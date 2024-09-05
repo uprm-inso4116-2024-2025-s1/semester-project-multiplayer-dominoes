@@ -73,7 +73,7 @@ class Table{
     // Retorna los Dominos que se encuentran en cada esquina.
     get leftTail(){return this.#left_domino}
     get rightTail(){return this.#right_domino}
-    get availableDominos(){return (chips.length - this.#chips_on_table)}
+    get availableDominos(){return (this.#chips.length - this.#chips_on_table)}
 
     // Private Methods
     #createDominoesDataMatrix(){
