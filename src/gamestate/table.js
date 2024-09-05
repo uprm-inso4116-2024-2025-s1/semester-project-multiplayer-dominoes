@@ -74,6 +74,7 @@ class Table{
     get leftTail(){return this.#left_domino}
     get rightTail(){return this.#right_domino}
     get availableDominos(){return (this.#chips.length - this.#chips_on_table)}
+    get dominosMatrix(){return this.#data_matrix}
 
     // Private Methods
     #createDominoesDataMatrix(){
