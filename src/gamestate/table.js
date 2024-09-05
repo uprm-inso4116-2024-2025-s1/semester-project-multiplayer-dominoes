@@ -185,22 +185,22 @@ class Table{
         this.#chips_on_table++;
     }
 
-    // Retorna una matriz de strings que representa los dominos en un formato legible. 
+    // Retorna un string que representa la tabla con dominos en un formato legible. 
     // Esta función es útil para observar el estado de la matriz en un terminal de forma 
     // más comprensible.
-    drawMatrix(){
-        let matrix = [];
+    drawTable(){
+        let matrix = "";
         for(let i = 0; i < this.#data_matrix.length; i++){
-            let sub_list = [];
+            let sub_list = "";
             for(let j = 0; j < this.#data_matrix[i].length; j++){
                 if(this.#data_matrix[i][j]){
-                    sub_list.push((this.#data_matrix[i][j].values[0]).toString()+"|"+
-                                  (this.#data_matrix[i][j].values[1]).toString());
+                    sub_list += (" |"+ this.#data_matrix[i][j].values[0]).toString()+"|"+
+                                  (this.#data_matrix[i][j].values[1]).toString() + "| ";
                 }else{
-                    sub_list.push("X");
+                    sub_list += " === ";
                 }
             }
-            matrix.push(sub_list);
+            matrix += "\n"+sub_list;
         }
         return matrix;
     }
