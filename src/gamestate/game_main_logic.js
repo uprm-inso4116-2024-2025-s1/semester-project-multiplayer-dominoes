@@ -1,12 +1,3 @@
-
-// 1) Se hace un base game con un input que des una ficha en estilo "[#,#]" se coloca en un tablero que es una matrix X*X . Si no hay ninguna ficha se coloca en la matriz se coloca una ficha en el centro del juego.
-// 2) La ficha del input va a buscar una ficha que tengo algun lado disponible y se coloca al lado. (Hay que asegurarse que la ficha donde se coloque sea el lugar adecuado)
-// 3) Se crea un set de fichas del que puedas pick up alguna ficha random.
-// 4) Se setea que al comenzar el jugador reciba 7 fichas de domino de ese set. y el jugador solo pueda input esas fichas. 
-// 5) Si el jugador no tiene fichas, el jugador gana.
-
-const { tab } = require("@testing-library/user-event/dist/tab");
-
 // let path_matrix = [
 // [1,1,1,1,1,1,1,1,1,],
 // [0,0,0,0,0,0,0,0,1,],
@@ -23,16 +14,16 @@ const DisplayDirection = Object.freeze({
     VERTICAL: 1,
 });
 
-const Position = Object.freeze({
+const Corner = Object.freeze({
     LEFT: 0,
     RIGHT: 1,
 });
 
 class Domino {
-    #values = [];
-    #free_corners = [];
     #coords = [];
     #display_direction = null;
+    #free_corners = [];
+    #values = [];
     constructor(values, coords, display_direction){
         this.#values = values;
         this.#free_corners = [...values]
@@ -41,10 +32,10 @@ class Domino {
     }
 
     // Getters
-    get values(){return this.#values}
-    get freeCorners(){return this.#free_corners}
     get coords(){return this.#coords}
     get displayDirection(){return this.#display_direction}
+    get freeCorners(){return this.#free_corners}
+    get values(){return this.#values}
 
     // Setters
     set coords(input){this.#coords = input}
@@ -59,11 +50,23 @@ class Domino {
     }
 }
 
+// Table Class
+// Constructor:
+// path_matrix: Es una matriz predefinida que muestra el camino que seguirán los dominós. Utilizando 1 para el camino a recorrer y 0 para el camino no accesible.
+//              Example: [
+//                       [1,1,1,1,1],
+//                       [0,0,0,0,1],
+//                       [1,1,1,1,1],
+//                       [1,0,0,0,0],
+//                       [1,1,1,1,1],
+//                       ]
+// chips: La lista de fichas que puede tener el juego. 
+//        Example: [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]...]
 class Table{
-    #path_matrix = []
-    #data_matrix = []
     #chips = []
     #chips_on_table = 0
+    #data_matrix = []
+    #path_matrix = []
     #right_domino = null;
     #left_domino = null;
     constructor(path_matrix, chips){
@@ -73,6 +76,7 @@ class Table{
     }
 
     // Getters
+    // Retorna los Dominos que se encuentran en cada esquina.
     get leftDomino() {return this.#left_domino}
     get rightDomino(){return this.#right_domino}
 
@@ -91,7 +95,7 @@ class Table{
         }
         return new_data_matrix
     }
-
+    
     #findNewCoordinates(coords){
         let list = [[0,1],[0,-1],[1,0],[-1,0]]
         for(let i = 0; i < list.length; i++){
@@ -115,6 +119,9 @@ class Table{
         return []
     }
 
+    // Public Methods
+
+    // Retorna una lista con 7 fichas random. 
     playerChips(){
         let player_chips = []
         for(let i = 0; i < 7; i++){
@@ -125,7 +132,14 @@ class Table{
         return player_chips
     }
 
-    placeDomino(domino_to_place, position){
+    // placeDomino coloca el dominó dado en el lugar correcto de la matriz y actualiza el estado. 
+    // Si el dominó no es jugable, será ignorado y no realizará ninguna acción.
+    // Inputs: 
+    // domino_to_place : Una ficha representada como una lista de dos elementos. 
+    //                   Ejemplos: [6, 3], [1, 2], [0, 0].
+    // corner : El extremo donde se colocará la ficha, puede ser izquierda o derecha. 
+    //          Este argumento es de tipo Corner (Corner.LEFT o Corner.RIGHT).
+    placeDomino(domino_to_place, corner){
         if (this.#chips_on_table == 0){
             let current_domino = new Domino(domino_to_place,[2,2],
                                 DisplayDirection.HORIZONTAL)
@@ -138,7 +152,7 @@ class Table{
             this.#path_matrix[center_y][center_x] = -1
         }else{
             let adjacent_domino;
-            if(position == Position.LEFT){
+            if(corner == Corner.LEFT){
                 adjacent_domino = this.#left_domino
             }else{
                 adjacent_domino = this.#right_domino
@@ -162,9 +176,9 @@ class Table{
                 adjacent_domino.removeCorner(number_to_place)
                 current_domino.removeCorner(number_to_place)
                     
-                if(position == Position.LEFT){
+                if(corner == Corner.LEFT){
                     this.#left_domino = current_domino
-                }else if (position == Position.RIGHT){
+                }else if (corner == Corner.RIGHT){
                     this.#right_domino = current_domino
                 }
                 this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino
@@ -173,12 +187,15 @@ class Table{
         this.#chips_on_table++;
     }
 
+    // Retorna una matriz de strings que representa los dominos en un formato legible. 
+    // Esta función es útil para observar el estado de la matriz en un terminal de forma 
+    // más comprensible.
     drawMatrix(){
         let matrix = []
         for(let i = 0; i < this.#data_matrix.length; i++){
             let sub_list = []
             for(let j = 0; j < this.#data_matrix[i].length; j++){
-                if(this.#data_matrix[i][j] != null){
+                if(this.#data_matrix[i][j]){
                     sub_list.push((this.#data_matrix[i][j].values[0]).toString()+"|"+(this.#data_matrix[i][j].values[1]).toString())
                 }else{
                     sub_list.push("X")
@@ -189,7 +206,6 @@ class Table{
         return matrix
     }
 }
-
 
 function main(){
     const fichas = [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],
@@ -203,10 +219,7 @@ function main(){
     [1,0,0,0,0],
     [1,1,1,1,1],
     ]
-
     let table = new Table(global_path_matrix,fichas)
-
-    console.log(table.drawMatrix())
 }
 
 
