@@ -5,6 +5,8 @@
 // 4) Se setea que al comenzar el jugador reciba 7 fichas de domino de ese set. y el jugador solo pueda input esas fichas. 
 // 5) Si el jugador no tiene fichas, el jugador gana.
 
+const { tab } = require("@testing-library/user-event/dist/tab");
+
 // let path_matrix = [
 // [1,1,1,1,1,1,1,1,1,],
 // [0,0,0,0,0,0,0,0,1,],
@@ -22,7 +24,7 @@ const DisplayDirection = Object.freeze({
 });
 
 const Position = Object.freeze({
-    LEFT: -1,
+    LEFT: 0,
     RIGHT: 1,
 });
 
@@ -58,21 +60,26 @@ class Domino {
 }
 
 class Table{
-    path_matrix = []
-    data_matrix = []
-    chips = []
-    chips_on_table = 0
-    right_domino = null;
-    left_domino = null;
+    #path_matrix = []
+    #data_matrix = []
+    #chips = []
+    #chips_on_table = 0
+    #right_domino = null;
+    #left_domino = null;
     constructor(path_matrix, chips){
-        this.path_matrix = path_matrix
-        this.chips = chips
-        this.data_matrix = this.createDominoesDataMatrix()
+        this.#path_matrix = path_matrix
+        this.#chips = chips
+        this.#data_matrix = this.#createDominoesDataMatrix()
     }
 
-    createDominoesDataMatrix(){
-        let n = this.path_matrix.length
-        let m = this.path_matrix[0].length
+    // Getters
+    get leftDomino() {return this.#left_domino}
+    get rightDomino(){return this.#right_domino}
+
+    // Private Methods
+    #createDominoesDataMatrix(){
+        let n = this.#path_matrix.length
+        let m = this.#path_matrix[0].length
 
         let new_data_matrix = []
         for(let i = 0; i < n; i++){
@@ -85,7 +92,7 @@ class Table{
         return new_data_matrix
     }
 
-    findNewCoordinates(coords){
+    #findNewCoordinates(coords){
         let list = [[0,1],[0,-1],[1,0],[-1,0]]
         for(let i = 0; i < list.length; i++){
             let x = list[i][1]
@@ -94,14 +101,14 @@ class Table{
             let curr_x = coords[1]
             let curr_y = coords[0]
         
-            if(x+curr_x < 0 || x+curr_x > this.path_matrix[0].length){
+            if(x+curr_x < 0 || x+curr_x > this.#path_matrix[0].length){
                 continue;
-            }else if(y+curr_y < 0 || y+curr_y > this.path_matrix.length){
+            }else if(y+curr_y < 0 || y+curr_y > this.#path_matrix.length){
                 continue;
             }
         
-            if(this.path_matrix[y+curr_y][x+curr_x] == 1){
-                this.path_matrix[y+curr_y][x+curr_x] = -1
+            if(this.#path_matrix[y+curr_y][x+curr_x] == 1){
+                this.#path_matrix[y+curr_y][x+curr_x] = -1
                 return [y+curr_y,x+curr_x]
             }
         }
@@ -111,30 +118,30 @@ class Table{
     playerChips(){
         let player_chips = []
         for(let i = 0; i < 7; i++){
-            let random_ficha = Math.floor(Math.random() * this.chips.length-1)
-            player_chips.push(this.chips[random_ficha])
-            this.chips.splice(random_ficha,1)
+            let random_ficha = Math.floor(Math.random() * this.#chips.length-1)
+            player_chips.push(this.#chips[random_ficha])
+            this.#chips.splice(random_ficha,1)
         }
         return player_chips
     }
 
     placeDomino(domino_to_place, position){
-        if (this.chips_on_table == 0){
+        if (this.#chips_on_table == 0){
             let current_domino = new Domino(domino_to_place,[2,2],
                                 DisplayDirection.HORIZONTAL)
-            this.left_domino = current_domino
-            this.right_domino = current_domino
+            this.#left_domino = current_domino
+            this.#right_domino = current_domino
                 
-            let center_y = Math.floor(this.path_matrix.length/2)
-            let center_x = Math.floor(this.path_matrix[0].length/2)
-            this.data_matrix[center_y][center_x] = current_domino
-            this.path_matrix[center_y][center_x] = -1
+            let center_y = Math.floor(this.#path_matrix.length/2)
+            let center_x = Math.floor(this.#path_matrix[0].length/2)
+            this.#data_matrix[center_y][center_x] = current_domino
+            this.#path_matrix[center_y][center_x] = -1
         }else{
             let adjacent_domino;
             if(position == Position.LEFT){
-                adjacent_domino = this.left_domino
+                adjacent_domino = this.#left_domino
             }else{
-                adjacent_domino = this.right_domino
+                adjacent_domino = this.#right_domino
             }
     
             let is_legal = true
@@ -148,7 +155,7 @@ class Table{
             }
     
             if(is_legal){
-                let new_coords = this.findNewCoordinates(adjacent_domino.coords)
+                let new_coords = this.#findNewCoordinates(adjacent_domino.coords)
                 let current_domino = new Domino(domino_to_place, 
                                     new_coords,
                                     DisplayDirection.HORIZONTAL)
@@ -156,23 +163,23 @@ class Table{
                 current_domino.removeCorner(number_to_place)
                     
                 if(position == Position.LEFT){
-                    this.left_domino = current_domino
+                    this.#left_domino = current_domino
                 }else if (position == Position.RIGHT){
-                    this.right_domino = current_domino
+                    this.#right_domino = current_domino
                 }
-                this.data_matrix[new_coords[0]][new_coords[1]] = current_domino
+                this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino
             }
         }
-        this.chips_on_table++;
+        this.#chips_on_table++;
     }
 
     drawMatrix(){
         let matrix = []
-        for(let i = 0; i < this.data_matrix.length; i++){
+        for(let i = 0; i < this.#data_matrix.length; i++){
             let sub_list = []
-            for(let j = 0; j < this.data_matrix[i].length; j++){
-                if(this.data_matrix[i][j] != null){
-                    sub_list.push((this.data_matrix[i][j].values[0]).toString()+"|"+(this.data_matrix[i][j].values[1]).toString())
+            for(let j = 0; j < this.#data_matrix[i].length; j++){
+                if(this.#data_matrix[i][j] != null){
+                    sub_list.push((this.#data_matrix[i][j].values[0]).toString()+"|"+(this.#data_matrix[i][j].values[1]).toString())
                 }else{
                     sub_list.push("X")
                 }
@@ -198,8 +205,6 @@ function main(){
     ]
 
     let table = new Table(global_path_matrix,fichas)
-
-
 
     console.log(table.drawMatrix())
 }
