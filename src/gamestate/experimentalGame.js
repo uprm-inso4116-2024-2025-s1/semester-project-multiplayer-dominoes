@@ -12,81 +12,81 @@ function MainGame(){
         [1,0,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,0,0,0,0,1],
         [1,1,1,1,1,1,1,1,1,1,1],
-    ]
+    ];
 
-    const [playerDominoIndex, setPlayerDominoIndex] = useState('')
+    const [playerDominoIndex, setPlayerDominoIndex] = useState('');
 
     const [data, setData] = useState({
         Domino: undefined,
         DominoDirection: undefined,
-    })
+    });
 
-    let tempTableState = new Table(default_path)
-    let initialPlayerHand = tempTableState.playerChips()
+    let tempTableState = new Table(default_path);
+    let initialPlayerHand = tempTableState.playerChips();
 
     const [tableData, setTableData] = useState({
         TableState: tempTableState,
         DrawMatrix: tempTableState.drawTable().split('\n'),
-    })
+    });
     const [playerData, setPlayerData] = useState({
         PlayerHand: initialPlayerHand,
         DrawHand: drawChips(initialPlayerHand),
         PlayerInput: false,
-    })
+    });
 
     useEffect(() => {
         // This runs when the player places a domino on the table.
         if(data.Domino && data.Domino.length === 2){
-            let tempTableState = tableData.TableState
+            let tempTableState = tableData.TableState;
             if(playerDominoIndex >= 0 &&  playerDominoIndex< playerData.PlayerHand.length && tempTableState.placeDomino(data.Domino,data.DominoDirection)){
                 setData({
                     Domino : undefined,
                     DominoDirection: undefined,
-                    })
+                    });
 
                 setTableData({
                     TableState: tempTableState,
                     DrawMatrix: tempTableState.drawTable().split('\n')
-                })
+                });
                 
-                playerData.PlayerHand.splice(playerDominoIndex,1)
+                playerData.PlayerHand.splice(playerDominoIndex,1);
 
                 setPlayerData({
                     PlayerHand: playerData.PlayerHand,
                     DrawHand: drawChips(playerData.PlayerHand),
                     PlayerInput: false,
-                })
+                });
 
-                setPlayerDominoIndex('')
+                setPlayerDominoIndex('');
             }
         }
 
         // This runs when the player grabs a domino from the dominoes pool.
         if(playerData.PlayerInput){
     
-            playerData.PlayerHand.push(tableData.TableState.grabRandomChip())
+            playerData.PlayerHand.push(tableData.TableState.grabRandomChip());
 
             setPlayerData({
                 PlayerHand: playerData.PlayerHand,
                 DrawHand: drawChips(playerData.PlayerHand),
                 PlayerInput: false,
-            })
+            });
 
             setTableData({
                 TableState: tableData.TableState,
                 DrawMatrix: tableData.TableState.drawTable().split('\n')
-            })
+            });
         }
-    }, [data, playerData])
+    }, [data, playerData]);
 
     // Convert a matrix into a string to visualize the player's hand.
     function drawChips(chips){
-        let str = ""
+        let str = "";
         for(let i = 0; i < chips.length; i++){
             if(chips[i]) str += i.toString() + ( "=|" + chips[i][0].toString()) + "|" 
-                                + (chips[i][1].toString() + "| ")
+                                + (chips[i][1].toString() + "| ");
         }
-        return str
+        return str;
     }
     
 

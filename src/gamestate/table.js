@@ -33,7 +33,7 @@ class Domino {
     // Methods
     removeCorner(number){
         const indexFinder = this.#free_corners.indexOf(number);
-        if(indexFinder != -1){
+        if(indexFinder !== -1){
             this.#free_corners.splice(indexFinder,1);
         }
     }
@@ -107,7 +107,7 @@ class Table{
                 continue;
             }
         
-            if(this.#path_matrix[y+curr_y][x+curr_x] == 1){
+            if(this.#path_matrix[y+curr_y][x+curr_x] === 1){
                 this.#path_matrix[y+curr_y][x+curr_x] = -1;
                 return [y+curr_y,x+curr_x];
             }
@@ -128,9 +128,9 @@ class Table{
 
     grabRandomChip(){
         let random_index = Math.floor(Math.random() * this.#dominoes.length);
-        let random_domino = this.#dominoes[random_index]
+        let random_domino = this.#dominoes[random_index];
         this.#dominoes.splice(random_index,1);
-        return random_domino
+        return random_domino;
     }
 
     // placeDomino coloca el dominó dado en el lugar correcto de la matriz y actualiza el estado. 
@@ -142,7 +142,7 @@ class Table{
     //          Este argumento es de tipo Corner (Corner.LEFT o Corner.RIGHT).
     placeDomino(domino_to_place, corner){
         let is_legal = true;
-        if (this.#dominoes_on_table == 0){
+        if (this.#dominoes_on_table === 0){
             let center_y = Math.floor(this.#path_matrix.length/2);
             let center_x = Math.floor(this.#path_matrix[0].length/2);
 
@@ -155,7 +155,7 @@ class Table{
             this.#path_matrix[center_y][center_x] = -1;
         }else{
             let adjacent_domino;
-            if(corner == Corner.LEFT){
+            if(corner === Corner.LEFT){
                 adjacent_domino = this.#left_domino;
             }else{
                 adjacent_domino = this.#right_domino;
@@ -174,15 +174,19 @@ class Table{
                 let new_coords = this.#findNewCoordinates(adjacent_domino.coords, corner)
 
                 if(new_coords.length > 0){
+                    let display_direction  = DisplayDirection.HORIZONTAL;
+                    if(new_coords[0] - adjacent_domino[0] !== 0){
+                        display_direction = DisplayDirection.VERTICAL;
+                    }
                     let current_domino = new Domino(domino_to_place, 
                                         new_coords,
-                                        DisplayDirection.HORIZONTAL);
+                                        display_direction);
                     adjacent_domino.removeCorner(number_to_place);
                     current_domino.removeCorner(number_to_place);
                         
-                    if(corner == Corner.LEFT){
+                    if(corner === Corner.LEFT){
                         this.#left_domino = current_domino;
-                    }else if (corner == Corner.RIGHT){
+                    }else if (corner === Corner.RIGHT){
                         this.#right_domino = current_domino;
                     }
                     this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino;
@@ -190,7 +194,7 @@ class Table{
             }
         }
         this.#dominoes_on_table++;
-        return is_legal
+        return is_legal;
     }
 
     // Retorna un string que representa la tabla con dominoes en un formato legible. 
