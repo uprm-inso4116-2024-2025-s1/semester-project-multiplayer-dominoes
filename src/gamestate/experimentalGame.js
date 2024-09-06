@@ -11,78 +11,105 @@ function MainGame(){
         [1,0,0,0,0,0,0,0,0],
         [1,1,1,1,1,1,1,1,1],
     ]
-    const [Domino, setDomino] = useState([]);
-    const [DominoDirection, setDominoDirection] = useState(Corner.RIGHT)
 
-    const [TableState, setTableState] = useState(new Table(default_path))
-    const [DrawMatrix, setDrawMatrix] = useState(TableState.drawTable());
+    const [chipIndex, setChipIndex] = useState('')
 
-    const [ChipIndex, setChipIndex] = useState(-1);
-    const [Player, setPlayer] = useState(TableState.playerChips());
-    const [DrawChip,setDrawChip] = useState(drawChips(Player));
+    const [data, setData] = useState({
+        Domino: undefined,
+        DominoDirection: undefined,
+    })
 
+    let tempTableState = new Table(default_path)
+    let initialPlayerChips = tempTableState.playerChips()
+
+    const [tableData, setTableData] = useState({
+        TableState: tempTableState,
+        DrawMatrix: tempTableState.drawTable().split('\n'),
+    })
+    const [playerData, setPlayerData] = useState({
+        PlayerChips: initialPlayerChips,
+        DrawChips: drawChips(initialPlayerChips),
+        PlayerInput: false,
+    })
 
     useEffect(() => {
-    if(Domino && Domino.length === 2){
-        if(ChipIndex >= 0 && ChipIndex < Player.length && TableState.placeDomino(Domino,DominoDirection)){
-            Player.splice(ChipIndex,1)
-        }
-        setDomino(undefined)
-        setDrawMatrix(TableState.drawTable())
-    }
-    if(Player){
-        setDrawChip(drawChips(Player))
-    }
+        if(data.Domino && data.Domino.length === 2){
+            let tempTableState = tableData.TableState
+            // 
+            if(chipIndex >= 0 &&  chipIndex< playerData.PlayerChips.length && tempTableState.placeDomino(data.Domino,data.DominoDirection)){
+                setData({
+                    Domino : undefined,
+                    DominoDirection: undefined,
+                    })
 
-    }, [Domino, DominoDirection, ChipIndex, Player, TableState, DrawMatrix, DrawChip])
+                setTableData({
+                    TableState: tempTableState,
+                    DrawMatrix: tempTableState.drawTable().split('\n')
+                })
+                
+                let temp_player = Object.assign({},playerData)
+                temp_player.PlayerChips.splice(chipIndex,1)
+
+                setPlayerData({
+                    PlayerChips: temp_player.PlayerChips,
+                    DrawChips: drawChips(temp_player.PlayerChips),
+                    PlayerInput: false,
+                })
+
+                setChipIndex('')
+            }
+
+        }
+    }, [data])
 
 
     function drawChips(chips){
         let str = ""
         for(let i = 0; i < chips.length; i++){
-            if(chips[i]) str += ( " |" + chips[i][0].toString()) + "|" 
+            if(chips[i]) str += i.toString() + ( "=|" + chips[i][0].toString()) + "|" 
                                 + (chips[i][1].toString() + "| ")
         }
         return str
     }
+    
 
+    
     return(
     <div className='table_game'>
         <div className='table'>
-            {DrawMatrix.split('\n').map(e => <p>{e}</p>)}
+            {tableData.DrawMatrix.map(e => <p>{e}</p>)}
         </div>
         <div className='input_chips'>
             <div className='Player1'>
-                <p>{DrawChip}</p>
+                <p>{playerData.DrawChips}</p>
+            
+                <input type='number' 
+                value={chipIndex} 
+                onChange={(e)=> setChipIndex(e.target.value)} 
+                placeholder='Enter the position of a domino'/>
+
                 <button onClick={()=>{
+                    if(chipIndex){
+                        setData({
+                            Domino: playerData.PlayerChips[chipIndex],
+                            DominoDirection: Corner.LEFT
+                        });
+                    }
+                }}>Left Tail</button>
+                <button onClick={()=>{
+                    if(chipIndex){
+                        setData({
+                            Domino: playerData.PlayerChips[chipIndex],
+                            DominoDirection: Corner.RIGHT
+                        });
+                    }
+                }}>Right Tail</button>
+                {/* <button onClick={()=>{
                     Player.push(TableState.grabRandomChip())
                     setPlayer(Player)
                     setDrawChip(drawChips(Player))
                     setTableState(TableState)
-                    }}>Grab a Random Chip</button>
-            
-                <input type='number' 
-                value={ChipIndex} 
-                onChange={(e)=> setChipIndex(e.target.value)} 
-                placeholder='Enter the Index of the chip'/>
-
-                <button onClick={()=>{
-                    if(ChipIndex){
-                        setDomino(Player[ChipIndex]);
-                        setDominoDirection(Corner.LEFT);
-                        setDrawChip(drawChips(Player))
-                        setDrawMatrix(TableState.drawTable())
-                    }
-                }}>Left Place Chip</button>
-
-                <button onClick={()=>{
-                    if(ChipIndex){
-                        setDomino(Player[ChipIndex]);
-                        setDominoDirection(Corner.RIGHT);
-                        setDrawMatrix(TableState.drawTable())
-                        setDrawChip(drawChips(Player))
-                    }
-                }}>Right Place Chip</button>
+                    }}>Grab a Random Chip</button> */}
             </div>
         </div>
     </div>
