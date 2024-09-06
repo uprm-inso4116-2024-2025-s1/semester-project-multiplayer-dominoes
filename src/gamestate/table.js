@@ -4,7 +4,7 @@ const DisplayDirection = Object.freeze({
 });
 
 const Corner = Object.freeze({
-    LEFT: 0,
+    LEFT: -1,
     RIGHT: 1,
 });
 
@@ -92,8 +92,8 @@ class Table{
         return new_data_matrix;
     }
     
-    #findNewCoordinates(coords){
-        let list = [[0,1],[0,-1],[1,0],[-1,0]];
+    #findNewCoordinates(coords, corner){
+        let list = [[0,corner],[0,1],[0,-1],[1,0],[-1,0]];
         for(let i = 0; i < list.length; i++){
             let x = list[i][1];
             let y = list[i][0];
@@ -121,11 +121,16 @@ class Table{
     playerChips(){
         let player_chips = [];
         for(let i = 0; i < 7; i++){
-            let random_ficha = Math.floor(Math.random() * this.#chips.length-1);
-            player_chips.push(this.#chips[random_ficha]);
-            this.#chips.splice(random_ficha,1);
+            player_chips.push(this.grabRandomChip());
         }
         return player_chips;
+    }
+
+    grabRandomChip(){
+        let random_ficha = Math.floor(Math.random() * this.#chips.length-1);
+        let chip = this.#chips[random_ficha]
+        this.#chips.splice(random_ficha,1);
+        return chip
     }
 
     // placeDomino coloca el dominó dado en el lugar correcto de la matriz y actualiza el estado. 
@@ -136,6 +141,7 @@ class Table{
     // corner : El extremo donde se colocará la ficha, puede ser izquierda o derecha. 
     //          Este argumento es de tipo Corner (Corner.LEFT o Corner.RIGHT).
     placeDomino(domino_to_place, corner){
+        let is_legal = true;
         if (this.#chips_on_table == 0){
             let center_y = Math.floor(this.#path_matrix.length/2);
             let center_x = Math.floor(this.#path_matrix[0].length/2);
@@ -154,8 +160,7 @@ class Table{
             }else{
                 adjacent_domino = this.#right_domino;
             }
-    
-            let is_legal = true;
+
             let number_to_place;
             if(adjacent_domino.freeCorners.includes(domino_to_place[0])){
                 number_to_place = domino_to_place[0];
@@ -166,7 +171,7 @@ class Table{
             }
     
             if(is_legal){
-                let new_coords = this.#findNewCoordinates(adjacent_domino.coords)
+                let new_coords = this.#findNewCoordinates(adjacent_domino.coords, corner)
 
                 if(new_coords.length > 0){
                     let current_domino = new Domino(domino_to_place, 
@@ -185,6 +190,7 @@ class Table{
             }
         }
         this.#chips_on_table++;
+        return is_legal
     }
 
     // Retorna un string que representa la tabla con dominos en un formato legible. 
