@@ -35,9 +35,9 @@ function MainGame(){
     })
 
     useEffect(() => {
+        // This runs when the player places a domino on the table.
         if(data.Domino && data.Domino.length === 2){
             let tempTableState = tableData.TableState
-            // 
             if(playerDominoIndex >= 0 &&  playerDominoIndex< playerData.PlayerHand.length && tempTableState.placeDomino(data.Domino,data.DominoDirection)){
                 setData({
                     Domino : undefined,
@@ -60,6 +60,8 @@ function MainGame(){
                 setPlayerDominoIndex('')
             }
         }
+
+        // This runs when the player grabs a domino from the dominoes pool.
         if(playerData.PlayerInput){
     
             playerData.PlayerHand.push(tableData.TableState.grabRandomChip())
@@ -77,7 +79,7 @@ function MainGame(){
         }
     }, [data, playerData])
 
-
+    // Convert a matrix into a string to visualize the player's hand.
     function drawChips(chips){
         let str = ""
         for(let i = 0; i < chips.length; i++){
