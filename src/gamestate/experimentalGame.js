@@ -58,9 +58,24 @@ function MainGame(){
 
                 setChipIndex('')
             }
-
         }
-    }, [data])
+        if(playerData.PlayerInput){
+    
+            let temp_player = Object.assign({},playerData)
+            temp_player.PlayerChips.push(tableData.TableState.grabRandomChip())
+
+            setPlayerData({
+                PlayerChips: temp_player.PlayerChips,
+                DrawChips: drawChips(temp_player.PlayerChips),
+                PlayerInput: false,
+            })
+
+            setTableData({
+                TableState: tableData.TableState,
+                DrawMatrix: tableData.TableState.drawTable().split('\n')
+            })
+        }
+    }, [data, playerData])
 
 
     function drawChips(chips){
@@ -104,12 +119,9 @@ function MainGame(){
                         });
                     }
                 }}>Right Tail</button>
-                {/* <button onClick={()=>{
-                    Player.push(TableState.grabRandomChip())
-                    setPlayer(Player)
-                    setDrawChip(drawChips(Player))
-                    setTableState(TableState)
-                    }}>Grab a Random Chip</button> */}
+                <button onClick={()=>{
+                        setPlayerData({...playerData, ['PlayerInput']: true})
+                    }}>Grab a Random Chip</button>
             </div>
         </div>
     </div>
