@@ -49,32 +49,32 @@ class Domino {
 //                       [1,0,0,0,0],
 //                       [1,1,1,1,1],
 //                       ]
-// chips: La lista de fichas que puede tener el juego. El default son las 28 fichas del juego original.  
+// dominoes: La lista de dominoes que puede tener el juego. El default son las 28 dominoes del juego original.  
 //        Example: [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]...]
 class Table{
-    #chips = [
+    #dominoes = [
         [0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],
         [1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,2],
         [2,3],[2,4],[2,5],[2,6],[3,3],[3,4],[3,5],
         [3,6],[4,4],[4,5],[4,6],[5,5],[5,6],[6,6]
     ];
-    #chips_on_table = 0;
+    #dominoes_on_table = 0;
     #data_matrix = [];
     #path_matrix = [];
     #right_domino = null;
     #left_domino = null;
-    constructor(path_matrix, chips){
+    constructor(path_matrix, dominoes){
         this.#path_matrix = path_matrix;
         this.#data_matrix = this.#createDominoesDataMatrix();
-        if(chips) this.#chips = chips;
+        if(dominoes) this.#dominoes = dominoes;
     }
 
     // Getters
     // Retorna los Dominos que se encuentran en cada esquina.
     get leftTail(){return this.#left_domino}
     get rightTail(){return this.#right_domino}
-    get availableDominos(){return (this.#chips.length - this.#chips_on_table)}
-    get dominosMatrix(){return this.#data_matrix}
+    get availableDominos(){return (this.#dominoes.length - this.#dominoes_on_table)}
+    get dominoesMatrix(){return this.#data_matrix}
 
     // Private Methods
     #createDominoesDataMatrix(){
@@ -117,32 +117,32 @@ class Table{
 
     // Public Methods
 
-    // Retorna una lista con 7 fichas random. 
+    // Retorna una lista con 7 dominoes random. 
     playerChips(){
-        let player_chips = [];
+        let player_dominoes = [];
         for(let i = 0; i < 7; i++){
-            player_chips.push(this.grabRandomChip());
+            player_dominoes.push(this.grabRandomChip());
         }
-        return player_chips;
+        return player_dominoes;
     }
 
     grabRandomChip(){
-        let random_ficha = Math.floor(Math.random() * this.#chips.length-1);
-        let chip = this.#chips[random_ficha]
-        this.#chips.splice(random_ficha,1);
-        return chip
+        let random_index = Math.floor(Math.random() * this.#dominoes.length);
+        let random_domino = this.#dominoes[random_index]
+        this.#dominoes.splice(random_index,1);
+        return random_domino
     }
 
     // placeDomino coloca el dominó dado en el lugar correcto de la matriz y actualiza el estado. 
     // Si el dominó no es jugable, será ignorado y no realizará ninguna acción.
     // Inputs: 
-    // domino_to_place : Una ficha representada como una lista de dos elementos. 
+    // domino_to_place : Una domino representada como una lista de dos elementos. 
     //                   Ejemplos: [6, 3], [1, 2], [0, 0].
-    // corner : El extremo donde se colocará la ficha, puede ser izquierda o derecha. 
+    // corner : El extremo donde se colocará la domino, puede ser izquierda o derecha. 
     //          Este argumento es de tipo Corner (Corner.LEFT o Corner.RIGHT).
     placeDomino(domino_to_place, corner){
         let is_legal = true;
-        if (this.#chips_on_table == 0){
+        if (this.#dominoes_on_table == 0){
             let center_y = Math.floor(this.#path_matrix.length/2);
             let center_x = Math.floor(this.#path_matrix[0].length/2);
 
@@ -189,11 +189,11 @@ class Table{
                 }
             }
         }
-        this.#chips_on_table++;
+        this.#dominoes_on_table++;
         return is_legal
     }
 
-    // Retorna un string que representa la tabla con dominos en un formato legible. 
+    // Retorna un string que representa la tabla con dominoes en un formato legible. 
     // Esta función es útil para observar el estado de la matriz en un terminal de forma 
     // más comprensible.
     drawTable(){
