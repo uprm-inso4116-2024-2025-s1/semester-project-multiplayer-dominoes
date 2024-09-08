@@ -1,5 +1,6 @@
 import {Table,Corner} from './table.js';
 import React, { useState, useEffect } from 'react';
+import DominoBot from './Bot.js';
 
 function MainGame(){
     let default_path = [
@@ -23,6 +24,13 @@ function MainGame(){
 
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
+    let botHand = tempTableState.playerChips();
+    let bot = new DominoBot(tempTableState, botHand);
+    
+    const [botData, setbotData] = useState({
+        BotHand: botHand,
+        BotPlayer: bot
+    })
 
     const [tableData, setTableData] = useState({
         TableState: tempTableState,
@@ -58,6 +66,20 @@ function MainGame(){
                 });
 
                 setPlayerDominoIndex('');
+                // Bot's turn to play
+                setTimeout(() => {
+                    let botMoved = botData.BotPlayer.playTurn();
+                    if (botMoved) {
+                        setbotData({
+                            BotHand: botData.BotPlayer.hand,
+                            BotPlayer: botData.BotPlayer
+                        });
+                        setTableData({
+                            TableState: tempTableState,
+                            DrawMatrix: tempTableState.drawTable().split('\n')
+                        });
+                    }
+                }, 1000); // Give a 1-second delay before the bot plays
             }
         }
 
