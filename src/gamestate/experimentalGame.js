@@ -66,6 +66,11 @@ function MainGame(){
                     TableState: tableData.TableState,
                     DrawMatrix: tableData.TableState.drawTable().split('\n')
                 });
+               
+                if(botData.BotPlayer.hand.length === 0){
+                    alert("Bot has won.");
+                    return; 
+                }
                 setCurrentTurn('Player');
             } else if (botData.BotPlayer.hand.length < tableData.TableState.availableDominos) {
                 // If the bot cannot play, and there are still dominos available to draw
@@ -108,9 +113,13 @@ function MainGame(){
                     DrawHand: drawChips(playerData.PlayerHand),
                     PlayerInput: false,
                 });
-
+                
                 setPlayerDominoIndex('');
-
+                
+                if(playerData.PlayerHand.length === 0 ){
+                    alert("Player wins!");
+                    return;
+                }
                 // Bot's turn to play
                 setCurrentTurn('bot');
                 botPlayTurn(botData, tableData, setbotData, setTableData);
