@@ -72,7 +72,7 @@ function MainGame(){
                     return; 
                 }
                 setCurrentTurn('Player');
-            } else if (botData.BotPlayer.hand.length < tableData.TableState.availableDominos) {
+            } else if (tableData.TableState.availableDominos !== 0) {
                 // If the bot cannot play, and there are still dominos available to draw
                 botData.BotHand.push(tableData.TableState.grabRandomChip()); 
                 
