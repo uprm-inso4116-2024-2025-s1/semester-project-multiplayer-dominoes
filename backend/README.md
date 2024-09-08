@@ -62,10 +62,14 @@ multiplayerDominoes> db.myCollection.find()
 
 ## Add MongoDB Connection String to `.env` file
 * Create a `.env` file in the root of the backend directory (`/backend/.env`).
+
+> NOTE: Do NOT give the `.env` file a name (e.g. `dev.env`)! Leave it as `.env` only.
+
 * Add the following environment variable with the credentials of the db user you created:
 ```txt
 MONGODB_CONNECTION_STRING=mongodb://<yourUser>:<your userPassword>@localhost:27017/multiplayerDominoes
 ```
+> NOTE: Make sure you get rid of the *"<>"* when replacing your user name and password.
 
 ## Run the server
 Execute `npm run dev` to run the server with `nodemon`, you should get the following output:
@@ -83,3 +87,5 @@ Execute `npm run dev` to run the server with `nodemon`, you should get the follo
 Server listening on port 8080
 Connected to MongoDB
 ```
+
+You have successfully setup the backend! If needed, visit the [frontend README](../frontend/README.md) to setup it up locally.
