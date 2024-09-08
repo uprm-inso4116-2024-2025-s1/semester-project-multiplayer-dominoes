@@ -42,6 +42,37 @@ function MainGame(){
         PlayerInput: false,
     });
 
+    function botPlayTurn(botData, tableData, setbotData, setTableData) {
+    setTimeout(() => {
+        let botMoved = botData.BotPlayer.playTurn();
+        if (botMoved) {
+            // Update bot data and table if a move was successfully made
+            setbotData({
+                BotHand: botData.BotPlayer.hand,
+                BotPlayer: botData.BotPlayer
+            });
+            setTableData({
+                TableState: tableData.TableState,
+                DrawMatrix: tableData.TableState.drawTable().split('\n')
+            });
+        } else if (botData.BotPlayer.hand.length < tableData.TableState.availableDominos) {
+            // If the bot cannot play, and there are still dominos available to draw
+            botData.BotHand.push(tableData.TableState.grabRandomChip()); 
+            
+            // Update the bot's hand
+            setbotData({
+                BotHand: botData.BotHand,
+                BotPlayer: botData.BotPlayer
+            });
+
+            // Retry playing after grabbing a new domino
+            botPlayTurn(botData, tableData, setbotData, setTableData);
+        } else {
+            console.log("Bot cannot make a move and no dominos left to draw.");
+        }
+    }, 2000); // Give a 2-second delay before the bot plays
+    }
+
     useEffect(() => {
         // This runs when the player places a domino on the table.
         if(data.Domino && data.Domino.length === 2){
@@ -67,19 +98,7 @@ function MainGame(){
 
                 setPlayerDominoIndex('');
                 // Bot's turn to play
-                setTimeout(() => {
-                    let botMoved = botData.BotPlayer.playTurn();
-                    if (botMoved) {
-                        setbotData({
-                            BotHand: botData.BotPlayer.hand,
-                            BotPlayer: botData.BotPlayer
-                        });
-                        setTableData({
-                            TableState: tempTableState,
-                            DrawMatrix: tempTableState.drawTable().split('\n')
-                        });
-                    }
-                }, 1000); // Give a 1-second delay before the bot plays
+                botPlayTurn(botData, tableData, setbotData, setTableData);
             }
         }
 
@@ -150,6 +169,10 @@ function MainGame(){
                             PlayerInput: true,
                         })
                     }}>Grab a Random Chip</button>
+            </div>
+            {/* Display bot's domino count */}
+            <div className='BotInfo'>
+                <p>Bot has {botData.BotHand.length} dominos</p>
             </div>
         </div>
     </div>
