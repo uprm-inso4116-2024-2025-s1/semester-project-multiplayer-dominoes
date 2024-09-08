@@ -3,7 +3,7 @@ import { Table, Corner, Domino } from "./table.js";
 class DominoBot {
 
     /**
-     * 
+     * @param {array} table - The table where the bot will be playing. 
      * @param {array} hand - Array of tuples representing the tiles the bot currently has. 
      */
     constructor(table, hand){

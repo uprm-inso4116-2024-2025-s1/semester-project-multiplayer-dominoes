@@ -44,6 +44,14 @@ function MainGame(){
         PlayerInput: false,
     });
 
+    /** Uses the playturn function from the bot to see if the bot can make a move. If they can't, they will pickup 
+     * dominoes until they can or until chips run out. Is recursive. 
+     * 
+     * @param {array} botData - The hand the bot currently has. 
+     * @param {array} tableData - The current setup of the table.
+     * @param {*} setbotData - Setter for the bot hand.
+     * @param {*} setTableData - Setter for the table data.
+     */
     function botPlayTurn(botData, tableData, setbotData, setTableData) {
         setTimeout(() => {
             let botMoved = botData.BotPlayer.playTurn();
@@ -72,8 +80,7 @@ function MainGame(){
 
                 // Retry playing after grabbing a new domino
                 botPlayTurn(botData, tableData, setbotData, setTableData);
-            } else {
-                console.log("Bot cannot make a move and no dominos left to draw.");
+            } else { //Bot cannot make a move and cannot draw more dominoes.
                 setCurrentTurn('Player');
             }
         }, 3000); // Give a 3-second delay before the bot plays
@@ -103,7 +110,7 @@ function MainGame(){
                 });
 
                 setPlayerDominoIndex('');
-                
+
                 // Bot's turn to play
                 setCurrentTurn('bot');
                 botPlayTurn(botData, tableData, setbotData, setTableData);
@@ -138,6 +145,7 @@ function MainGame(){
         return str;
     }
     
+    // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
     function drawBotChips(chips){
         let str = "";
         for(let i = 0; i < chips.length; i++){
@@ -148,12 +156,12 @@ function MainGame(){
     
     return(
     <div className='table_game'>
-        {/*Displays who's turn it is. */}
+        {/*Displays who's turn it is.*/}
         <div className='turnInfo'>
                 <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
         </div>
 
-        {/*Shows the placeholder dominoes for the bot */}
+        {/*Shows the placeholder dominoes for the bot.*/}
         <div className='BotInfo'>
                 <p>{botData.DbHand}</p>
         </div>
