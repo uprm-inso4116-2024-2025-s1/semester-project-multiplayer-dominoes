@@ -74,7 +74,7 @@ function MainGame(){
                 // Update the bot's hand
                 setbotData({
                     BotHand: botData.BotHand,
-                    DbHand: drawChips(botData.BotHand),
+                    DbHand: drawBotChips(botData.BotHand),
                     BotPlayer: botData.BotPlayer
                 });
 
