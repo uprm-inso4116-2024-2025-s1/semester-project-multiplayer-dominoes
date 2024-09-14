@@ -140,55 +140,73 @@ class Table{
     //                   Ejemplos: [6, 3], [1, 2], [0, 0].
     // corner : El extremo donde se colocará la domino, puede ser izquierda o derecha. 
     //          Este argumento es de tipo Corner (Corner.LEFT o Corner.RIGHT).
-    placeDomino(domino_to_place, corner){
+    placeDomino(domino_to_place, corner) {
         let is_legal = true;
-        if (this.#dominoes_on_table === 0){
-            let center_y = Math.floor(this.#path_matrix.length/2);
-            let center_x = Math.floor(this.#path_matrix[0].length/2);
-
-            let current_domino = new Domino(domino_to_place,[center_y,center_x],
-                                DisplayDirection.HORIZONTAL);
+        let number_to_place;
+        if (this.#dominoes_on_table === 0) {
+            let center_y = Math.floor(this.#path_matrix.length / 2);
+            let center_x = Math.floor(this.#path_matrix[0].length / 2);
+    
+            let current_domino = new Domino(domino_to_place, [center_y, center_x], DisplayDirection.HORIZONTAL);
             this.#left_domino = current_domino;
             this.#right_domino = current_domino;
-                
+    
             this.#data_matrix[center_y][center_x] = current_domino;
             this.#path_matrix[center_y][center_x] = -1;
-        }else{
+        } else {
             let adjacent_domino;
-            if(corner === Corner.LEFT){
+            if (corner === Corner.LEFT) {
                 adjacent_domino = this.#left_domino;
-            }else{
+            } else {
                 adjacent_domino = this.#right_domino;
             }
-
-            let number_to_place;
-            if(adjacent_domino.freeCorners.includes(domino_to_place[0])){
-                number_to_place = domino_to_place[0];
-            }else if(adjacent_domino.freeCorners.includes(domino_to_place[1])){
-                number_to_place = domino_to_place[1];
-            }else{
-                is_legal = false;
+    
+            // Check which value of the domino needs to match the corner.
+            if (corner === Corner.LEFT) {
+                if (adjacent_domino.freeCorners.includes(domino_to_place[1])) {
+                    number_to_place = domino_to_place[1];
+                } else if (adjacent_domino.freeCorners.includes(domino_to_place[0])) {
+                    // Flip the domino to match.
+                    domino_to_place = [domino_to_place[1], domino_to_place[0]];
+                    number_to_place = domino_to_place[1];
+                } else {
+                    // No match.
+                    is_legal = false;
+                }
+            } else if (corner === Corner.RIGHT) {
+                // Match the right tail of the table.
+                if (adjacent_domino.freeCorners.includes(domino_to_place[0])) {
+                    number_to_place = domino_to_place[0];
+                } else if (adjacent_domino.freeCorners.includes(domino_to_place[1])) {
+                    // Flip the domino to match.
+                    domino_to_place = [domino_to_place[1], domino_to_place[0]];
+                    number_to_place = domino_to_place[0];
+                } else {
+                    is_legal = false;
+                }
             }
     
-            if(is_legal){
-                let new_coords = this.#findNewCoordinates(adjacent_domino.coords, corner)
-
-                if(new_coords.length > 0){
-                    let display_direction  = DisplayDirection.HORIZONTAL;
-                    if(new_coords[0] - adjacent_domino[0] !== 0){
+            if (is_legal) {
+                // Find new coordinates for the domino placement.
+                let new_coords = this.#findNewCoordinates(adjacent_domino.coords, corner);
+    
+                if (new_coords.length > 0) {
+                    let display_direction = DisplayDirection.HORIZONTAL;
+                    if (new_coords[0] - adjacent_domino.coords[0] !== 0) {
                         display_direction = DisplayDirection.VERTICAL;
                     }
-                    let current_domino = new Domino(domino_to_place, 
-                                        new_coords,
-                                        display_direction);
+    
+                    let current_domino = new Domino(domino_to_place, new_coords, display_direction);
                     adjacent_domino.removeCorner(number_to_place);
                     current_domino.removeCorner(number_to_place);
-                        
-                    if(corner === Corner.LEFT){
+    
+                    // Update left or right domino reference.
+                    if (corner === Corner.LEFT) {
                         this.#left_domino = current_domino;
-                    }else if (corner === Corner.RIGHT){
+                    } else if (corner === Corner.RIGHT) {
                         this.#right_domino = current_domino;
                     }
+    
                     this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino;
                 }
             }
@@ -196,6 +214,7 @@ class Table{
         this.#dominoes_on_table++;
         return is_legal;
     }
+              
 
     // Retorna un string que representa la tabla con dominoes en un formato legible. 
     // Esta función es útil para observar el estado de la matriz en un terminal de forma 
