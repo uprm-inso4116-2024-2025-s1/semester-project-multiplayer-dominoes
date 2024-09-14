@@ -1,5 +1,6 @@
 import {Table,Corner} from './table.js';
 import React, { useState, useEffect } from 'react';
+import DominoBot from './Bot.js';
 
 function MainGame(){
     let default_path = [
@@ -15,6 +16,7 @@ function MainGame(){
     ];
 
     const [playerDominoIndex, setPlayerDominoIndex] = useState('');
+    const [currentTurn, setCurrentTurn] =useState('Player');
 
     const [data, setData] = useState({
         Domino: undefined,
@@ -23,6 +25,14 @@ function MainGame(){
 
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
+    let botHand = tempTableState.playerChips();
+    let bot = new DominoBot(tempTableState, botHand);
+    
+    const [botData, setbotData] = useState({
+        BotHand: botHand,
+        DbHand: drawBotChips(botHand),
+        BotPlayer: bot
+    })
 
     const [tableData, setTableData] = useState({
         TableState: tempTableState,
@@ -33,6 +43,53 @@ function MainGame(){
         DrawHand: drawChips(initialPlayerHand),
         PlayerInput: false,
     });
+
+    /** Uses the playturn function from the bot to see if the bot can make a move. If they can't, they will pickup 
+     * dominoes until they can or until chips run out. Is recursive. 
+     * 
+     * @param {array} botData - The hand the bot currently has. 
+     * @param {array} tableData - The current setup of the table.
+     * @param {*} setbotData - Setter for the bot hand.
+     * @param {*} setTableData - Setter for the table data.
+     */
+    function botPlayTurn(botData, tableData, setbotData, setTableData) {
+        setTimeout(() => {
+            let botMoved = botData.BotPlayer.playTurn();
+            if (botMoved) {
+                // Update bot data and table if a move was successfully made
+                setbotData({
+                    BotHand: botData.BotPlayer.hand,
+                    DbHand : drawBotChips(botData.BotHand),
+                    BotPlayer: botData.BotPlayer
+                });
+                setTableData({
+                    TableState: tableData.TableState,
+                    DrawMatrix: tableData.TableState.drawTable().split('\n')
+                });
+               
+                if(botData.BotPlayer.hand.length === 0){
+                    alert("Bot has won.");
+                    return; 
+                }
+                setCurrentTurn('Player');
+            } else if (tableData.TableState.availableDominos !== 0) {
+                // If the bot cannot play, and there are still dominos available to draw
+                botData.BotHand.push(tableData.TableState.grabRandomChip()); 
+                
+                // Update the bot's hand
+                setbotData({
+                    BotHand: botData.BotHand,
+                    DbHand: drawBotChips(botData.BotHand),
+                    BotPlayer: botData.BotPlayer
+                });
+
+                // Retry playing after grabbing a new domino
+                botPlayTurn(botData, tableData, setbotData, setTableData);
+            } else { //Bot cannot make a move and cannot draw more dominoes.
+                setCurrentTurn('Player');
+            }
+        }, 3000); // Give a 3-second delay before the bot plays
+    }
 
     useEffect(() => {
         // This runs when the player places a domino on the table.
@@ -56,8 +113,16 @@ function MainGame(){
                     DrawHand: drawChips(playerData.PlayerHand),
                     PlayerInput: false,
                 });
-
+                
                 setPlayerDominoIndex('');
+                
+                if(playerData.PlayerHand.length === 0 ){
+                    alert("Player wins!");
+                    return;
+                }
+                // Bot's turn to play
+                setCurrentTurn('bot');
+                botPlayTurn(botData, tableData, setbotData, setTableData);
             }
         }
 
@@ -89,10 +154,27 @@ function MainGame(){
         return str;
     }
     
-
+    // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
+    function drawBotChips(chips){
+        let str = "";
+        for(let i = 0; i < chips.length; i++){
+            if(chips[i]) str += "|::|::| ";
+        }
+        return str;
+    }
     
     return(
     <div className='table_game'>
+        {/*Displays who's turn it is.*/}
+        <div className='turnInfo'>
+                <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
+        </div>
+
+        {/*Shows the placeholder dominoes for the bot.*/}
+        <div className='BotInfo'>
+                <p>{botData.DbHand}</p>
+        </div>
+
         <div className='table'>
             {tableData.DrawMatrix.map(e => <p>{e}</p>)}
         </div>
