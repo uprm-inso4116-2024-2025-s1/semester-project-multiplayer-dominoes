@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 function Login() {
@@ -6,13 +7,16 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isLogin) {
       console.log('Logging in with:', username, password);
+      navigate('/game');
     } else {
       console.log('Signing up with:', username, email, password);
+      navigate('/game');
     }
   };
 
@@ -23,6 +27,7 @@ function Login() {
         <h2 className="header">{isLogin ? 'Login' : 'Sign Up'} to Multi Dominoes</h2>
         <form onSubmit={handleSubmit}>
           <input
+            className="login-input"
             type="text"
             placeholder="Username"
             value={username}
@@ -31,6 +36,7 @@ function Login() {
           />
           {!isLogin && (
             <input
+              className="login-input"
               type="email"
               placeholder="Email"
               value={email}
@@ -39,6 +45,7 @@ function Login() {
             />
           )}
           <input
+            className="login-input"
             type="password"
             placeholder="Password"
             value={password}
