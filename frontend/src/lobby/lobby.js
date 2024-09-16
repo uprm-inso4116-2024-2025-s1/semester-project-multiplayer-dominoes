@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './lobby.css';
+import { useNavigate } from 'react-router-dom';
 
 const Lobby = () => {
+
+  /*Variable added to navigate between gamestate and lobby */
+  const navigate = useNavigate();
   // State to manage the list of rooms and room creation
   const [rooms, setRooms] = useState([]);
   const [newRoomName, setNewRoomName] = useState('');
@@ -58,7 +62,25 @@ const Lobby = () => {
     });
   };
   return (
+  
     <div className="lobby-container">
+              {/*Button to switch between gamestate and lobby ui*/}
+              <button
+                style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    padding: '10px',
+                    backgroundColor: '#1A3636',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                }}
+                onClick={() => navigate('/game')}
+            >
+                GameState
+            </button>
       <div className="left-column">
         <h2 className="heading">Create Lobby</h2>
         <input 
