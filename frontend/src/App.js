@@ -1,16 +1,23 @@
 import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import Lobby from './lobby/lobby.js';
+
+import Login from './Auth/Login.js';
+
 import MainGame from './gamestate/experimentalGame.js';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        {/*<MainGame/>*/}
-        <Lobby/>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <header className="App-header">
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/game" element={<MainGame />} />
+          </Routes>
+        </header>
+      </div>
+    </Router>
   );
 }
 
