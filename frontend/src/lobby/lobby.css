@@ -72,7 +72,8 @@
     color: #282c34; 
   }
   
-  button {
+  /**/
+  .createRoom_button {
     padding: 10px 20px;
     background-color: #282c34;
     color: white;
@@ -81,7 +82,7 @@
     cursor: pointer;
   }
   
-  button:hover {
+  .createRoom_button:hover {
     background-color: #282c34;
   }
   

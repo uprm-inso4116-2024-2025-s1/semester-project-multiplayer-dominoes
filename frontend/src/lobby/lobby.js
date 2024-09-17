@@ -90,7 +90,7 @@ const Lobby = () => {
           placeholder="Enter Room Name"
           className="text-box"
         />
-        <button onClick={handleCreateRoom}>Create Room</button>
+        <button className="createRoom_button" onClick={handleCreateRoom}>Create Room</button>
         {errorMessage && <p className="error">{errorMessage}</p>}
       </div>
 
