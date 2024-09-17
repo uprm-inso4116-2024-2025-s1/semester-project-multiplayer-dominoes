@@ -4,6 +4,9 @@ import DominoBot from './Bot.js';
 import { useNavigate } from 'react-router-dom';
 
 function MainGame(){
+
+    /*Variable added to navigate between gamestate and lobby */
+    const navigate = useNavigate();
     let default_path = [
         [1,1,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,0,0,0,0,1],
@@ -15,6 +18,7 @@ function MainGame(){
         [1,0,0,0,0,0,0,0,0,0,1],
         [1,1,1,1,1,1,1,1,1,1,1],
     ];
+
 
     const [playerDominoIndex, setPlayerDominoIndex] = useState('');
     const [currentTurn, setCurrentTurn] =useState('Player');
@@ -45,8 +49,6 @@ function MainGame(){
         DrawHand: drawChips(initialPlayerHand),
         PlayerInput: false,
     });
-
-    const navigate = useNavigate();
 
     /** Uses the playturn function from the bot to see if the bot can make a move. If they can't, they will pickup 
      * dominoes until they can or until chips run out. Is recursive. 
@@ -169,6 +171,24 @@ function MainGame(){
     
     return(
     <div className='table_game'>
+        {/*Button to switch between gamestate and lobby ui*/}
+        <button
+                style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    padding: '10px',
+                    backgroundColor: '#1A3636',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                }}
+                onClick={() => navigate('/lobby')}
+            >
+                Lobby
+            </button>
+
         {/*Displays who's turn it is.*/}
         <div className='turnInfo'>
                 <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
