@@ -1,6 +1,7 @@
 import {Table,Corner} from './table.js';
 import React, { useState, useEffect } from 'react';
 import DominoBot from './Bot.js';
+import RuleEngine from './RuleEngine.js';
 import { useNavigate } from 'react-router-dom';
 
 function MainGame(){
@@ -28,6 +29,7 @@ function MainGame(){
         DominoDirection: undefined,
     });
 
+    const ruleEngine = new RuleEngine('classic');
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
@@ -100,7 +102,9 @@ function MainGame(){
         // This runs when the player places a domino on the table.
         if(data.Domino && data.Domino.length === 2){
             let tempTableState = tableData.TableState;
-            if(playerDominoIndex >= 0 &&  playerDominoIndex< playerData.PlayerHand.length && tempTableState.placeDomino(data.Domino,data.DominoDirection)){
+            if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, tempTableState)) {
+                tempTableState.placeDomino(data.Domino, data.DominoDirection);
+                
                 setData({
                     Domino : undefined,
                     DominoDirection: undefined,
@@ -108,7 +112,7 @@ function MainGame(){
 
                 setTableData({
                     TableState: tempTableState,
-                    DrawMatrix: tempTableState.drawTable().split('\n')
+                    DrawMatrix: tempTableState.drawTable().split('\n'),
                 });
                 
                 playerData.PlayerHand.splice(playerDominoIndex,1);
