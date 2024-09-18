@@ -43,18 +43,17 @@
   right: 20px;
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #61dafb;
+  background-color: #61dafb; 
   border: none;
   border-radius: 5px;
-  color: #282c34;
+  color: #282c34; 
   cursor: pointer;
   z-index: 1001; 
 }
 
 .rules-button:hover {
-  background-color: #21a1f1;
+  background-color: #21a1f1; 
 }
-
 
 .rules-overlay {
   position: fixed;
@@ -62,7 +61,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7); 
+  background-color: #87D4DE;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,16 +69,16 @@
 }
 
 .rules {
-  background-color: white;
+  background-color: #FFFEC9; 
   padding: 20px;
   border-radius: 10px;
   width: 80%;
   max-width: 600px;
   text-align: left;
-  color: black;
+  color: #582400; 
+  font-family: 'Peepo Regular', sans-serif; 
 }
 
-h2, p {
-  color: black;
+.rules h2, .rules p {
+  color: #582400; 
 }
-

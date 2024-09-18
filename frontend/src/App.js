@@ -44,7 +44,6 @@ function App() {
               </>
             } 
           />
-        </Routes>
             
           
             <Route path="/game" element={<MainGame />} />
