@@ -1,8 +1,12 @@
 import { Table, Corner } from './table.js';
 import React, { useState, useEffect } from 'react';
 import DominoBot from './Bot.js';
+import RuleEngine from './RuleEngine.js';
 import { useNavigate } from 'react-router-dom';
 import PauseScreen from './Pause.js';
+import AchievementManager from './AchievementManager.js';
+import { ToastContainer } from 'react-toastify';  // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 
 function MainGame() {
 
@@ -29,11 +33,20 @@ function MainGame() {
         DominoDirection: undefined,
     });
 
+    const ruleEngine = new RuleEngine('classic');
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
     let bot = new DominoBot(tempTableState, botHand);
 
+    const achievementManager = new AchievementManager();
+
+    useEffect(() => {
+        achievementManager.checkStartWithDoubleSix(initialPlayerHand);
+        achievementManager.checkAllDoublesHand(initialPlayerHand);
+    }, []);
+    
+    
     const [botData, setbotData] = useState({
         BotHand: botHand,
         DbHand: drawBotChips(botHand),
@@ -112,7 +125,9 @@ function MainGame() {
         // This runs when the player places a domino on the table.
         if (data.Domino && data.Domino.length === 2) {
             let tempTableState = tableData.TableState;
-            if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && tempTableState.placeDomino(data.Domino, data.DominoDirection)) {
+            if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, tempTableState)) {
+                tempTableState.placeDomino(data.Domino, data.DominoDirection);
+                
                 setData({
                     Domino: undefined,
                     DominoDirection: undefined,
@@ -120,7 +135,7 @@ function MainGame() {
 
                 setTableData({
                     TableState: tempTableState,
-                    DrawMatrix: tempTableState.drawTable().split('\n')
+                    DrawMatrix: tempTableState.drawTable().split('\n'),
                 });
 
                 playerData.PlayerHand.splice(playerDominoIndex, 1);
@@ -133,7 +148,10 @@ function MainGame() {
 
                 setPlayerDominoIndex('');
 
-                if (playerData.PlayerHand.length === 0) {
+                // Check win condition for player
+                achievementManager.checkWin(playerData.PlayerHand);
+                
+                if(playerData.PlayerHand.length === 0 ){
                     alert("Player wins!");
                     return;
                 }
@@ -147,6 +165,7 @@ function MainGame() {
         if (playerData.PlayerInput) {
 
             playerData.PlayerHand.push(tableData.TableState.grabRandomChip());
+            achievementManager.trackDrawing();  // Track if the player draws a domino
 
             setPlayerData({
                 PlayerHand: playerData.PlayerHand,
@@ -250,6 +269,21 @@ function MainGame() {
                             <button onClick={pauseGame}>Pause Game</button>
                         </div>
                     </div>
+                    {/* Add ToastContainer to display toast notifications */}
+                    <ToastContainer
+                            position="top-right"
+                            autoClose={3000}
+                            hideProgressBar={false}
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss
+                            draggable
+                            pauseOnHover
+                            theme="colored"  // Add theme for better visual presentation
+                        />
+
+                    {/* Button and UI for navigating and game controls */}
                 </div>
             ) : (<PauseScreen onResume={resumeGame} />)}</div>
     );
