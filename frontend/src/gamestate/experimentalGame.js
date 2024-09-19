@@ -2,6 +2,9 @@ import {Table,Corner} from './table.js';
 import React, { useState, useEffect } from 'react';
 import DominoBot from './Bot.js';
 import { useNavigate } from 'react-router-dom';
+import AchievementManager from './AchievementManager.js';
+import { ToastContainer } from 'react-toastify';  // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 
 function MainGame(){
 
@@ -27,11 +30,19 @@ function MainGame(){
         Domino: undefined,
         DominoDirection: undefined,
     });
-
+    
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
     let bot = new DominoBot(tempTableState, botHand);
+
+    const achievementManager = new AchievementManager();
+
+    useEffect(() => {
+        achievementManager.checkStartWithDoubleSix(initialPlayerHand);
+        achievementManager.checkAllDoublesHand(initialPlayerHand);
+    }, []);
+    
     
     const [botData, setbotData] = useState({
         BotHand: botHand,
@@ -120,6 +131,9 @@ function MainGame(){
                 });
                 
                 setPlayerDominoIndex('');
+
+                // Check win condition for player
+                achievementManager.checkWin(playerData.PlayerHand);
                 
                 if(playerData.PlayerHand.length === 0 ){
                     alert("Player wins!");
@@ -135,6 +149,7 @@ function MainGame(){
         if(playerData.PlayerInput){
     
             playerData.PlayerHand.push(tableData.TableState.grabRandomChip());
+            achievementManager.trackDrawing();  // Track if the player draws a domino
 
             setPlayerData({
                 PlayerHand: playerData.PlayerHand,
@@ -235,6 +250,21 @@ function MainGame(){
                     }}>Grab a Random Chip</button>
             </div>
         </div>
+        {/* Add ToastContainer to display toast notifications */}
+        <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"  // Add theme for better visual presentation
+            />
+
+            {/* Button and UI for navigating and game controls */}
     </div>
     );
 }
