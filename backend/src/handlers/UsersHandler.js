@@ -8,8 +8,9 @@ export default class UsersHandler {
 
     async createUser(data) {
         const user = new UserModel({
-            name: data.name,
-            age: parseInt(data.age),
+            username: data.username,
+            email: data.email,
+            password: data.password,
             uuid: uuidv4() // Generate a unique UUID for the user
         });
         return await user.save();

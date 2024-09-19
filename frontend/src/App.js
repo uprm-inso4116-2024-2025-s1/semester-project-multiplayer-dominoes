@@ -47,7 +47,7 @@ function App() {
             
           
             <Route path="/game" element={<MainGame />} />
-            <Route path="/lobby" element={<Lobby/>} />
+            <Route path="/lobby" element={<Lobby />} />
           </Routes>
         </header>
       </div>
