@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 .App {
   text-align: center;
 }
@@ -76,7 +78,8 @@
   max-width: 600px;
   text-align: left;
   color: #582400; 
-  font-family: 'Peepo Regular', sans-serif; 
+  font-family: 'Press Start 2P', sans-serif; 
+  font-size: 18px;
 }
 
 .rules h2, .rules p {
