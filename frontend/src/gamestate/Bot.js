@@ -12,8 +12,10 @@ class DominoBot {
     }
 
     chooseDomino(){
+        if (this.hand.length === 0) return null;
         for(let i = 0; i < this.hand.length; i++){
             let domino = this.hand[i];
+            if (!domino) continue;  // Skip undefined or null domino entries
             if (this.table.leftTail.freeCorners.includes(domino[0]) || this.table.leftTail.freeCorners.includes(domino[1])) {
                 return { domino, corner: Corner.LEFT };
             }
@@ -34,7 +36,6 @@ class DominoBot {
             return false; // Bot can't make a valid move
         }
     }
-
 }
 
 export default DominoBot;
