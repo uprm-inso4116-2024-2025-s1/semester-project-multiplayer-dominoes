@@ -31,6 +31,7 @@ describe('Table logic', () => {
 
   test('No duplicate dominoes are created', () => {
     const dominoSet = new Set();
+    // There are 28 different dominoes.
     for (let i = 0; i < 28; i++) {
       const randomChip = table.grabRandomChip();
       expect(dominoSet).not.toContain(randomChip);
