@@ -14,7 +14,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/game" element={<MainGame />} />
-            <Route path="/lobby" element={<Lobby/>} />
+            <Route path="/lobby" element={<Lobby />} />
           </Routes>
         </header>
       </div>
