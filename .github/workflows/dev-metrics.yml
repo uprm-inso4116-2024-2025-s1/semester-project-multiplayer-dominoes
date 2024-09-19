@@ -42,7 +42,7 @@ jobs:
       - name: Run metrics generator
         run: |
           cd inso-gh-query-metrics
-          poetry run python src/enerateMilestoneMetricsForActions.py ${{ github.workspace }}/gh_metrics_config.json
+          poetry run python src/generateMilestoneMetricsForActions.py ${{ github.workspace }}/gh_metrics_config.json
         shell: bash
         env:
           GITHUB_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
