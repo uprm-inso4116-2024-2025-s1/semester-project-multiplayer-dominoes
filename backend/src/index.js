@@ -11,7 +11,7 @@ import UsersHandler from './handlers/UsersHandler.js';
 dotenv.config();
 
 // Setup database connection
-createMongoDbConnection(process.env.MONGODB_CONNECTION_STRING);
+createMongoDbConnection(process.env.MONGODB_URI);
 
 // Create an express application
 const app = express();
@@ -36,3 +36,5 @@ app.post('/users', async (req, res) => usersController.createUser(req, res));
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
+
+export default app;
