@@ -44,17 +44,18 @@
   top: 20px;
   left: 20px;
   padding: 10px 20px;
-  font-size: 16px;
-  background-color: #61dafb; 
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 10px;
+  background-color: #FFFEC9; 
   border: none;
   border-radius: 5px;
-  color: #282c34; 
+  color: #582400; 
   cursor: pointer;
   z-index: 1001; 
 }
 
 .rules-button:hover {
-  background-color: #21a1f1; 
+  background-color: rgb(244, 213, 75); 
 }
 
 .rules-overlay {
