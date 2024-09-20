@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -9,7 +10,7 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
+        unique: true
     },
     password: {
         type: String,
@@ -17,12 +18,16 @@ const userSchema = new mongoose.Schema({
     },
     score: {
         type: Number,
-        default: 0,
+        default: 0
     },
-    uuid: { 
-        type: String, 
-        required: true, 
-        unique: true 
+    uuid: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    tokenVersion: {
+        type: Number,
+        default: 0,
     },
 });
 

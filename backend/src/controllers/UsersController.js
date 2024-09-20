@@ -14,8 +14,27 @@ export default class UsersController {
 
     async createUser(req, res) {
         try {
-            const savedData = this.userHandler.createUser(req.body);
+            const savedData = await this.userHandler.createUser(req.body);
             res.status(201).json(savedData);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async loginUser(req, res) {
+        try {
+            const { email, password } = req.body;
+            const user = await this.userHandler.findUserByEmail(email);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            const isPasswordValid = await this.userHandler.validatePassword(password, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).json({ error: 'Invalid credentials' });
+            }
+            const token = this.userHandler.generateToken(user);
+            res.status(200).json({ token });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

@@ -16,3 +16,5 @@ class GameStatus{
     set CurrentPlayer(current_player){this.#current_player = current_player}
     set PlayerHands(player_hands){this.#player_hands = player_hands}
 }
+
+export default GameStatus

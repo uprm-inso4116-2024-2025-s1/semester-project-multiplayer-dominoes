@@ -45,8 +45,8 @@ function MainGame() {
         achievementManager.checkStartWithDoubleSix(initialPlayerHand);
         achievementManager.checkAllDoublesHand(initialPlayerHand);
     }, []);
-    
-    
+
+
     const [botData, setbotData] = useState({
         BotHand: botHand,
         DbHand: drawBotChips(botHand),
@@ -127,7 +127,7 @@ function MainGame() {
             let tempTableState = tableData.TableState;
             if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, tempTableState)) {
                 tempTableState.placeDomino(data.Domino, data.DominoDirection);
-                
+
                 setData({
                     Domino: undefined,
                     DominoDirection: undefined,
@@ -150,8 +150,8 @@ function MainGame() {
 
                 // Check win condition for player
                 achievementManager.checkWin(playerData.PlayerHand);
-                
-                if(playerData.PlayerHand.length === 0 ){
+
+                if (playerData.PlayerHand.length === 0) {
                     alert("Player wins!");
                     return;
                 }
@@ -271,17 +271,17 @@ function MainGame() {
                     </div>
                     {/* Add ToastContainer to display toast notifications */}
                     <ToastContainer
-                            position="top-right"
-                            autoClose={3000}
-                            hideProgressBar={false}
-                            newestOnTop={false}
-                            closeOnClick
-                            rtl={false}
-                            pauseOnFocusLoss
-                            draggable
-                            pauseOnHover
-                            theme="colored"  // Add theme for better visual presentation
-                        />
+                        position="top-right"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="colored"  // Add theme for better visual presentation
+                    />
 
                     {/* Button and UI for navigating and game controls */}
                 </div>
