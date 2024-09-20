@@ -12,10 +12,10 @@ export default class UsersHandler {
     async createUser(data) {
         const hashedPassword = await bcrypt.hash(data.password, 10);
         const user = new UserModel({
-            name: data.name,
+            username: data.name,
             email: data.email,
-            uuid: uuidv4(), // Generate a unique UUID for the user
-            password: hashedPassword
+            password: hashedPassword,
+            uuid: uuidv4() // Generate a unique UUID for the user
         });
         return await user.save();
     }

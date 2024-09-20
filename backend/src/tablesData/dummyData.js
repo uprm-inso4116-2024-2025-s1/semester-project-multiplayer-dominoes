@@ -13,12 +13,12 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING)
 
 // Dummy data to insert
 const users = [
-    { name: 'John Doe', uuid: 150, email: 'john@example.com', password: 'password123' },
-    { name: 'Mary Jane', uuid: 151, email: 'mary@example.com', password: 'password987' },
-    { name: 'Alice Smith', uuid: 152, email: 'alice@example.com', password: 'alicepass456' },
-    { name: 'Bob Brown', uuid: 153, email: 'bob@example.com', password: 'bobsecure789' },
-    { name: 'Charlie Green', uuid: 154, email: 'charlie@example.com', password: 'charlie1234' },
-    { name: 'Diana Prince', uuid: 155, email: 'diana@example.com', password: 'diana2021' },
+    { username: 'John Doe', email: 'john@example.com', password: 'password123', uuid: 150, },
+    { username: 'Mary Jane', email: 'mary@example.com', password: 'password987', uuid: 151 },
+    { username: 'Alice Smith', email: 'alice@example.com', password: 'alicepass456', uuid: 152 },
+    { username: 'Bob Brown', email: 'bob@example.com', password: 'bobsecure789', uuid: 153 },
+    { username: 'Charlie Green', email: 'charlie@example.com', password: 'charlie1234', uuid: 154 },
+    { username: 'Diana Prince', email: 'diana@example.com', password: 'diana2021', uuid: 155 },
 
 ];
 

@@ -2,14 +2,9 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
-    name: {
+    username: {
         type: String,
         required: true,
-    },
-    uuid: {
-        type: String,
-        required: true,
-        unique: true
     },
     email: {
         type: String,
@@ -19,6 +14,15 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+    },
+    score: {
+        type: Number,
+        default: 0
+    },
+    uuid: {
+        type: String,
+        required: true,
+        unique: true
     },
     tokenVersion: {
         type: Number,
