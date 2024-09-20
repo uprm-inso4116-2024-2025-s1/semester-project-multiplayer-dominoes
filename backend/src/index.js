@@ -12,7 +12,7 @@ import authenticateJWT from './middleware/authenticateJWT.js';
 dotenv.config();
 
 // Setup database connection
-createMongoDbConnection(process.env.MONGODB_CONNECTION_STRING);
+createMongoDbConnection(process.env.MONGODB_URI);
 
 // Create an express application
 const app = express();
@@ -29,6 +29,7 @@ const healthCheckController = new HealthCheckController();
 const usersController = new UsersController(usersHandler);
 
 // Register endpoints
+app.get('/', (req, res) => res.send('Welcome to Multiplayer Dominoes backend!'));
 app.get('/healthz', async (req, res) => healthCheckController.index(req, res));
 app.get('/users', async (req, res) => usersController.getAllUsers(req, res));
 app.post('/users', async (req, res) => usersController.createUser(req, res));
@@ -48,3 +49,5 @@ app.post('/logout', authenticateJWT, async (req, res) => {
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
+
+export default app;

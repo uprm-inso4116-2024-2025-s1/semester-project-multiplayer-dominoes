@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "prod": "node src/index.js",
+    "start": "node src/index.js",
     "test": "react-scripts test"
   },
   "author": "",
