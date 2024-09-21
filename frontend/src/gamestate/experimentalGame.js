@@ -2,12 +2,11 @@ import { Table, Corner } from './table.js';
 import React, { useState, useEffect } from 'react';
 import DominoBot from './Bot.js';
 import RuleEngine from './RuleEngine.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
-
 function MainGame() {
 
     /*Variable added to navigate between gamestate and lobby */
@@ -199,10 +198,13 @@ function MainGame() {
         return str;
     }
 
+    const { roomId } = useParams(); // Get the roomId from the URL
+
     return (
         <div>
             {!isPaused ? (
                 <div className='table_game'>
+                    <p>Game Room Id: {roomId}</p>
                     {/*Button to switch between gamestate and lobby ui*/}
                     <button
                         style={{

@@ -13,7 +13,7 @@ function App() {
         <header className="App-header">
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/game" element={<MainGame />} />
+            <Route path="/game/:roomId" element={<MainGame />} />
             <Route path="/lobby" element={<Lobby />} />
           </Routes>
         </header>
