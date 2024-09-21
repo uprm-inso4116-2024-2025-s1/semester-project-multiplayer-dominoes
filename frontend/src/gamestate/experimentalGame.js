@@ -290,22 +290,4 @@ function MainGame() {
 
 }
 
-function onTableClick(tableElement, gameStatus) {
-    tableElement.addEventListener('click', (event) => {
-        const position = getPositionFromEvent(event);  
-        const success = gameStatus.placeDomino(position);  
-        if (success) {
-            console.log('Domino placed successfully!');
-            updateTableUI(gameStatus);
-        } else {
-            console.log('Failed to place domino.');
-        }
-    });
-
-    function updateTableUI(gameStatus) {
-        const table = gameStatus.CurrentTable;
-    }
-
-}
-
 export default MainGame
