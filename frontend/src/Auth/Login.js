@@ -13,10 +13,10 @@ function Login() {
     e.preventDefault();
     if (isLogin) {
       console.log('Logging in with:', username, password);
-      navigate('/game');
+      navigate('/lobby');
     } else {
       console.log('Signing up with:', username, email, password);
-      navigate('/game');
+      navigate('/lobby');
     }
   };
 
