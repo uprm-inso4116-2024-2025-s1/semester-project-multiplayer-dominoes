@@ -1,33 +1,52 @@
-import {Table,Corner} from './table.js';
+import { Table, Corner } from './table.js';
 import React, { useState, useEffect } from 'react';
 import DominoBot from './Bot.js';
+import RuleEngine from './RuleEngine.js';
+import { useNavigate } from 'react-router-dom';
+import PauseScreen from './Pause.js';
+import AchievementManager from './AchievementManager.js';
+import { ToastContainer } from 'react-toastify';  // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 
-function MainGame(){
+function MainGame() {
+
+    /*Variable added to navigate between gamestate and lobby */
+    const navigate = useNavigate();
     let default_path = [
-        [1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,0,1],
-        [0,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,0,0,0,0,0],
-        [1,0,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ];
 
+
     const [playerDominoIndex, setPlayerDominoIndex] = useState('');
-    const [currentTurn, setCurrentTurn] =useState('Player');
+    const [currentTurn, setCurrentTurn] = useState('Player');
 
     const [data, setData] = useState({
         Domino: undefined,
         DominoDirection: undefined,
     });
 
+    const ruleEngine = new RuleEngine('classic');
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
     let bot = new DominoBot(tempTableState, botHand);
-    
+
+    const achievementManager = new AchievementManager();
+
+    useEffect(() => {
+        achievementManager.checkStartWithDoubleSix(initialPlayerHand);
+        achievementManager.checkAllDoublesHand(initialPlayerHand);
+    }, []);
+
+
     const [botData, setbotData] = useState({
         BotHand: botHand,
         DbHand: drawBotChips(botHand),
@@ -38,11 +57,22 @@ function MainGame(){
         TableState: tempTableState,
         DrawMatrix: tempTableState.drawTable().split('\n'),
     });
+
     const [playerData, setPlayerData] = useState({
         PlayerHand: initialPlayerHand,
         DrawHand: drawChips(initialPlayerHand),
         PlayerInput: false,
     });
+
+    const [isPaused, setPaused] = useState(false);
+
+    const pauseGame = () => {
+        setPaused(true);
+    }
+
+    const resumeGame = () => {
+        setPaused(false);
+    }
 
     /** Uses the playturn function from the bot to see if the bot can make a move. If they can't, they will pickup 
      * dominoes until they can or until chips run out. Is recursive. 
@@ -59,23 +89,23 @@ function MainGame(){
                 // Update bot data and table if a move was successfully made
                 setbotData({
                     BotHand: botData.BotPlayer.hand,
-                    DbHand : drawBotChips(botData.BotHand),
+                    DbHand: drawBotChips(botData.BotHand),
                     BotPlayer: botData.BotPlayer
                 });
                 setTableData({
                     TableState: tableData.TableState,
                     DrawMatrix: tableData.TableState.drawTable().split('\n')
                 });
-               
-                if(botData.BotPlayer.hand.length === 0){
+
+                if (botData.BotPlayer.hand.length === 0) {
                     alert("Bot has won.");
-                    return; 
+                    return;
                 }
                 setCurrentTurn('Player');
             } else if (tableData.TableState.availableDominos !== 0) {
                 // If the bot cannot play, and there are still dominos available to draw
-                botData.BotHand.push(tableData.TableState.grabRandomChip()); 
-                
+                botData.BotHand.push(tableData.TableState.grabRandomChip());
+
                 // Update the bot's hand
                 setbotData({
                     BotHand: botData.BotHand,
@@ -93,20 +123,22 @@ function MainGame(){
 
     useEffect(() => {
         // This runs when the player places a domino on the table.
-        if(data.Domino && data.Domino.length === 2){
+        if (data.Domino && data.Domino.length === 2) {
             let tempTableState = tableData.TableState;
-            if(playerDominoIndex >= 0 &&  playerDominoIndex< playerData.PlayerHand.length && tempTableState.placeDomino(data.Domino,data.DominoDirection)){
+            if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, tempTableState)) {
+                tempTableState.placeDomino(data.Domino, data.DominoDirection);
+
                 setData({
-                    Domino : undefined,
+                    Domino: undefined,
                     DominoDirection: undefined,
-                    });
+                });
 
                 setTableData({
                     TableState: tempTableState,
-                    DrawMatrix: tempTableState.drawTable().split('\n')
+                    DrawMatrix: tempTableState.drawTable().split('\n'),
                 });
-                
-                playerData.PlayerHand.splice(playerDominoIndex,1);
+
+                playerData.PlayerHand.splice(playerDominoIndex, 1);
 
                 setPlayerData({
                     PlayerHand: playerData.PlayerHand,
@@ -115,8 +147,11 @@ function MainGame(){
                 });
                 
                 setPlayerDominoIndex('');
-                
-                if(playerData.PlayerHand.length === 0 ){
+
+                // Check win condition for player
+                achievementManager.checkWin(playerData.PlayerHand);
+
+                if (playerData.PlayerHand.length === 0) {
                     alert("Player wins!");
                     return;
                 }
@@ -127,9 +162,10 @@ function MainGame(){
         }
 
         // This runs when the player grabs a domino from the dominoes pool.
-        if(playerData.PlayerInput){
-    
+        if (playerData.PlayerInput) {
+
             playerData.PlayerHand.push(tableData.TableState.grabRandomChip());
+            achievementManager.trackDrawing();  // Track if the player draws a domino
 
             setPlayerData({
                 PlayerHand: playerData.PlayerHand,
@@ -145,75 +181,113 @@ function MainGame(){
     }, [data, playerData]);
 
     // Convert a matrix into a string to visualize the player's hand.
-    function drawChips(chips){
+    function drawChips(chips) {
         let str = "";
-        for(let i = 0; i < chips.length; i++){
-            if(chips[i]) str += i.toString() + ( "=|" + chips[i][0].toString()) + "|" 
-                                + (chips[i][1].toString() + "| ");
+        for (let i = 0; i < chips.length; i++) {
+            if (chips[i]) str += i.toString() + ("=|" + chips[i][0].toString()) + "|"
+                + (chips[i][1].toString() + "| ");
         }
         return str;
     }
-    
+
     // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
-    function drawBotChips(chips){
+    function drawBotChips(chips) {
         let str = "";
-        for(let i = 0; i < chips.length; i++){
-            if(chips[i]) str += "|::|::| ";
+        for (let i = 0; i < chips.length; i++) {
+            if (chips[i]) str += "|::|::| ";
         }
         return str;
     }
-    
-    return(
-    <div className='table_game'>
-        {/*Displays who's turn it is.*/}
-        <div className='turnInfo'>
-                <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
-        </div>
 
-        {/*Shows the placeholder dominoes for the bot.*/}
-        <div className='BotInfo'>
-                <p>{botData.DbHand}</p>
-        </div>
+    return (
+        <div>
+            {!isPaused ? (
+                <div className='table_game'>
+                    {/*Button to switch between gamestate and lobby ui*/}
+                    <button
+                        style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            padding: '10px',
+                            backgroundColor: '#1A3636',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => navigate('/lobby')}
+                    >
+                        Lobby
+                    </button>
 
-        <div className='table'>
-            {tableData.DrawMatrix.map(e => <p>{e}</p>)}
-        </div>
-        <div className='input_chips'>
-            <div className='Player1'>
-                <p>{playerData.DrawHand}</p>
-            
-                <input type='number' 
-                value={playerDominoIndex} 
-                onChange={(e)=> setPlayerDominoIndex(e.target.value)} 
-                placeholder='Enter the position of a domino'/>
+                    {/*Displays who's turn it is.*/}
+                    <div className='turnInfo'>
+                        <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
+                    </div>
 
-                <button onClick={()=>{
-                    if(playerDominoIndex){
-                        setData({
-                            Domino: playerData.PlayerHand[playerDominoIndex],
-                            DominoDirection: Corner.LEFT
-                        });
-                    }
-                }}>Left Tail</button>
-                <button onClick={()=>{
-                    if(playerDominoIndex){
-                        setData({
-                            Domino: playerData.PlayerHand[playerDominoIndex],
-                            DominoDirection: Corner.RIGHT
-                        });
-                    }
-                }}>Right Tail</button>
-                <button onClick={()=>{
-                        setPlayerData({
-                            PlayerHand: playerData.PlayerHand,
-                            DrawHand: playerData.DrawHand,
-                            PlayerInput: true,
-                        })
-                    }}>Grab a Random Chip</button>
-            </div>
-        </div>
-    </div>
+                    {/*Shows the placeholder dominoes for the bot.*/}
+                    <div className='BotInfo'>
+                        <p>{botData.DbHand}</p>
+                    </div>
+
+                    <div className='table'>
+                        {tableData.DrawMatrix.map(e => <p>{e}</p>)}
+                    </div>
+                    <div className='input_chips'>
+                        <div className='Player1'>
+                            <p>{playerData.DrawHand}</p>
+
+                            <input type='number'
+                                value={playerDominoIndex}
+                                onChange={(e) => setPlayerDominoIndex(e.target.value)}
+                                placeholder='Enter the position of a domino' />
+
+                            <button onClick={() => {
+                                if (playerDominoIndex) {
+                                    setData({
+                                        Domino: playerData.PlayerHand[playerDominoIndex],
+                                        DominoDirection: Corner.LEFT
+                                    });
+                                }
+                            }}>Left Tail</button>
+                            <button onClick={() => {
+                                if (playerDominoIndex) {
+                                    setData({
+                                        Domino: playerData.PlayerHand[playerDominoIndex],
+                                        DominoDirection: Corner.RIGHT
+                                    });
+                                }
+                            }}>Right Tail</button>
+                            <button onClick={() => {
+                                setPlayerData({
+                                    PlayerHand: playerData.PlayerHand,
+                                    DrawHand: playerData.DrawHand,
+                                    PlayerInput: true,
+                                })
+                            }}>Grab a Random Chip</button>
+                            <button onClick={pauseGame}>Pause Game</button>
+                        </div>
+                    </div>
+                    {/* Add ToastContainer to display toast notifications */}
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="colored"  // Add theme for better visual presentation
+                    />
+
+                    {/* Button and UI for navigating and game controls */}
+                </div>
+            ) : (<PauseScreen onResume={resumeGame} />)}</div>
     );
+
 }
 
 export default MainGame

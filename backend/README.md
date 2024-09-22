@@ -67,7 +67,7 @@ multiplayerDominoes> db.myCollection.find()
 
 * Add the following environment variable with the credentials of the db user you created:
 ```txt
-MONGODB_CONNECTION_STRING=mongodb://<yourUser>:<your userPassword>@localhost:27017/multiplayerDominoes
+MONGODB_URI=mongodb://<yourUser>:<your userPassword>@localhost:27017/multiplayerDominoes
 ```
 > NOTE: Make sure you get rid of the *"<>"* when replacing your user name and password.
 
