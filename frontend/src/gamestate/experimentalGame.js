@@ -7,6 +7,7 @@ import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
+import IntermediateBot from './intermediateBot.js';
 
 function MainGame() {
 
@@ -37,7 +38,7 @@ function MainGame() {
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
-    let bot = new DominoBot(tempTableState, botHand);
+    let bot = new IntermediateBot(tempTableState, botHand);
 
     const achievementManager = new AchievementManager();
 
