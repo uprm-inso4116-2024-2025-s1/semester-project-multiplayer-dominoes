@@ -13,6 +13,7 @@ class DominoBot {
 
     chooseDomino(){
         if (this.hand.length === 0) return null;
+        // Iterates through the hand until it finds the first tile it can play
         for(let i = 0; i < this.hand.length; i++){
             let domino = this.hand[i];
             if (!domino) continue;  // Skip undefined or null domino entries
