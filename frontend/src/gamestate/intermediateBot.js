@@ -1,6 +1,10 @@
 import DominoBot from "./Bot.js";
 import { Corner } from "./table.js";
 
+/**
+ *  This class is the middle between the Advanced Bot and the Simple Bot. 
+ *  It only cares about playing the highest scoring tiles. 
+ */
 class IntermediateBot extends DominoBot {
     chooseDomino() {
         let bestScore = -1;

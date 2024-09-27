@@ -1,5 +1,9 @@
 import { Table, Corner, Domino } from "./table.js";
 
+/**
+ *  This class is the base class for all bot classes. 
+ *  It only cares about playing a tile, the first one it can find.
+ */
 class DominoBot {
 
     /**
