@@ -2,12 +2,11 @@ import { Table, Corner } from './table.js';
 import React, { useState, useEffect } from 'react';
 import DominoBot from './Bot.js';
 import RuleEngine from './RuleEngine.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
-
 function MainGame() {
 
     /*Variable added to navigate between gamestate and lobby */
@@ -45,8 +44,8 @@ function MainGame() {
         achievementManager.checkStartWithDoubleSix(initialPlayerHand);
         achievementManager.checkAllDoublesHand(initialPlayerHand);
     }, []);
-    
-    
+
+
     const [botData, setbotData] = useState({
         BotHand: botHand,
         DbHand: drawBotChips(botHand),
@@ -127,7 +126,7 @@ function MainGame() {
             let tempTableState = tableData.TableState;
             if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, tempTableState)) {
                 tempTableState.placeDomino(data.Domino, data.DominoDirection);
-                
+
                 setData({
                     Domino: undefined,
                     DominoDirection: undefined,
@@ -150,8 +149,8 @@ function MainGame() {
 
                 // Check win condition for player
                 achievementManager.checkWin(playerData.PlayerHand);
-                
-                if(playerData.PlayerHand.length === 0 ){
+
+                if (playerData.PlayerHand.length === 0) {
                     alert("Player wins!");
                     return;
                 }
@@ -199,10 +198,13 @@ function MainGame() {
         return str;
     }
 
+    const { roomId } = useParams(); // Get the roomId from the URL
+
     return (
         <div>
             {!isPaused ? (
                 <div className='table_game'>
+                    <p>Game Room Id: {roomId}</p>
                     {/*Button to switch between gamestate and lobby ui*/}
                     <button
                         style={{
@@ -271,22 +273,40 @@ function MainGame() {
                     </div>
                     {/* Add ToastContainer to display toast notifications */}
                     <ToastContainer
-                            position="top-right"
-                            autoClose={3000}
-                            hideProgressBar={false}
-                            newestOnTop={false}
-                            closeOnClick
-                            rtl={false}
-                            pauseOnFocusLoss
-                            draggable
-                            pauseOnHover
-                            theme="colored"  // Add theme for better visual presentation
-                        />
+                        position="top-right"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="colored"  // Add theme for better visual presentation
+                    />
 
                     {/* Button and UI for navigating and game controls */}
                 </div>
             ) : (<PauseScreen onResume={resumeGame} />)}</div>
     );
+
+}
+
+function onTableClick(tableElement, gameStatus) {
+    tableElement.addEventListener('click', (event) => {
+        const position = getPositionFromEvent(event);  
+        const success = gameStatus.placeDomino(position);  
+        if (success) {
+            console.log('Domino placed successfully!');
+            updateTableUI(gameStatus);
+        } else {
+            console.log('Failed to place domino.');
+        }
+    });
+
+    function updateTableUI(gameStatus) {
+        const table = gameStatus.CurrentTable;
+    }
 
 }
 
