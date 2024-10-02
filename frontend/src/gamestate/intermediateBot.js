@@ -12,6 +12,7 @@ class IntermediateBot extends DominoBot {
         
         // Iterates through the hand and looks for the highest scored domino it can play
         for (let domino of this.hand) {
+            if(!domino) continue;
             // Check if the domino can be played on the left side
             if (this.table.leftTail.freeCorners.includes(domino[0]) || this.table.leftTail.freeCorners.includes(domino[1])) {
                 let score = domino[0] + domino[1];
