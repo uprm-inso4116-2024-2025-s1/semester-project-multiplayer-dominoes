@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from './config.js';
 import './Login.css';
+import GameMode from '../gameMode.js';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -33,7 +34,8 @@ function Login() {
 
       localStorage.setItem('token', data.token);
 
-      navigate('/game');
+      // navigate('/game');
+      navigate('/gameMode');
     } catch (error) {
       console.error('Error:', error);
     }
