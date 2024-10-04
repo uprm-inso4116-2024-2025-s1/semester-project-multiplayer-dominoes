@@ -6,9 +6,9 @@ import GameMode from '../gameMode.js';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState(''); 
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [email, setEmail] = useState(''); 
+  const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -34,7 +34,6 @@ function Login() {
 
       localStorage.setItem('token', data.token);
 
-      // navigate('/game');
       navigate('/gameMode');
     } catch (error) {
       console.error('Error:', error);
