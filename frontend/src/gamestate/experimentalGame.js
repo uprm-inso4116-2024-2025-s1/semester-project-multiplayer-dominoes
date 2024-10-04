@@ -284,7 +284,10 @@ function MainGame() {
     // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
     function drawBotChips(tileCount) {
         const backtileImage = '/backtile.png'; // Adjust this path as needed
-    
+         // Use the same scale as in renderDominoImage
+        const displayWidth = tileWidth
+        const displayHeight = tileHeight
+
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {[...Array(tileCount)].map((_, index) => (
@@ -292,9 +295,9 @@ function MainGame() {
                         <img
                             src={backtileImage}
                             style={{
-                                width: '40px', // Adjust size as needed
-                                height: '80px', // Adjust size as needed
-                                objectFit: 'contain'
+                                width: `${displayWidth}px`,
+                                height: `${displayHeight}px`,
+                                objectFit: 'cover'
                             }}
                             alt={`Bot's domino ${index + 1}`}
                         />
@@ -302,6 +305,46 @@ function MainGame() {
                 ))}
             </div>
         );
+    }
+
+    function renderDominoImage(domino) {
+        if (!domino || domino.length !== 2) return null;
+        const tileKey = domino[0].toString() + domino[1].toString();
+        const tile = tileMap.get(tileKey);
+        if (tile && tile.image) {
+            const scale = 0.3; // Adjust this value to change the size of the domino
+            return (
+                <img
+                    src={tile.image.src}
+                    style={{
+                        width: `${tile.width }px`,
+                        height: `${tile.height }px`,
+                        objectFit: 'none',
+                        objectPosition: `-${tile.sx }px 0px`,
+                        display: 'inline-block',
+                        verticalAlign: 'middle',
+                    }}
+                    alt={`Domino ${domino[0]}-${domino[1]}`}
+                />
+            );
+        }
+        return `[${domino[0]},${domino[1]}]`; // Fallback to text if image not found
+    }
+
+    function renderGameBoard() {
+        return tableData.DrawMatrix.map((row, rowIndex) => (
+            <div key={rowIndex} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40px' }}>
+                {row.split(' ').map((cell, cellIndex) => {
+                    if (cell === '===') {
+                        return <span key={cellIndex} style={{ width: '40px', display: 'inline-block' }}></span>;
+                    } else if (cell.startsWith('|')) {
+                        const [val1, val2] = cell.slice(1, -1).split('|').map(Number);
+                        return <span key={cellIndex}>{renderDominoImage([val1, val2])}</span>;
+                    }
+                    return null;
+                })}
+            </div>
+        ));
     }
 
     return (
@@ -337,7 +380,7 @@ function MainGame() {
                     </div>
 
                     <div className='table'>
-                        {tableData.DrawMatrix.map(e => <p>{e}</p>)}
+                        {renderGameBoard()}
                     </div>
                     <div className='input_chips'>
                         <div className='Player1'>
