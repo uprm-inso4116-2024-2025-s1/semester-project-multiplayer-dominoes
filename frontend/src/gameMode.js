@@ -4,10 +4,10 @@ export default function GameMode() {
     const navigate = useNavigate();
     return (
         <div><p>Choose game mode:</p>
-            <button onClick={() => { navigate('/game') }}>vs. AI</button>
+            <button onClick={() => navigate('/game', { state: { gameMode: 'classic' } })}>vs. AI</button>
             <button onClick={() => {
-                navigate('/lobby');
-            }}>vs. player</button>
+                navigate('/game', { state: { gameMode: 'allFives' } })
+            }}>All Fives</button>
         </div >
     )
 }
