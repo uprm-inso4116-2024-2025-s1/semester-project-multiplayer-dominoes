@@ -8,7 +8,66 @@ import AchievementManager from './AchievementManager.js';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 
+const tileWidth = 3840 / 28; // Width of each tile (~137.14 pixels)
+const tileHeight = 91; // Height of each tile (91 pixels)
+const totalTiles = 28; // Total number of tiles (excluding the back tile)
+const tileMap = new Map();
+
 function MainGame() {
+    const [tileMap, setTileMap] = useState(new Map());
+    const [tilesInitialized, setTilesInitialized] = useState(false);
+
+    const tileImage = new Image();
+    tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
+    function initTiles() {
+        return new Promise((resolve) => {
+            console.log("Starting to load image...");
+            tileImage.onload = () => {
+                console.log("Image loaded successfully");
+                const newTileMap = new Map();
+                const dominoes = [
+                    "00", "01", "02", "03", "04", "05", "06",
+                    "11", "12", "13", "14", "15", "16", "22",
+                    "23", "24", "25", "26", "33", "34", "35",
+                    "36", "44", "45", "46", "55", "56", "66"
+                ];
+    
+                for (let i = 0; i < totalTiles; i++) {
+                    newTileMap.set(dominoes[i], {
+                        image: tileImage,
+                        sx: i * tileWidth,
+                        sy: 0,
+                        width: tileWidth,
+                        height: tileHeight,
+                    });
+                }
+                console.log("TileMap created with size:", newTileMap.size);
+                resolve(newTileMap);
+            };
+            tileImage.onerror = () => {
+                console.error("Failed to load image");
+                resolve(new Map());
+            };
+        });
+    }
+    useEffect(() => {
+        console.log("Starting initTiles...");
+        initTiles().then((newTileMap) => {
+            console.log("Tiles initialized, updating state");
+            setTileMap(newTileMap);
+            setTilesInitialized(true);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (tilesInitialized) {
+            console.log("Tiles initialized, updating player data");
+            setPlayerData(prevData => ({
+                ...prevData,
+                DrawHand: drawChips(prevData.PlayerHand)
+            }));
+        }
+    }, [tilesInitialized, tileMap]);
 
     /*Variable added to navigate between gamestate and lobby */
     const navigate = useNavigate();
@@ -49,8 +108,9 @@ function MainGame() {
 
     const [botData, setbotData] = useState({
         BotHand: botHand,
-        DbHand: drawBotChips(botHand),
-        BotPlayer: bot
+        DbHand: drawBotChips(botHand.length),
+        BotPlayer: bot,
+        TileCount: botHand.length
     })
 
     const [tableData, setTableData] = useState({
@@ -87,16 +147,17 @@ function MainGame() {
             let botMoved = botData.BotPlayer.playTurn();
             if (botMoved) {
                 // Update bot data and table if a move was successfully made
-                setbotData({
+                setbotData(prevBotData => ({
+                    ...prevBotData,
                     BotHand: botData.BotPlayer.hand,
-                    DbHand: drawBotChips(botData.BotHand),
-                    BotPlayer: botData.BotPlayer
-                });
+                    TileCount: botData.BotPlayer.hand.length,
+                    DbHand: drawBotChips(botData.BotPlayer.hand.length)
+                }));
                 setTableData({
                     TableState: tableData.TableState,
                     DrawMatrix: tableData.TableState.drawTable().split('\n')
                 });
-
+    
                 if (botData.BotPlayer.hand.length === 0) {
                     alert("Bot has won.");
                     return;
@@ -105,14 +166,15 @@ function MainGame() {
             } else if (tableData.TableState.availableDominos !== 0) {
                 // If the bot cannot play, and there are still dominos available to draw
                 botData.BotHand.push(tableData.TableState.grabRandomChip());
-
+    
                 // Update the bot's hand
-                setbotData({
+                setbotData(prevBotData => ({
+                    ...prevBotData,
                     BotHand: botData.BotHand,
-                    DbHand: drawBotChips(botData.BotHand),
-                    BotPlayer: botData.BotPlayer
-                });
-
+                    TileCount: botData.BotHand.length,
+                    DbHand: drawBotChips(botData.BotHand.length)
+                }));
+    
                 // Retry playing after grabbing a new domino
                 botPlayTurn(botData, tableData, setbotData, setTableData);
             } else { //Bot cannot make a move and cannot draw more dominoes.
@@ -179,24 +241,67 @@ function MainGame() {
             });
         }
     }, [data, playerData]);
-
     // Convert a matrix into a string to visualize the player's hand.
     function drawChips(chips) {
-        let str = "";
-        for (let i = 0; i < chips.length; i++) {
-            if (chips[i]) str += i.toString() + ("=|" + chips[i][0].toString()) + "|"
-                + (chips[i][1].toString() + "| ");
+        console.log("drawChips called, tilesInitialized:", tilesInitialized, "tileMap size:", tileMap.size);
+        if (!tilesInitialized || tileMap.size === 0) {
+            console.log("Tiles not initialized or empty tileMap");
+            return <div>Loading...</div>;
         }
-        return str;
+        return (
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                {chips.map((chip, index) => {
+                    const tileKey = chip[0].toString() + chip[1].toString();
+                    const tile = tileMap.get(tileKey);
+                    console.log(`Chip ${index}:`, tileKey, "Tile:", tile);
+                    if (tile && tile.image) {
+                        return (
+                            <div key={index} style={{ display: 'inline-block', textAlign: 'center', margin: '0 5px' }}>
+                                <img
+                                    src={tile.image.src}
+                                    style={{
+                                        width: `${tile.width}px`,
+                                        height: `${tile.height}px`,
+                                        display: 'block',
+                                        objectFit: 'none',
+                                        objectPosition: `-${tile.sx}px 0px`,
+                                    }}
+                                    alt={`Domino ${chip[0]}-${chip[1]}`}
+                                />
+                                <div style={{ marginTop: '5px', fontWeight: 'bold', fontSize: '14px' }}>
+                                    {index % 7}
+                                </div>
+                            </div>
+                        );
+                    }
+                    return null;
+                })}
+            </div>
+        );
     }
+    
 
     // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
-    function drawBotChips(chips) {
-        let str = "";
-        for (let i = 0; i < chips.length; i++) {
-            if (chips[i]) str += "|::|::| ";
-        }
-        return str;
+    function drawBotChips(tileCount) {
+        const backtileImage = '/backtile.png'; // Adjust this path as needed
+    
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {[...Array(tileCount)].map((_, index) => (
+                    <div key={index} style={{ margin: '0 2px' }}>
+                        <img
+                            src={backtileImage}
+                            style={{
+                                width: '40px', // Adjust size as needed
+                                height: '80px', // Adjust size as needed
+                                objectFit: 'contain'
+                            }}
+                            alt={`Bot's domino ${index + 1}`}
+                        />
+                    </div>
+                ))}
+            </div>
+        );
     }
 
     return (
