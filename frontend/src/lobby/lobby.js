@@ -11,6 +11,13 @@ const Lobby = () => {
   const [newRoomName, setNewRoomName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  const playSound = () => {
+    const audio = document.getElementById('lobbyClickSound');
+    if (audio) {
+      audio.play();
+    }
+  };
+
   // Later Implement with the database to do a getAllRooms
   useEffect(() => {
     fetchRooms();
@@ -77,8 +84,12 @@ const Lobby = () => {
                     borderRadius: '5px',
                     cursor: 'pointer'
                 }}
-                onClick={() => navigate('/game')}
-            >
+                onClick={() => {
+                  playSound(); 
+                  navigate('/game');
+                }}
+              >
+            
                 GameState
             </button>
       <div className="left-column">
@@ -90,7 +101,7 @@ const Lobby = () => {
           placeholder="Enter Room Name"
           className="text-box"
         />
-        <button className="createRoom_button" onClick={handleCreateRoom}>Create Room</button>
+        <button className="createRoom_button" onClick={() => { handleCreateRoom(); playSound(); }}>Create Room</button>
         {errorMessage && <p className="error">{errorMessage}</p>}
       </div>
 
@@ -112,7 +123,7 @@ const Lobby = () => {
                     <td>{room.name}</td>
                     <td>{room.players}/{room.maxPlayers}</td>
                     <td>
-                      <button onClick={() => joinRooms(room.id)} className="join-button">Join Room</button>
+                      <button onClick={() => { joinRooms(room.id); playSound(); }} className="join-button">Join Room</button>
                     </td>
                   </tr>
                 ))}
@@ -123,6 +134,7 @@ const Lobby = () => {
           <p>No rooms available. Create one to get started!</p>
         )}
       </div>
+      <audio id="lobbyClickSound" src="/DominoesClick.wav" preload="auto"></audio>
     </div>
   );
 

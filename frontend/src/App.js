@@ -16,6 +16,13 @@ function App() {
     setShowRules(!showRules);
   };
 
+  const playSound = () => {
+    const audio = document.getElementById('howToPlaySound');
+    if (audio) {
+      audio.play();
+    }
+  };
+
   return (
     <Router>
       <div className="App">
@@ -25,7 +32,7 @@ function App() {
             <Route path="/game" 
             element={
               <>
-                <button onClick={toggleRules} className="rules-button">
+                <button onClick={() => { toggleRules(); playSound(); }} className="rules-button">
                   {showRules ? 'Close' : 'How to Play'}
                 </button>
                 <MainGame />
@@ -49,6 +56,7 @@ function App() {
             <Route path="/game" element={<MainGame />} />
             <Route path="/lobby" element={<Lobby />} />
           </Routes>
+          <audio id="howToPlaySound" src="/DominoesClick.wav" preload="auto"></audio>
         </header>
       </div>
     </Router>
