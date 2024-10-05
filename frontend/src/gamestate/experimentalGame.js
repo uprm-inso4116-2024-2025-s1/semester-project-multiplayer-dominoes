@@ -8,6 +8,7 @@ import AchievementManager from './AchievementManager.js';
 import { ToastContainer, toast } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 import IntermediateBot from './intermediateBot.js';
+import GameStatus from '../gamestatus/GameStatus.js';
 
 const tileWidth = 3840 / 28; // Width of each tile (~137.14 pixels)
 const tileHeight = 91; // Height of each tile (91 pixels)
