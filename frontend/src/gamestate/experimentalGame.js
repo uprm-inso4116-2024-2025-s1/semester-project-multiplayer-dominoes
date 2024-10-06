@@ -2,7 +2,7 @@ import { Table, Corner } from './table.js';
 import React, { useState, useEffect } from 'react';
 import DominoBot from './Bot.js';
 import RuleEngine from './RuleEngine.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
@@ -34,7 +34,9 @@ function MainGame() {
         DominoDirection: undefined,
     });
 
-    const ruleEngine = new RuleEngine('classic');
+    const gameMode = useLocation().state.gameMode;
+
+    const ruleEngine = new RuleEngine(gameMode);
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
