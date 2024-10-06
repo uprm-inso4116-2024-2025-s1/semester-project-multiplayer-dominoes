@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import config from './config.js';
 import './Login.css';
+import GameMode from '../gameMode.js';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,14 +11,32 @@ function Login() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isLogin) {
-      console.log('Logging in with:', username, password);
-      navigate('/game');
-    } else {
-      console.log('Signing up with:', username, email, password);
-      navigate('/game');
+    const endpoint = isLogin ? '/login' : '/register';
+    const payload = isLogin ? { email, password } : { username, email, password };
+
+    try {
+      console.log(JSON.stringify(payload));
+      const response = await fetch(`${config.backendUrl}${endpoint}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      localStorage.setItem('token', data.token);
+
+      navigate('/gameMode');
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
@@ -26,24 +46,24 @@ function Login() {
         <img src={"images/logo_with_name.png"} alt="logo" className="logo" />
         <h2 className="header">{isLogin ? 'Login' : 'Sign Up'} to Multi Dominoes</h2>
         <form onSubmit={handleSubmit}>
-          <input
-            className="login-input"
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
           {!isLogin && (
             <input
               className="login-input"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           )}
+          <input
+            className="login-input"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
           <input
             className="login-input"
             type="password"

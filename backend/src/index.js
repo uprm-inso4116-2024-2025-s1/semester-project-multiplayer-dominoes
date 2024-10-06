@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import createMongoDbConnection from './database/MongoDbConnection.js';
 
 import HealthCheckController from './controllers/HealthCheckController.js';
@@ -19,6 +20,7 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 // Register middlewares
+app.use(cors());
 app.use(express.json());
 
 // Create Handlers
