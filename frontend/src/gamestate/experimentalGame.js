@@ -60,7 +60,6 @@ function MainGame() {
         TableState: tempTableState,
         DrawMatrix: tempTableState.drawTable().split('\n'),
     });
-
     const [playerData, setPlayerData] = useState({
         PlayerHand: initialPlayerHand,
         DrawHand: drawChips(initialPlayerHand),
