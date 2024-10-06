@@ -8,6 +8,7 @@ import AchievementManager from './AchievementManager.js';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 import IntermediateBot from './intermediateBot.js';
+import GameStatus from '../gamestatus/GameStatus.js';
 
 function MainGame() {
 
@@ -41,6 +42,7 @@ function MainGame() {
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
     let bot = new IntermediateBot(tempTableState, botHand);
+    let  game_status = new GameStatus(tempTableState, "player", initialPlayerHand, 0);
 
     const achievementManager = new AchievementManager();
 
@@ -60,7 +62,6 @@ function MainGame() {
         TableState: tempTableState,
         DrawMatrix: tempTableState.drawTable().split('\n'),
     });
-
     const [playerData, setPlayerData] = useState({
         PlayerHand: initialPlayerHand,
         DrawHand: drawChips(initialPlayerHand),
@@ -68,6 +69,14 @@ function MainGame() {
     });
 
     const [isPaused, setPaused] = useState(false);
+
+    const saveGame = () => {
+        game_status.CurrentPlayer = currentTurn
+        game_status.CurrentTable = tableData.TableState
+        game_status.PlayerHands = playerData.PlayerHand
+        game_status.Scores = 0
+        localStorage.setItem('game_status_data', JSON.stringify(game_status));
+        };
 
     const pauseGame = () => {
         setPaused(true);
@@ -219,7 +228,10 @@ function MainGame() {
                             borderRadius: '5px',
                             cursor: 'pointer'
                         }}
-                        onClick={() => navigate('/lobby')}
+                        onClick={() => {
+                            navigate('/lobby')
+                            saveGame();
+                        }}
                     >
                         Lobby
                     </button>
@@ -253,6 +265,7 @@ function MainGame() {
                                         DominoDirection: Corner.LEFT
                                     });
                                 }
+                                saveGame();
                             }}>Left Tail</button>
                             <button onClick={() => {
                                 if (playerDominoIndex) {
@@ -261,13 +274,15 @@ function MainGame() {
                                         DominoDirection: Corner.RIGHT
                                     });
                                 }
+                                saveGame();
                             }}>Right Tail</button>
                             <button onClick={() => {
                                 setPlayerData({
                                     PlayerHand: playerData.PlayerHand,
                                     DrawHand: playerData.DrawHand,
                                     PlayerInput: true,
-                                })
+                                });
+                                saveGame();
                             }}>Grab a Random Chip</button>
                             <button onClick={pauseGame}>Pause Game</button>
                         </div>
