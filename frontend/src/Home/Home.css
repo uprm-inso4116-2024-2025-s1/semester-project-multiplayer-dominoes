@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #282c34; /* Dark background */
+    color: #FFF6F4; /* White text color */
+}
+
+/* Use Press Start 2P for pixel-like headings */
+.instructions h2, .reviews h2 {
+    font-family: 'Press Start 2P', cursive; /* Pixel font for headings */
+}
+
+/* Use Orbitron for instructions and reviews text */
+.instructions p {
+    font-family: 'Orbitron', cursive; /* Orbitron font for paragraphs */
+}
+
+/* Link styling in instructions */
+.instruction-link, .footer-links a {
+    font-family: 'Orbitron', cursive; /* Orbitron font for links */
+    color: #F86F03;
+}
+
+/* Header styling */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px;
+    background-color: #1e2125; /* Darker header */
+}
+
+header .logo img {
+    height: 50px; /* Adjust height as needed */
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    gap: 15px; /* Space between menu items */
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #F86F03;
+    font-weight: bold;
+}
+
+/* Hero section styling */
+.hero {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: rgba(255, 140, 0, 0.2); /* Soft flame background */
+}
+
+.hero h1 {
+    font-size: 2.5em;
+    margin: 0;
+}
+
+/* Content layout */
+.content {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+/* Individual sections styling */
+.leaderboard, .game-options, .instructions, .reviews {
+    background-color: #1e2125; /* Same as header */
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px;
+    flex: 1; /* Equal space for each section */
+}
+
+/* Section header styling */
+.leaderboard h2, .instructions h2, .reviews h2 {
+    font-family: 'Press Start 2P', cursive; /* Use Press Start 2P for section headers */
+    font-size: 1.5em;
+    border-bottom: 2px solid #525FE1; /* Underline for headers */
+    padding-bottom: 10px;
+}
+
+/* Review box styling */
+.review-box {
+    background-color: #3a3f47; /* Slightly lighter than main background */
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+/* Footer styling */
+footer {
+    background-color: #1e2125; /* Dark footer */
+    padding: 100px;
+    text-align: center;
+}
+
+.footer-links a{
+    margin: 0 50px;
+    text-decoration: none;
+}
+
+.content {
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Space between the two sections */
+    padding: 20px;
+}
+
+/* Individual section styling */
+.leaderboard, .reviews {
+    background-color: #1e2125; /* Same as header */
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px; /* Space around sections */
+    flex: 1; /* Equal space for each section */
+}
