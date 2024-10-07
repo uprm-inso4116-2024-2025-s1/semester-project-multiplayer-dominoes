@@ -8,12 +8,20 @@ import Lobby from './lobby/lobby.js'
 import Login from './Auth/Login.js';
 
 import MainGame from './gamestate/experimentalGame.js';
+import GameMode from './gameMode.js';
 
 function App() {
   const [showRules, setShowRules] = useState(false);
 
   const toggleRules = () => {
     setShowRules(!showRules);
+  };
+
+  const playSound = () => {
+    const audio = document.getElementById('howToPlaySound');
+    if (audio) {
+      audio.play();
+    }
   };
 
   return (
@@ -25,7 +33,7 @@ function App() {
             <Route path="/game" 
             element={
               <>
-                <button onClick={toggleRules} className="rules-button">
+                <button onClick={() => { toggleRules(); playSound(); }} className="rules-button">
                   {showRules ? 'Close' : 'How to Play'}
                 </button>
                 <MainGame />
@@ -48,7 +56,9 @@ function App() {
           
             <Route path="/game" element={<MainGame />} />
             <Route path="/lobby" element={<Lobby />} />
+            <Route path="/gameMode" element={<GameMode />} />
           </Routes>
+          <audio id="howToPlaySound" src="/DominoesClick.wav" preload="auto"></audio>
         </header>
       </div>
     </Router>
