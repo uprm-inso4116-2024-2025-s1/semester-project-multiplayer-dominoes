@@ -58,6 +58,7 @@ class Table{
         [2,3],[2,4],[2,5],[2,6],[3,3],[3,4],[3,5],
         [3,6],[4,4],[4,5],[4,6],[5,5],[5,6],[6,6]
     ];
+    #playedDominoes = [];
     #dominoes_on_table = 0;
     #data_matrix = [];
     #path_matrix = [];
@@ -74,6 +75,7 @@ class Table{
     get leftTail(){return this.#left_domino}
     get rightTail(){return this.#right_domino}
     get availableDominos(){return (this.#dominoes.length - this.#dominoes_on_table)}
+    get playedDominoes(){return this.#playedDominoes}
     get dominoesMatrix(){return this.#data_matrix}
 
     // Private Methods
@@ -193,6 +195,7 @@ class Table{
                 }
             }
         }
+        this.#playedDominoes.push(domino_to_place);
         this.#dominoes_on_table++;
         return is_legal;
     }

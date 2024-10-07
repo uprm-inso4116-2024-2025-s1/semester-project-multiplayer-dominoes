@@ -1,13 +1,14 @@
 import { Table, Corner } from './table.js';
 import React, { useState, useEffect } from 'react';
 import DominoBot from './Bot.js';
+import IntermediateBot from './intermediateBot.js';
+import AdvancedBot from './advancedBot.js';
 import RuleEngine from './RuleEngine.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
-import IntermediateBot from './intermediateBot.js';
 
 const tileWidth = 3840 / 28; // Width of each tile (~137.14 pixels)
 const tileHeight = 91; // Height of each tile (91 pixels)
@@ -99,7 +100,7 @@ function MainGame() {
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
-    let bot = new IntermediateBot(tempTableState, botHand);
+    let bot = new AdvancedBot(tempTableState, botHand, tempTableState.playedDominoes);
 
     const achievementManager = new AchievementManager();
 
