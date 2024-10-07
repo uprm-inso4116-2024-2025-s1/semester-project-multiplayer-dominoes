@@ -22,6 +22,10 @@ export default class UsersHandler {
     async findUserByEmail(email) {
         return await UserModel.findOne({ email });
     }
+    async findUserByUsername(username) {
+        return await UserModel.findOne({ username });
+    }
+    
 
     async validatePassword(inputPassword, storedPassword) {
         return await bcrypt.compare(inputPassword, storedPassword);
@@ -51,4 +55,5 @@ export default class UsersHandler {
     async logoutUser(userId) {
         return await UserModel.findByIdAndUpdate(userId, { $inc: { tokenVersion: 1 } });
     }
+    
 };
