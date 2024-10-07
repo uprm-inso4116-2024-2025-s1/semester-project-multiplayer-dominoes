@@ -41,7 +41,7 @@ class Domino {
 
 // Table Class
 // Constructor:
-// path_matrix: Es una matriz predefinida que muestra el camino que seguirán los dominós. Utilizando 1 para el camino a recorrer y 0 para el camino no accesible.
+// path_matrix: A predefined matrix that shows the path the dominoes will follow, using 1 for the traversable path and 0 for the inaccessible path.
 //              Example: [
 //                       [1,1,1,1,1],
 //                       [0,0,0,0,1],
@@ -49,7 +49,7 @@ class Domino {
 //                       [1,0,0,0,0],
 //                       [1,1,1,1,1],
 //                       ]
-// dominoes: La lista de dominoes que puede tener el juego. El default son las 28 dominoes del juego original.  
+// dominoes: The list of dominoes that the game can have. By default, these are the 28 dominoes from the original game.  
 //        Example: [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]...]
 class Table{
     #dominoes = [
@@ -70,7 +70,7 @@ class Table{
     }
 
     // Getters
-    // Retorna los Dominos que se encuentran en cada esquina.
+    // Returns the dominoes that are at each corner.
     get leftTail(){return this.#left_domino}
     get rightTail(){return this.#right_domino}
     get availableDominos(){return (this.#dominoes.length - this.#dominoes_on_table)}
@@ -117,7 +117,7 @@ class Table{
 
     // Public Methods
 
-    // Retorna una lista con 7 dominoes random. 
+    // Returns a list of 7 random dominoes.
     playerChips(){
         let player_dominoes = [];
         for(let i = 0; i < 7; i++){
@@ -133,13 +133,13 @@ class Table{
         return random_domino;
     }
 
-    // placeDomino coloca el dominó dado en el lugar correcto de la matriz y actualiza el estado. 
-    // Si el dominó no es jugable, será ignorado y no realizará ninguna acción.
+    // placeDomino places the given domino in the correct spot on the matrix and updates the state.
+    // If the domino is not playable, it will be ignored and no action will be taken.
     // Inputs: 
-    // domino_to_place : Una domino representada como una lista de dos elementos. 
-    //                   Ejemplos: [6, 3], [1, 2], [0, 0].
-    // corner : El extremo donde se colocará la domino, puede ser izquierda o derecha. 
-    //          Este argumento es de tipo Corner (Corner.LEFT o Corner.RIGHT).
+    // domino_to_place: A domino represented as a list of two elements. 
+    //                  Examples: [6, 3], [1, 2], [0, 0].
+    // corner: The end where the domino will be placed, which can be either left or right. 
+    //         This argument is of type Corner (Corner.LEFT or Corner.RIGHT).
     placeDomino(domino_to_place, corner){
         let is_legal = true;
         if (this.#dominoes_on_table === 0){
@@ -197,9 +197,8 @@ class Table{
         return is_legal;
     }
 
-    // Retorna un string que representa la tabla con dominoes en un formato legible. 
-    // Esta función es útil para observar el estado de la matriz en un terminal de forma 
-    // más comprensible.
+    // Returns a string that represents the table with dominoes in a readable format.
+    // This function is useful for viewing the state of the matrix in a terminal in a more understandable way.
     drawTable(){
         let matrix = "";
         for(let i = 0; i < this.#data_matrix.length; i++){

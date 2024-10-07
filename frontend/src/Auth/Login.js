@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import config from './config.js';
 import './Login.css';
+import GameMode from '../gameMode.js';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState(''); 
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [email, setEmail] = useState(''); 
+  const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,7 +17,7 @@ function Login() {
 
     try {
       console.log(JSON.stringify(payload));
-      const response = await fetch(`${config.backendUrl}${endpoint}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -33,7 +33,7 @@ function Login() {
 
       localStorage.setItem('token', data.token);
 
-      navigate('/game');
+      navigate('/gameMode');
     } catch (error) {
       console.error('Error:', error);
     }
