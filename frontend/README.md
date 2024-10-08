@@ -10,6 +10,12 @@ If you have npm installed, you can check the version by typing `npm -v` on your 
 
 Or to make sure you have the latest version on your computer run `npm update` on your terminal. 
 
+## Create `.env` file
+
+Create a copy of the `.env.template` file and rename it to `.env`. This will load up the environment variables the React app needs.
+
+NOTE: Do not include any secrets in the `.env.template` file, its purpose is to provide a template so others can easily provided their secrets as environment variables.
+
 ## React Instructions
 
 In the project directory, you can run:
