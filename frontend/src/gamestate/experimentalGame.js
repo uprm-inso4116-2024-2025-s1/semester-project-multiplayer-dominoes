@@ -136,6 +136,13 @@ function MainGame() {
         setPaused(false);
     }
 
+    const playSound = () => {
+        const audio = document.getElementById('dominoPlaceSound');
+        if (audio) {
+            audio.play();
+        }
+    };
+
     /** Uses the playturn function from the bot to see if the bot can make a move. If they can't, they will pickup 
      * dominoes until they can or until chips run out. Is recursive. 
      * 
@@ -165,6 +172,7 @@ function MainGame() {
                     return;
                 }
                 setCurrentTurn('Player');
+                playSound();
             } else if (tableData.TableState.availableDominos !== 0) {
                 // If the bot cannot play, and there are still dominos available to draw
                 botData.BotHand.push(tableData.TableState.grabRandomChip());
@@ -211,6 +219,7 @@ function MainGame() {
                 });
 
                 setPlayerDominoIndex('');
+                playSound();
 
                 // Check win condition for player
                 achievementManager.checkWin(playerData.PlayerHand);
@@ -432,6 +441,7 @@ function MainGame() {
                         pauseOnHover
                         theme="colored"  // Add theme for better visual presentation
                     />
+                    <audio id="dominoPlaceSound" src="/DominoPlacement.wav" preload="auto"></audio>
 
                     {/* Button and UI for navigating and game controls */}
                 </div>
