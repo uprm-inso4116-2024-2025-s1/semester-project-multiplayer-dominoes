@@ -165,7 +165,6 @@ function MainGame() {
                 });
     
                 if (botData.BotPlayer.hand.length === 0) {
-                    alert("Bot has won.");
                     setShowLoserOverlay(true);
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
                     return;
@@ -222,7 +221,6 @@ function MainGame() {
                 achievementManager.checkWin(playerData.PlayerHand);
 
                 if (playerData.PlayerHand.length === 0) {
-                    alert("Player wins!");
                     setShowWinnerOverlay(true);
                     setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
                     return;
@@ -395,21 +393,21 @@ function MainGame() {
                     {/* Turn notification overlay */}
                     {showTurnNotification && (
                         <div className="overlay">
-                            <img src={'./images/Your Turn.png'} alt="Your Turn" />
+                            <img src={'yourTurn.png'} alt="Your Turn" />
                         </div>
                     )}
 
                     {/* Winner overlay */}
                     {showWinnerOverlay && (
                         <div className="overlay">
-                            <img src={'./images/Winner.png'} alt="Winner" />
+                            <img src={'winner.png'} alt="Winner" />
                         </div>
                     )}
 
                     {/* Loser overlay */}
                     {showLoserOverlay && (
                         <div className="overlay">
-                            <img src={'./images/Looser.png'} alt="Loser" />
+                            <img src={'loser.png'} alt="Loser" />
                         </div>
                     )}
                     {/*Shows the placeholder dominoes for the bot.*/}
