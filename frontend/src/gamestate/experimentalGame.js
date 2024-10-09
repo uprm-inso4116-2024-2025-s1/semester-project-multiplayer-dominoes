@@ -23,9 +23,7 @@ function MainGame() {
     tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
     function initTiles() {
         return new Promise((resolve) => {
-            console.log("Starting to load image...");
             tileImage.onload = () => {
-                console.log("Image loaded successfully");
                 const newTileMap = new Map();
                 const dominoes = [
                     "00", "01", "02", "03", "04", "05", "06",
@@ -43,19 +41,15 @@ function MainGame() {
                         height: tileHeight,
                     });
                 }
-                console.log("TileMap created with size:", newTileMap.size);
                 resolve(newTileMap);
             };
             tileImage.onerror = () => {
-                console.error("Failed to load image");
                 resolve(new Map());
             };
         });
     }
     useEffect(() => {
-        console.log("Starting initTiles...");
         initTiles().then((newTileMap) => {
-            console.log("Tiles initialized, updating state");
             setTileMap(newTileMap);
             setTilesInitialized(true);
         });
@@ -63,7 +57,6 @@ function MainGame() {
 
     useEffect(() => {
         if (tilesInitialized) {
-            console.log("Tiles initialized, updating player data");
             setPlayerData(prevData => ({
                 ...prevData,
                 DrawHand: drawChips(prevData.PlayerHand)
@@ -246,9 +239,7 @@ function MainGame() {
     }, [data, playerData]);
     // Convert a matrix into a string to visualize the player's hand.
     function drawChips(chips) {
-        console.log("drawChips called, tilesInitialized:", tilesInitialized, "tileMap size:", tileMap.size);
         if (!tilesInitialized || tileMap.size === 0) {
-            console.log("Tiles not initialized or empty tileMap");
             return <div>Loading...</div>;
         }
         return (
@@ -256,7 +247,6 @@ function MainGame() {
                 {chips.map((chip, index) => {
                     const tileKey = chip[0].toString() + chip[1].toString();
                     const tile = tileMap.get(tileKey);
-                    console.log(`Chip ${index}:`, tileKey, "Tile:", tile);
                     if (tile && tile.image) {
                         return (
                             <div key={index} style={{ display: 'inline-block', textAlign: 'center', margin: '0 5px' }}>
