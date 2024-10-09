@@ -6,6 +6,22 @@ import { Corner } from "./table.js";
  *  It only cares about playing the highest scoring tiles. 
  */
 class IntermediateBot extends DominoBot {
+
+    constructor(table, hand){
+        if(IntermediateBot.instance){
+            return IntermediateBot.instance;
+        }
+        IntermediateBot.instance = this;
+        super(table, hand);
+    }
+
+    static getInstance(table, hand){
+        if(!IntermediateBot.instance){
+            return new IntermediateBot(table, hand);
+        }
+        return IntermediateBot.instance;
+    }
+
     chooseDomino() {
         let bestScore = -1;
         let bestMove = null;

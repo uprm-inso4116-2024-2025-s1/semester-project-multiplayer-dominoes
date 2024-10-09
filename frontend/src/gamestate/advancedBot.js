@@ -12,14 +12,26 @@ class AdvancedBot extends DominoBot {
      * 
      */
     constructor(table, hand, playedTiles){
+        if(AdvancedBot.instance){ 
+            return AdvancedBot.instance;
+        }
+        AdvancedBot.instance = this;
         super(table, hand);
-        this.playedTiles = playedTiles;
+        this.playedTiles = playedTiles || [];
         this.unplayedTiles = [
             [0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],
             [1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,2],
             [2,3],[2,4],[2,5],[2,6],[3,3],[3,4],[3,5],
             [3,6],[4,4],[4,5],[4,6],[5,5],[5,6],[6,6]
         ];
+        this.updateUnplayedTiles();
+    }
+
+    static getInstance(table, hand, playedTiles) {
+        if(!AdvancedBot.instance){
+            return new AdvancedBot(table, hand, playedTiles);
+        }
+        return AdvancedBot.instance;
     }
 
     /**
@@ -68,7 +80,7 @@ class AdvancedBot extends DominoBot {
 
 
     chooseDomino() {
-        let biggets_domino = null;
+        let biggest_domino = null;
         let biggest_score = 0;
         this.updateUnplayedTiles();
         let counts = this.countElements();
@@ -82,12 +94,13 @@ class AdvancedBot extends DominoBot {
             //Play doubles and heavy tiles early.
             score += domino[0] + domino[1];
 
-            if(score > biggest_score){
+            if(score < biggest_score){
                 biggest_score = score;
-                biggets_domino = domino;
+                biggest_domino = domino;
             }
 
         }
+        return  biggest_domino;
     }
 }
 
