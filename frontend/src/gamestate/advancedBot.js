@@ -15,8 +15,8 @@ class AdvancedBot extends DominoBot {
         if(AdvancedBot.instance){ 
             return AdvancedBot.instance;
         }
-        AdvancedBot.instance = this;
         super(table, hand);
+        AdvancedBot.instance = this;
         this.playedTiles = playedTiles || [];
         this.unplayedTiles = [
             [0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],

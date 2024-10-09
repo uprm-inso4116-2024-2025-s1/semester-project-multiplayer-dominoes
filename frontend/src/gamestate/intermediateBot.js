@@ -11,8 +11,8 @@ class IntermediateBot extends DominoBot {
         if(IntermediateBot.instance){
             return IntermediateBot.instance;
         }
-        IntermediateBot.instance = this;
         super(table, hand);
+        IntermediateBot.instance = this;
     }
 
     static getInstance(table, hand){
