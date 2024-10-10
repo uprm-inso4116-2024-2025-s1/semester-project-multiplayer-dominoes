@@ -274,34 +274,69 @@ function MainGame() {
             console.log("Tiles not initialized or empty tileMap");
             return <div>Loading...</div>;
         }
+
+        const containerStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            padding: '10px',
+            width: '100%',
+            overflowX: 'auto'
+        };
+
+        const rowStyle = {
+            display: 'flex',
+            gap: '10px',
+        };
+
+        const itemStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        };
+
+        const numberStyle = {
+            marginTop: '5px',
+            fontWeight: 'bold',
+            fontSize: '14px'
+        };
+
+        // Group dominoes into rows of 7
+        const rows = [];
+        for (let i = 0; i < chips.length; i += 7) {
+            rows.push(chips.slice(i, i + 7));
+        }
+
         return (
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                {chips.map((chip, index) => {
-                    const tileKey = chip[0].toString() + chip[1].toString();
-                    const tile = tileMap.get(tileKey);
-                    console.log(`Chip ${index}:`, tileKey, "Tile:", tile);
-                    if (tile && tile.image) {
-                        return (
-                            <div key={index} style={{ display: 'inline-block', textAlign: 'center', margin: '0 5px' }}>
-                                <img
-                                    src={tile.image.src}
-                                    style={{
-                                        width: `${tile.width}px`,
-                                        height: `${tile.height}px`,
-                                        display: 'block',
-                                        objectFit: 'none',
-                                        objectPosition: `-${tile.sx}px 0px`,
-                                    }}
-                                    alt={`Domino ${chip[0]}-${chip[1]}`}
-                                />
-                                <div style={{ marginTop: '5px', fontWeight: 'bold', fontSize: '14px' }}>
-                                    {index % 7}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return null;
-                })}
+            <div style={containerStyle}>
+                {rows.map((row, rowIndex) => (
+                    <div key={rowIndex} style={rowStyle}>
+                        {row.map((chip, index) => {
+                            const tileKey = chip[0].toString() + chip[1].toString();
+                            const tile = tileMap.get(tileKey);
+                            const globalIndex = rowIndex * 7 + index;
+                            console.log(`Chip ${globalIndex}:`, tileKey, "Tile:", tile);
+                            if (tile && tile.image) {
+                                return (
+                                    <div key={globalIndex} style={itemStyle}>
+                                        <img
+                                            src={tile.image.src}
+                                            style={{
+                                                width: `${tile.width}px`,
+                                                height: `${tile.height}px`,
+                                                objectFit: 'none',
+                                                objectPosition: `-${tile.sx}px 0px`,
+                                            }}
+                                            alt={`Domino ${chip[0]}-${chip[1]}`}
+                                        />
+                                        <div style={numberStyle}>{globalIndex}</div>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })}
+                    </div>
+                ))}
             </div>
         );
     }
