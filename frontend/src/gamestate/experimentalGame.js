@@ -99,7 +99,7 @@ function MainGame() {
         DrawMatrix: tempTableState.drawTable().split('\n'),
     });
 
-    let bot = new DominoBot(tempTableState, botHand);
+    let bot = new IntermediateBot(tempTableState, botHand);
 
     const achievementManager = new AchievementManager();
 
@@ -181,6 +181,7 @@ function MainGame() {
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
                     return;
                 }
+                console.log(tableData.TableState);
                 setCurrentTurn('Player');
                 playSound();
             } else if (tableData.TableState.availableDominos !== 0) {

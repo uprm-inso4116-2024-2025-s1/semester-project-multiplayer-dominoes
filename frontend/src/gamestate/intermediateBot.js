@@ -7,21 +7,6 @@ import { Corner } from "./table.js";
  */
 class IntermediateBot extends DominoBot {
 
-    constructor(table, hand){
-        if(IntermediateBot.instance){
-            return IntermediateBot.instance;
-        }
-        super(table, hand);
-        IntermediateBot.instance = this;
-    }
-
-    static getInstance(table, hand){
-        if(!IntermediateBot.instance){
-            return new IntermediateBot(table, hand);
-        }
-        return IntermediateBot.instance;
-    }
-
     chooseDomino() {
         let bestScore = -1;
         let bestMove = null;
