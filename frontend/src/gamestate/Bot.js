@@ -11,19 +11,12 @@ class DominoBot {
      * @param {array} hand - Array of tuples representing the tiles the bot currently has. 
      */
     constructor(table, hand){
-        if(DominoBot.instance){
-            return DominoBot.instance;
-        }
-        DominoBot.instance = this;
         this.table = table;
         this.hand = hand; 
     }
 
-    static getInstance(table, hand){
-        if(!DominoBot.instance){
-            return new DominoBot(table, hand);
-        }
-        return DominoBot.instance;
+    updateTable(table){
+        this.table = table;
     }
 
     chooseDomino(){

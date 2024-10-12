@@ -93,7 +93,13 @@ function MainGame() {
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
-    let bot = new AdvancedBot(tempTableState, botHand, tempTableState.playedDominoes);
+
+    const [tableData, setTableData] = useState({
+        TableState: tempTableState,
+        DrawMatrix: tempTableState.drawTable().split('\n'),
+    });
+
+    let bot = new DominoBot(tempTableState, botHand);
 
     const achievementManager = new AchievementManager();
 
@@ -107,13 +113,10 @@ function MainGame() {
         BotHand: botHand,
         DbHand: drawBotChips(botHand.length),
         BotPlayer: bot,
-        TileCount: botHand.length
+        TileCount: botHand.length, 
+        table : tableData
     })
 
-    const [tableData, setTableData] = useState({
-        TableState: tempTableState,
-        DrawMatrix: tempTableState.drawTable().split('\n'),
-    });
     const [playerData, setPlayerData] = useState({
         PlayerHand: initialPlayerHand,
         DrawHand: drawChips(initialPlayerHand),
@@ -138,8 +141,16 @@ function MainGame() {
      * @param {*} setbotData - Setter for the bot hand.
      * @param {*} setTableData - Setter for the table data.
      */
-    function botPlayTurn(botData, tableData, setbotData, setTableData) {
+    function botPlayTurn(botData, tableData) {
+        botData.BotPlayer.updateTable(tableData.TableState);
+
         setTimeout(() => {
+
+            setbotData( prev => ({
+                ...prev, 
+                table : tableData, 
+            }))
+
             let botMoved = botData.BotPlayer.playTurn();
             if (botMoved) {
                 // Update bot data and table if a move was successfully made
@@ -172,7 +183,7 @@ function MainGame() {
                 }));
     
                 // Retry playing after grabbing a new domino
-                botPlayTurn(botData, tableData, setbotData, setTableData);
+                botPlayTurn(botData, tableData);
             } else { //Bot cannot make a move and cannot draw more dominoes.
                 setCurrentTurn('Player');
             }
@@ -182,19 +193,21 @@ function MainGame() {
     useEffect(() => {
         // This runs when the player places a domino on the table.
         if (data.Domino && data.Domino.length === 2) {
-            let tempTableState = tableData.TableState;
-            if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, tempTableState)) {
-                tempTableState.placeDomino(data.Domino, data.DominoDirection);
+            let newtempTableState = tableData.TableState;
+            console.log(playerData.PlayerHand); 
+            if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, newtempTableState)) {
+                newtempTableState.placeDomino(data.Domino, data.DominoDirection);
 
                 setData({
                     Domino: undefined,
                     DominoDirection: undefined,
                 });
 
-                setTableData({
-                    TableState: tempTableState,
-                    DrawMatrix: tempTableState.drawTable().split('\n'),
-                });
+                setTableData(prev => ({
+                    ...prev,
+                    TableState: newtempTableState,
+                    DrawMatrix: newtempTableState.drawTable().split('\n'),
+                }));
 
                 playerData.PlayerHand.splice(playerDominoIndex, 1);
 
@@ -215,7 +228,7 @@ function MainGame() {
                 }
                 // Bot's turn to play
                 setCurrentTurn('bot');
-                botPlayTurn(botData, tableData, setbotData, setTableData);
+                botPlayTurn(botData, tableData);
             }
         }
 
@@ -223,6 +236,7 @@ function MainGame() {
         if (playerData.PlayerInput) {
 
             playerData.PlayerHand.push(tableData.TableState.grabRandomChip());
+            console.log(playerData.PlayerHand);
             achievementManager.trackDrawing();  // Track if the player draws a domino
 
             setPlayerData({
