@@ -32,16 +32,15 @@ class AdvancedBot extends DominoBot {
         this.unplayedTiles = this.unplayedTiles.filter(tile => {
             // Check if the current tile is not in playedTiles
             return !this.playedTiles.some(playedTile => {
-                return playedTile[0] === tile[0] && playedTile[1] === tile[1];
-            });
+                return (playedTile[0] === tile[0] && playedTile[1] === tile[1]) || (playedTile[0] === tile[1] && playedTile[1] === tile[0])});
         });
     }
 
     countElements(){
-        let counts = [0,0,0,0,0,0];
+        let counts = [0,0,0,0,0,0,0];
             for(let i = 0; i < this.hand.length; i++){
                 let Tile = this.hand[i];
-                for(let j = 0; j < 7; j++){
+                for(let j = 0; j <= 7; j++){
                     if(Tile[0] === j || Tile[1] ===j){
                         counts[j]++;
                     }
