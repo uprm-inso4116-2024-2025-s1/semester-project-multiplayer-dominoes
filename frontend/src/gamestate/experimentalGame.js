@@ -99,7 +99,7 @@ function MainGame() {
         DrawMatrix: tempTableState.drawTable().split('\n'),
     });
 
-    let bot = new IntermediateBot(tempTableState, botHand);
+    let bot = new AdvancedBot(tempTableState, botHand, tempTableState.playedDominoes);
 
     const achievementManager = new AchievementManager();
 
