@@ -4,11 +4,14 @@ import './App.css';
 
 import React, { useState } from 'react';
 
-import Lobby from './lobby/lobby.js'
+import Lobby from './lobby/lobby.js';
 import Login from './Auth/Login.js';
-
 import MainGame from './gamestate/experimentalGame.js';
+
+import Home from './Home/Home.js'; // Import the Home component
+
 import GameMode from './gameMode.js';
+
 
 function App() {
   const [showRules, setShowRules] = useState(false);
@@ -29,7 +32,8 @@ function App() {
       <div className="App">
         <header className="App-header">
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/game" 
             element={
               <>
@@ -53,7 +57,6 @@ function App() {
             } 
           />
             
-          
             <Route path="/game" element={<MainGame />} />
             <Route path="/lobby" element={<Lobby />} />
             <Route path="/gameMode" element={<GameMode />} />

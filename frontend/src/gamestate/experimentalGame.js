@@ -133,6 +133,17 @@ function MainGame() {
         setPaused(false);
     }
 
+    const [showWinnerOverlay, setShowWinnerOverlay] = useState(false);
+    const [showLoserOverlay, setShowLoserOverlay] = useState(false);
+    const [showTurnNotification, setShowTurnNotification] = useState(false);
+
+    const playSound = () => {
+        const audio = document.getElementById('dominoPlaceSound');
+        if (audio) {
+            audio.play();
+        }
+    };
+
     /** Uses the playturn function from the bot to see if the bot can make a move. If they can't, they will pickup 
      * dominoes until they can or until chips run out. Is recursive. 
      * 
@@ -166,10 +177,12 @@ function MainGame() {
                 });
     
                 if (botData.BotPlayer.hand.length === 0) {
-                    alert("Bot has won.");
+                    setShowLoserOverlay(true);
+                    setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
                     return;
                 }
                 setCurrentTurn('Player');
+                playSound();
             } else if (tableData.TableState.availableDominos !== 0) {
                 // If the bot cannot play, and there are still dominos available to draw
                 botData.BotHand.push(tableData.TableState.grabRandomChip());
@@ -218,12 +231,14 @@ function MainGame() {
                 });
 
                 setPlayerDominoIndex('');
+                playSound();
 
                 // Check win condition for player
                 achievementManager.checkWin(playerData.PlayerHand);
 
                 if (playerData.PlayerHand.length === 0) {
-                    alert("Player wins!");
+                    setShowWinnerOverlay(true);
+                    setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
                     return;
                 }
                 // Bot's turn to play
@@ -251,6 +266,15 @@ function MainGame() {
             });
         }
     }, [data, playerData]);
+
+            // For displaying turn notification
+    useEffect(() => {
+        if (currentTurn === 'Player' && !showWinnerOverlay && !showLoserOverlay) {
+            setShowTurnNotification(true);
+            setTimeout(() => setShowTurnNotification(false), 2000); // Show "Your Turn" notification for 2 seconds
+        }
+    }, [currentTurn]);
+
     // Convert a matrix into a string to visualize the player's hand.
     function drawChips(chips) {
         if (!tilesInitialized || tileMap.size === 0) {
@@ -380,7 +404,26 @@ function MainGame() {
                     <div className='turnInfo'>
                         <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
                     </div>
+                    {/* Turn notification overlay */}
+                    {showTurnNotification && (
+                        <div className="overlay">
+                            <img src={'yourTurn.png'} alt="Your Turn" />
+                        </div>
+                    )}
 
+                    {/* Winner overlay */}
+                    {showWinnerOverlay && (
+                        <div className="overlay">
+                            <img src={'winner.png'} alt="Winner" />
+                        </div>
+                    )}
+
+                    {/* Loser overlay */}
+                    {showLoserOverlay && (
+                        <div className="overlay">
+                            <img src={'loser.png'} alt="Loser" />
+                        </div>
+                    )}
                     {/*Shows the placeholder dominoes for the bot.*/}
                     <div className='BotInfo'>
                         <p>{botData.DbHand}</p>
@@ -437,6 +480,7 @@ function MainGame() {
                         pauseOnHover
                         theme="colored"  // Add theme for better visual presentation
                     />
+                    <audio id="dominoPlaceSound" src="/DominoPlacement.wav" preload="auto"></audio>
 
                     {/* Button and UI for navigating and game controls */}
                 </div>
