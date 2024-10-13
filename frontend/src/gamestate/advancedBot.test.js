@@ -2,7 +2,10 @@ import AdvancedBot from './advancedBot.js';
 
 // Scenario 1: Simple starting hand
 const scenario1 = {
-    table: [[6, 6], [6, 3]],  // Played tiles on the table
+    table: {
+        leftTail: { freeCorners: [6] },  // Define free corners for left tail
+        rightTail: { freeCorners: [3] }  // Define free corners for right tail
+    },
     botHand: [[5, 6], [2, 3], [1, 4], [4, 6]],  // Bot's hand
     playedTiles: [[6, 6], [6, 3]],  // Tiles already played
     opponentHand: [[0, 1], [2, 4], [3, 5]]  // Simulated opponent hand for testing
@@ -10,19 +13,35 @@ const scenario1 = {
 
 // Scenario 2: More complex hand with higher number tiles
 const scenario2 = {
-    table: [[4, 4], [4, 2]],  // Played tiles on the table
-    botHand: [[5, 6], [2, 4], [3, 6], [1, 5]],  // Bot's hand
-    playedTiles: [[4, 4], [4, 2]],  // Tiles already played
-    opponentHand: [[0, 1], [2, 3], [1, 2]]  // Simulated opponent hand for testing
+    table: {
+        leftTail: { freeCorners: [4] },  
+        rightTail: { freeCorners: [2] }
+    },
+    botHand: [[5, 6], [2, 4], [3, 6], [1, 5]],
+    playedTiles: [[4, 4], [4, 2]],
+    opponentHand: [[0, 1], [2, 3], [1, 2]]
 };
 
 // Scenario 3: Bot has fewer tiles, opponent likely has matching numbers
 const scenario3 = {
-    table: [[3, 3], [3, 6]],  // Played tiles on the table
-    botHand: [[1, 3], [6, 5], [0, 3]],  // Bot's hand
-    playedTiles: [[3, 3], [3, 6]],  // Tiles already played
-    opponentHand: [[2, 3], [1, 5], [2, 6]]  // Simulated opponent hand for testing
+    table: {
+        leftTail: { freeCorners: [3] },
+        rightTail: { freeCorners: [6] }
+    },
+    botHand: [[1, 3], [6, 5], [0, 3]],
+    playedTiles: [[3, 3], [3, 6]],
+    opponentHand: [[2, 3], [1, 5], [2, 6]]
 };
+
+// Define this for other test scenarios as well
+
+
+const scenario4 = {
+    table: [[5,6], [3, 6]],
+    botHand: [[6,6],[1,3],[4,4]],
+    playedTiles: [[5,6], [3, 6]],
+    opponentHand: [[2, 3], [1, 5], [2,6]]
+}
 
 // Function to simulate a round and get bot's decision
 function simulateRound(bot, scenario) {
@@ -35,22 +54,22 @@ function simulateRound(bot, scenario) {
 // Jest tests for different scenarios
 
 test('Bot correctly updates the played tiles from the board', () => {
-    const bot = new AdvancedBot(scenario1.table, scenario1.botHand, scenario1.playedTiles);
+    const bot = new AdvancedBot(scenario4.table, scenario4.botHand, scenario4.playedTiles);
     bot.updateUnplayedTiles();
     const unplayedTiles = [
         [0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],
-        [1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,2],
-        [2,3],[2,4],[2,5],[2,6],[3,3],[3,4],[3,5],
-        [4,4],[4,5],[4,6],[5,5],[5,6]
+        [1,1],[1,2],[1,4],[1,5],[1,6],[2,2],
+        [2,3],[2,4],[2,5],[2,6],[3,3],[3,4],[3,5]
+        ,[4,5],[4,6],[5,5],
     ];
     expect(bot.unplayedTiles).toEqual(unplayedTiles);
 });
 
 test('Countelements should correctly count the elements', () => {
-    const bot = new AdvancedBot(scenario1.table, scenario1.botHand, scenario1.playedTiles)
+    const bot = new AdvancedBot(scenario4.table, scenario4.botHand, scenario4.playedTiles)
     const count = bot.countElements();
-    //botHand: [[5, 6], [2, 3], [1, 4], [4, 6]]
-    const expectedCount = [0,1,1,1,2,1,2];
+    //botHand: [[6,6],[1,3],[4,4]],
+    const expectedCount = [0,1,0,1,1,0,1];
     expect(count).toEqual(expectedCount);
 });
 
