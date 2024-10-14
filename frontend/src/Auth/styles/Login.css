@@ -31,7 +31,7 @@ body {
 
 .login-container .login-form h2 {
     font-size: 1.5em;
-    margin: 0;
+    margin: 10px;
 }
 
 .login-container .login-input {
@@ -42,17 +42,6 @@ body {
     padding: 10px;
     margin: 5px 0;
     width: 100%;
-}
-
-.login-container .login-button {
-    font-family: 'Orbitron', cursive;
-    color: #FFF6F4;
-    background-color: #1e2125;
-    border-radius: 5px;
-    padding: 10px 15px;
-    margin: 5px 0;
-    width: 100%;
-    cursor: pointer;
 }
 
 .login-container {
@@ -83,22 +72,13 @@ body {
     border-color: #f7a517;
 }
 
-.login-container .login-button,
-.login-container .signup-button {
-    background-color: white;
-    color: black;
-    border: 2px solid black;
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
 .login-container .login-form {
     text-align: center;
     margin-top: 1rem;
 }
 
 .login-container .login-form button {
+    font-family: 'Orbitron', cursive;
     color: black;
     padding: 10px 15px;
     font-size: 16px;

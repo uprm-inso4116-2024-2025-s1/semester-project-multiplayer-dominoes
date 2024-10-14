@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from './services/AuthService.js';
-import './Login.css';
+import './styles/Login.css';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
