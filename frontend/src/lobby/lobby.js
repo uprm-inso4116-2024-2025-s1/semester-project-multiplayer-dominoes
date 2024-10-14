@@ -69,32 +69,32 @@ const Lobby = () => {
     });
   };
   return (
-  
+
     <div className="lobby-container">
-              {/*Button to switch between gamestate and lobby ui*/}
-              <button
-                style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    padding: '10px',
-                    backgroundColor: '#1A3636',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer'
-                }}
-                onClick={() => {
-                  playSound(); 
-                  navigate('/game');
-                }}
-              >
-            
-                GameState
-            </button>
+      {/*Button to switch between gamestate and lobby ui*/}
+      <button
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          padding: '10px',
+          backgroundColor: '#1A3636',
+          color: '#FFFFFF',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+        onClick={() => {
+          playSound();
+          navigate('/game', { state: { gameMode: 'classic' } });
+        }}
+      >
+
+        GameState
+      </button>
       <div className="left-column">
         <h2 className="heading">Create Lobby</h2>
-        <input 
+        <input
           type="text"
           value={newRoomName}
           onChange={(e) => setNewRoomName(e.target.value)}
