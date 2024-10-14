@@ -306,12 +306,17 @@ function MainGame() {
         for (let i = 0; i < chips.length; i += 7) {
             rows.push(chips.slice(i, i + 7));
         }
+        
 
         return (
             <div style={containerStyle}>
                 {rows.map((row, rowIndex) => (
                     <div key={rowIndex} style={rowStyle}>
                         {row.map((chip, index) => {
+                            if (!chip) {
+                                console.log(`Undefined chip at index ${rowIndex * 7 + index}`);
+                                return null; // Just return null without setting the popup
+                            }
                             const tileKey = chip[0].toString() + chip[1].toString();
                             const tile = tileMap.get(tileKey);
                             const globalIndex = rowIndex * 7 + index;
@@ -408,6 +413,26 @@ function MainGame() {
         ));
     }
 
+    const [showPopup, setShowPopup] = useState(false);
+
+    function Popup({ message }) {
+        return (
+            <div style={{
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+                backgroundColor: '#f8d7da',
+                color: '#721c24',
+                padding: '10px 20px',
+                borderRadius: '5px',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                zIndex: 1000
+            }}>
+                {message}
+            </div>
+        );
+    }
+
     return (
         <div>
             {!isPaused ? (
@@ -488,11 +513,16 @@ function MainGame() {
                                 }
                             }}>Right Tail</button>
                             <button onClick={() => {
-                                setPlayerData({
-                                    PlayerHand: playerData.PlayerHand,
-                                    DrawHand: playerData.DrawHand,
-                                    PlayerInput: true,
-                                })
+                                if (tableData.TableState.availableDominos === 0) {
+                                    setShowPopup(true);
+                                    setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
+                                } else {
+                                    setPlayerData({
+                                        PlayerHand: playerData.PlayerHand,
+                                        DrawHand: playerData.DrawHand,
+                                        PlayerInput: true,
+                                    });
+                                }
                             }}>Grab a Random Chip</button>
                             <button onClick={pauseGame}>Pause Game</button>
                         </div>
@@ -514,7 +544,10 @@ function MainGame() {
 
                     {/* Button and UI for navigating and game controls */}
                 </div>
-            ) : (<PauseScreen onResume={resumeGame} />)}</div>
+                //Continues the popup message for when the player has no more tiles to pick up after the game has been paused. 
+            ) : (<PauseScreen onResume={resumeGame} />)}
+            {showPopup && <Popup message="There are no more tiles to pick up!" />}  
+        </div>
     );
 
 }
