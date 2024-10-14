@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthService from './services/AuthService.js';
 import './Login.css';
-import GameMode from '../gameMode.js';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,35 +9,22 @@ function Login() {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const authService = new AuthService();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = isLogin ? '/login' : '/register';
-    const payload = isLogin ? { email, password } : { username, email, password };
-
     try {
-      console.log(JSON.stringify(payload));
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      console.log(data);
+      const data = isLogin
+        ? await authService.login(email, password)
+        : await authService.register(username, email, password);
 
       localStorage.setItem('token', data.token);
-
       navigate('/gameMode');
     } catch (error) {
-      console.error('Error:', error);
+      console.warn('User not found. Please check your email and password.');
     }
   };
+
 
   return (
     <div className="login-container">
