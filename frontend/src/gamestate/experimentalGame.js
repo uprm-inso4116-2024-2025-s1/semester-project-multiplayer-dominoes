@@ -5,7 +5,7 @@ import RuleEngine from './RuleEngine.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
-import { ToastContainer } from 'react-toastify';  // Import ToastContainer
+import { ToastContainer, toast } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 import IntermediateBot from './intermediateBot.js';
 
@@ -17,9 +17,12 @@ const tileMap = new Map();
 function MainGame() {
     const [tileMap, setTileMap] = useState(new Map());
     const [tilesInitialized, setTilesInitialized] = useState(false);
+    const [currentScore, setCurrentScore] = useState(0); // Track player score
 
     const tileImage = new Image();
     tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
+    const gameMode = useLocation().state.gameMode || 'classic'; // Default to 'classic' mode if not provided
+    const ruleEngine = new RuleEngine(gameMode); // Initialize RuleEngine with game mode
     function initTiles() {
         return new Promise((resolve) => {
             console.log("Starting to load image...");
@@ -93,9 +96,6 @@ function MainGame() {
         DominoDirection: undefined,
     });
 
-    const gameMode = useLocation().state.gameMode;
-
-    const ruleEngine = new RuleEngine(gameMode);
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
@@ -228,6 +228,16 @@ function MainGame() {
 
                 // Check win condition for player
                 achievementManager.checkWin(playerData.PlayerHand);
+
+                if (tableData.TableState.placeDomino(data.Domino, data.DominoDirection)) {
+                    if (gameMode === 'allFives') {
+                        let openEndsSum = tableData.TableState.calculateOpenEnds();
+                        if (openEndsSum % 5 === 0) {
+                            toast.success(`Scored ${openEndsSum} points!`);
+                            setCurrentScore(prevScore => prevScore + openEndsSum);
+                        }
+                    }
+                }
 
                 if (playerData.PlayerHand.length === 0) {
                     setShowWinnerOverlay(true);

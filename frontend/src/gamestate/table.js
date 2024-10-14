@@ -13,7 +13,7 @@ class Domino {
     #display_direction = null;
     #free_corners = [];
     #values = [];
-    constructor(values, coords, display_direction){
+    constructor(values, coords, display_direction) {
         this.#values = values;
         this.#free_corners = [...values];
         this.#coords = coords;
@@ -21,20 +21,20 @@ class Domino {
     }
 
     // Getters
-    get coords(){return this.#coords}
-    get displayDirection(){return this.#display_direction}
-    get freeCorners(){return this.#free_corners}
-    get values(){return this.#values}
+    get coords() { return this.#coords }
+    get displayDirection() { return this.#display_direction }
+    get freeCorners() { return this.#free_corners }
+    get values() { return this.#values }
 
     // Setters
-    set coords(input){this.#coords = input}
-    set displayDirection(input){this.#display_direction = input}
+    set coords(input) { this.#coords = input }
+    set displayDirection(input) { this.#display_direction = input }
 
     // Methods
-    removeCorner(number){
+    removeCorner(number) {
         const indexFinder = this.#free_corners.indexOf(number);
-        if(indexFinder !== -1){
-            this.#free_corners.splice(indexFinder,1);
+        if (indexFinder !== -1) {
+            this.#free_corners.splice(indexFinder, 1);
         }
     }
 }
@@ -51,65 +51,65 @@ class Domino {
 //                       ]
 // dominoes: The list of dominoes that the game can have. By default, these are the 28 dominoes from the original game.  
 //        Example: [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]...]
-class Table{
+class Table {
     #dominoes = [
-        [0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],
-        [1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,2],
-        [2,3],[2,4],[2,5],[2,6],[3,3],[3,4],[3,5],
-        [3,6],[4,4],[4,5],[4,6],[5,5],[5,6],[6,6]
+        [0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6],
+        [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [2, 2],
+        [2, 3], [2, 4], [2, 5], [2, 6], [3, 3], [3, 4], [3, 5],
+        [3, 6], [4, 4], [4, 5], [4, 6], [5, 5], [5, 6], [6, 6]
     ];
     #dominoes_on_table = 0;
     #data_matrix = [];
     #path_matrix = [];
     #right_domino = null;
     #left_domino = null;
-    constructor(path_matrix, dominoes){
+    constructor(path_matrix, dominoes) {
         this.#path_matrix = path_matrix;
         this.#data_matrix = this.#createDominoesDataMatrix();
-        if(dominoes) this.#dominoes = dominoes;
+        if (dominoes) this.#dominoes = dominoes;
     }
 
     // Getters
     // Returns the dominoes that are at each corner.
-    get leftTail(){return this.#left_domino}
-    get rightTail(){return this.#right_domino}
-    get availableDominos(){return (this.#dominoes.length - this.#dominoes_on_table)}
-    get dominoesMatrix(){return this.#data_matrix}
+    get leftTail() { return this.#left_domino }
+    get rightTail() { return this.#right_domino }
+    get availableDominos() { return (this.#dominoes.length - this.#dominoes_on_table) }
+    get dominoesMatrix() { return this.#data_matrix }
 
     // Private Methods
-    #createDominoesDataMatrix(){
+    #createDominoesDataMatrix() {
         let n = this.#path_matrix.length;
         let m = this.#path_matrix[0].length;
 
         let new_data_matrix = [];
-        for(let i = 0; i < n; i++){
+        for (let i = 0; i < n; i++) {
             let data_row = [];
-            for(let j = 0; j < m; j++){
+            for (let j = 0; j < m; j++) {
                 data_row.push(null);
             }
             new_data_matrix.push(data_row);
         }
         return new_data_matrix;
     }
-    
-    #findNewCoordinates(coords, corner){
-        let list = [[0,corner],[0,1],[0,-1],[1,0],[-1,0]];
-        for(let i = 0; i < list.length; i++){
+
+    #findNewCoordinates(coords, corner) {
+        let list = [[0, corner], [0, 1], [0, -1], [1, 0], [-1, 0]];
+        for (let i = 0; i < list.length; i++) {
             let x = list[i][1];
             let y = list[i][0];
-    
+
             let curr_x = coords[1];
             let curr_y = coords[0];
-        
-            if(x+curr_x < 0 || x+curr_x > this.#path_matrix[0].length){
+
+            if (x + curr_x < 0 || x + curr_x > this.#path_matrix[0].length) {
                 continue;
-            }else if(y+curr_y < 0 || y+curr_y > this.#path_matrix.length){
+            } else if (y + curr_y < 0 || y + curr_y > this.#path_matrix.length) {
                 continue;
             }
-        
-            if(this.#path_matrix[y+curr_y][x+curr_x] === 1){
-                this.#path_matrix[y+curr_y][x+curr_x] = -1;
-                return [y+curr_y,x+curr_x];
+
+            if (this.#path_matrix[y + curr_y][x + curr_x] === 1) {
+                this.#path_matrix[y + curr_y][x + curr_x] = -1;
+                return [y + curr_y, x + curr_x];
             }
         }
         return [];
@@ -118,19 +118,31 @@ class Table{
     // Public Methods
 
     // Returns a list of 7 random dominoes.
-    playerChips(){
+    playerChips() {
         let player_dominoes = [];
-        for(let i = 0; i < 7; i++){
+        for (let i = 0; i < 7; i++) {
             player_dominoes.push(this.grabRandomChip());
         }
         return player_dominoes;
     }
 
-    grabRandomChip(){
+    grabRandomChip() {
         let random_index = Math.floor(Math.random() * this.#dominoes.length);
         let random_domino = this.#dominoes[random_index];
-        this.#dominoes.splice(random_index,1);
+        this.#dominoes.splice(random_index, 1);
         return random_domino;
+    }
+
+    calculateOpenEnds() {
+        const leftEnd = this.#left_domino ? this.#left_domino.freeCorners[0] : 0;
+        const rightEnd = this.#right_domino ? this.#right_domino.freeCorners[0] : 0;
+    
+        // Check if left and right dominoes are the same, meaning only one domino is placed
+        if (this.#left_domino === this.#right_domino) {
+            return this.#left_domino.values[0] + this.#right_domino.values[1];
+        }
+    
+        return leftEnd + rightEnd;
     }
 
     // placeDomino places the given domino in the correct spot on the matrix and updates the state.
@@ -140,81 +152,79 @@ class Table{
     //                  Examples: [6, 3], [1, 2], [0, 0].
     // corner: The end where the domino will be placed, which can be either left or right. 
     //         This argument is of type Corner (Corner.LEFT or Corner.RIGHT).
-    placeDomino(domino_to_place, corner){
+    placeDomino(domino_to_place, corner) {
         let is_legal = true;
-        if (this.#dominoes_on_table === 0){
-            let center_y = Math.floor(this.#path_matrix.length/2);
-            let center_x = Math.floor(this.#path_matrix[0].length/2);
-
-            let current_domino = new Domino(domino_to_place,[center_y,center_x],
-                                DisplayDirection.HORIZONTAL);
+    
+        if (this.#dominoes_on_table === 0) {
+            // First domino placed in the center
+            let center_y = Math.floor(this.#path_matrix.length / 2);
+            let center_x = Math.floor(this.#path_matrix[0].length / 2);
+            let current_domino = new Domino(domino_to_place, [center_y, center_x], DisplayDirection.HORIZONTAL);
             this.#left_domino = current_domino;
             this.#right_domino = current_domino;
-                
+    
             this.#data_matrix[center_y][center_x] = current_domino;
             this.#path_matrix[center_y][center_x] = -1;
-        }else{
-            let adjacent_domino;
-            if(corner === Corner.LEFT){
-                adjacent_domino = this.#left_domino;
-            }else{
-                adjacent_domino = this.#right_domino;
-            }
-
+        } else {
+            let adjacent_domino = corner === Corner.LEFT ? this.#left_domino : this.#right_domino;
+    
             let number_to_place;
-            if(adjacent_domino.freeCorners.includes(domino_to_place[0])){
+            if (adjacent_domino.freeCorners.includes(domino_to_place[0])) {
                 number_to_place = domino_to_place[0];
-            }else if(adjacent_domino.freeCorners.includes(domino_to_place[1])){
+            } else if (adjacent_domino.freeCorners.includes(domino_to_place[1])) {
                 number_to_place = domino_to_place[1];
-            }else{
+            } else {
                 is_legal = false;
             }
     
-            if(is_legal){
-                let new_coords = this.#findNewCoordinates(adjacent_domino.coords, corner)
-
-                if(new_coords.length > 0){
-                    let display_direction  = DisplayDirection.HORIZONTAL;
-                    if(new_coords[0] - adjacent_domino[0] !== 0){
+            if (is_legal) {
+                let new_coords = this.#findNewCoordinates(adjacent_domino.coords, corner);
+                if (new_coords.length > 0) {
+                    let display_direction = DisplayDirection.HORIZONTAL;
+                    if (new_coords[0] - adjacent_domino.coords[0] !== 0) {
                         display_direction = DisplayDirection.VERTICAL;
                     }
-                    let current_domino = new Domino(domino_to_place, 
-                                        new_coords,
-                                        display_direction);
+    
+                    let current_domino = new Domino(domino_to_place, new_coords, display_direction);
                     adjacent_domino.removeCorner(number_to_place);
                     current_domino.removeCorner(number_to_place);
-                        
-                    if(corner === Corner.LEFT){
+    
+                    // Update the tail based on the corner (left or right)
+                    if (corner === Corner.LEFT) {
                         this.#left_domino = current_domino;
-                    }else if (corner === Corner.RIGHT){
+                    } else {
                         this.#right_domino = current_domino;
                     }
+    
                     this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino;
                 }
+            } else {
+                return false; // Early return if the move is illegal
             }
         }
+    
         this.#dominoes_on_table++;
-        return is_legal;
+        return true;  // Return true if the domino was placed legally
     }
 
     // Returns a string that represents the table with dominoes in a readable format.
     // This function is useful for viewing the state of the matrix in a terminal in a more understandable way.
-    drawTable(){
+    drawTable() {
         let matrix = "";
-        for(let i = 0; i < this.#data_matrix.length; i++){
+        for (let i = 0; i < this.#data_matrix.length; i++) {
             let sub_list = "";
-            for(let j = 0; j < this.#data_matrix[i].length; j++){
-                if(this.#data_matrix[i][j]){
-                    sub_list += (" |"+ this.#data_matrix[i][j].values[0]).toString()+"|"+
-                                  (this.#data_matrix[i][j].values[1]).toString() + "| ";
-                }else{
+            for (let j = 0; j < this.#data_matrix[i].length; j++) {
+                if (this.#data_matrix[i][j]) {
+                    sub_list += (" |" + this.#data_matrix[i][j].values[0]).toString() + "|" +
+                        (this.#data_matrix[i][j].values[1]).toString() + "| ";
+                } else {
                     sub_list += " === ";
                 }
             }
-            matrix += "\n"+sub_list;
+            matrix += "\n" + sub_list;
         }
         return matrix;
     }
 }
 
-export {Table, Domino, Corner}
+export { Table, Domino, Corner }
