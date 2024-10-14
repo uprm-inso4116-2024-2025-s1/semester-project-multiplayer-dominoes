@@ -27,7 +27,6 @@ class AdvancedBot extends DominoBot {
      * in the bot's hand. 
      */
     updateUnplayedTiles(){
-        console.log(this.playedTiles);
         this.unplayedTiles = this.unplayedTiles.filter(tile => {
             // Check if the current tile is not in playedTiles
             return !this.playedTiles.some(playedTile => {

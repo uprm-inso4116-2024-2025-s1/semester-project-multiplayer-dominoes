@@ -1,4 +1,5 @@
 import AdvancedBot from './advancedBot.js';
+import { Corner } from './table.js';
 
 // Scenario 1: Simple starting hand
 const scenario1 = {
@@ -17,7 +18,7 @@ const scenario2 = {
         leftTail: { freeCorners: [4] },  
         rightTail: { freeCorners: [2] }
     },
-    botHand: [[5, 6], [2, 4], [3, 6], [1, 5]],
+    botHand: [[5, 6], [1, 4], [3, 6], [2, 5]],
     playedTiles: [[4, 4], [4, 2]],
     opponentHand: [[0, 1], [2, 3], [1, 2]]
 };
@@ -28,7 +29,7 @@ const scenario3 = {
         leftTail: { freeCorners: [3] },
         rightTail: { freeCorners: [6] }
     },
-    botHand: [[1, 3], [6, 5], [0, 3]],
+    botHand: [[1, 3], [5,6], [0, 3]],
     playedTiles: [[3, 3], [3, 6]],
     opponentHand: [[2, 3], [1, 5], [2, 6]]
 };
@@ -47,7 +48,6 @@ const scenario4 = {
 function simulateRound(bot, scenario) {
     bot.updateUnplayedTiles();
     const chosenDomino = bot.chooseDomino();
-    console.log("Bot played: ", chosenDomino);
     return chosenDomino;
 }
 
@@ -83,7 +83,9 @@ test('Scenario 1: Bot should make a valid strategic move based on the hand', () 
     
     // Ensure the bot chooses a valid domino
     const chosenDomino = bot.chooseDomino();
-    expect(chosenDomino).toBeDefined(); 
+    const expectedDomino = { domino : [ 5, 6 ], corner : Corner.LEFT}
+    expect(chosenDomino.domino).toEqual(expectedDomino.domino); 
+    expect(chosenDomino.corner).toEqual({"corner": -1}); //Corner.LEFT 
 });
 
 test('Scenario 2: Bot should play the best move based on more complex hand', () => {
@@ -94,7 +96,9 @@ test('Scenario 2: Bot should play the best move based on more complex hand', () 
     expect(guessedScore).toBeGreaterThan(0);  // Positive score for the opponent's guessed hand
 
     const chosenDomino = simulateRound(bot, scenario2);
-    expect(chosenDomino).toBeDefined();  // Bot should choose a valid domino
+    const expectedDomino = { domino : [2,5], corner : 1}
+    expect(chosenDomino.domino).toEqual(expectedDomino.domino);  // Bot should choose a valid domino
+    expect(chosenDomino.corner).toEqual({"corner":1}) //Corner.RIGHT
 });
 
 test('Scenario 3: Bot should block opponent if necessary', () => {
@@ -105,6 +109,8 @@ test('Scenario 3: Bot should block opponent if necessary', () => {
     expect(guessedScore).toBeGreaterThan(0);  // Bot guesses opponent's hand
 
     const chosenDomino = simulateRound(bot, scenario3);
-    expect(chosenDomino).toBeDefined();  // Bot plays a tile
+    const expectedDomino = { domino : [5,6], corner: {"corner":1}}
+    expect(chosenDomino.domino).toEqual(expectedDomino.domino);  // Bot plays a tile
+    expect(chosenDomino.corner).toEqual({"corner": 1}); //Corner.RIGHT
     // Further checks could be added here to validate that the bot chooses the best move
 });
