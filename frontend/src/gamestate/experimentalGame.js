@@ -274,34 +274,74 @@ function MainGame() {
             console.log("Tiles not initialized or empty tileMap");
             return <div>Loading...</div>;
         }
+
+        const containerStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            padding: '10px',
+            width: '100%',
+            overflowX: 'auto'
+        };
+
+        const rowStyle = {
+            display: 'flex',
+            gap: '10px',
+        };
+
+        const itemStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        };
+
+        const numberStyle = {
+            marginTop: '5px',
+            fontWeight: 'bold',
+            fontSize: '14px'
+        };
+
+        // Group dominoes into rows of 7
+        const rows = [];
+        for (let i = 0; i < chips.length; i += 7) {
+            rows.push(chips.slice(i, i + 7));
+        }
+        
+
         return (
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                {chips.map((chip, index) => {
-                    const tileKey = chip[0].toString() + chip[1].toString();
-                    const tile = tileMap.get(tileKey);
-                    console.log(`Chip ${index}:`, tileKey, "Tile:", tile);
-                    if (tile && tile.image) {
-                        return (
-                            <div key={index} style={{ display: 'inline-block', textAlign: 'center', margin: '0 5px' }}>
-                                <img
-                                    src={tile.image.src}
-                                    style={{
-                                        width: `${tile.width}px`,
-                                        height: `${tile.height}px`,
-                                        display: 'block',
-                                        objectFit: 'none',
-                                        objectPosition: `-${tile.sx}px 0px`,
-                                    }}
-                                    alt={`Domino ${chip[0]}-${chip[1]}`}
-                                />
-                                <div style={{ marginTop: '5px', fontWeight: 'bold', fontSize: '14px' }}>
-                                    {index % 7}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return null;
-                })}
+            <div style={containerStyle}>
+                {rows.map((row, rowIndex) => (
+                    <div key={rowIndex} style={rowStyle}>
+                        {row.map((chip, index) => {
+                            if (!chip) {
+                                console.log(`Undefined chip at index ${rowIndex * 7 + index}`);
+                                return null; // Just return null without setting the popup
+                            }
+                            const tileKey = chip[0].toString() + chip[1].toString();
+                            const tile = tileMap.get(tileKey);
+                            const globalIndex = rowIndex * 7 + index;
+                            console.log(`Chip ${globalIndex}:`, tileKey, "Tile:", tile);
+                            if (tile && tile.image) {
+                                return (
+                                    <div key={globalIndex} style={itemStyle}>
+                                        <img
+                                            src={tile.image.src}
+                                            style={{
+                                                width: `${tile.width}px`,
+                                                height: `${tile.height}px`,
+                                                objectFit: 'none',
+                                                objectPosition: `-${tile.sx}px 0px`,
+                                            }}
+                                            alt={`Domino ${chip[0]}-${chip[1]}`}
+                                        />
+                                        <div style={numberStyle}>{globalIndex}</div>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })}
+                    </div>
+                ))}
             </div>
         );
     }
@@ -371,6 +411,26 @@ function MainGame() {
                 })}
             </div>
         ));
+    }
+
+    const [showPopup, setShowPopup] = useState(false);
+
+    function Popup({ message }) {
+        return (
+            <div style={{
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+                backgroundColor: '#f8d7da',
+                color: '#721c24',
+                padding: '10px 20px',
+                borderRadius: '5px',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                zIndex: 1000
+            }}>
+                {message}
+            </div>
+        );
     }
 
     return (
@@ -453,11 +513,16 @@ function MainGame() {
                                 }
                             }}>Right Tail</button>
                             <button onClick={() => {
-                                setPlayerData({
-                                    PlayerHand: playerData.PlayerHand,
-                                    DrawHand: playerData.DrawHand,
-                                    PlayerInput: true,
-                                })
+                                if (tableData.TableState.availableDominos === 0) {
+                                    setShowPopup(true);
+                                    setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
+                                } else {
+                                    setPlayerData({
+                                        PlayerHand: playerData.PlayerHand,
+                                        DrawHand: playerData.DrawHand,
+                                        PlayerInput: true,
+                                    });
+                                }
                             }}>Grab a Random Chip</button>
                             <button onClick={pauseGame}>Pause Game</button>
                         </div>
@@ -479,7 +544,10 @@ function MainGame() {
 
                     {/* Button and UI for navigating and game controls */}
                 </div>
-            ) : (<PauseScreen onResume={resumeGame} />)}</div>
+                //Continues the popup message for when the player has no more tiles to pick up after the game has been paused. 
+            ) : (<PauseScreen onResume={resumeGame} />)}
+            {showPopup && <Popup message="There are no more tiles to pick up!" />}  
+        </div>
     );
 
 }
