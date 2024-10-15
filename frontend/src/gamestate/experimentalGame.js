@@ -181,7 +181,6 @@ function MainGame() {
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
                     return;
                 }
-                console.log(tableData.TableState);
                 setCurrentTurn('Player');
                 playSound();
             } else if (tableData.TableState.availableDominos !== 0) {
@@ -208,7 +207,6 @@ function MainGame() {
         // This runs when the player places a domino on the table.
         if (data.Domino && data.Domino.length === 2) {
             let newtempTableState = tableData.TableState;
-            console.log(playerData.PlayerHand); 
             if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, newtempTableState)) {
                 newtempTableState.placeDomino(data.Domino, data.DominoDirection);
 
@@ -252,7 +250,6 @@ function MainGame() {
         if (playerData.PlayerInput) {
 
             playerData.PlayerHand.push(tableData.TableState.grabRandomChip());
-            console.log(playerData.PlayerHand);
             achievementManager.trackDrawing();  // Track if the player draws a domino
 
             setPlayerData({

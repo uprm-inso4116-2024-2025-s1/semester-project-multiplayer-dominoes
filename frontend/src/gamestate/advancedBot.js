@@ -70,9 +70,10 @@ class AdvancedBot extends DominoBot {
     
     isPlayable(domino){
             if (this.table.leftTail.freeCorners.includes(domino[0]) || this.table.leftTail.freeCorners.includes(domino[1])) {
-                return { corner: Corner.LEFT };
-            } else if (this.table.rightTail.freeCorners.includes(domino[0]) || this.table.rightTail.freeCorners.includes(domino[1])) {
-                return { corner: Corner.RIGHT };
+                return Corner.LEFT;
+            }  
+            if (this.table.rightTail.freeCorners.includes(domino[0]) || this.table.rightTail.freeCorners.includes(domino[1])) {
+                return Corner.RIGHT;
             }
         return null; 
     }
@@ -80,28 +81,34 @@ class AdvancedBot extends DominoBot {
     chooseDomino() {
         let biggest_domino = null;
         let biggest_score = 0;
-        let bigCorner = null;
         this.updateUnplayedTiles();
         let counts = this.countElements();
         for(let i = 0; i < this.hand.length; i++){
-            let score = 0;
             let domino = this.hand[i];
+
+            //Check if playable, if not, skip
+            if(!this.isPlayable(domino)) continue;
+
+            let score = 0;
             // Check if there are more dominoes with the same numbers
             score += counts[domino[0]] + counts[domino[1]];
             //Guess the opponent's hand and likelyness of playing a domino. 
             score += this.guessOpponentsHand(counts);
             //Play doubles and heavy tiles early.
             score += domino[0] + domino[1];
-            //Checks if the domino is playable on the table
-            bigCorner = this.isPlayable(domino)
 
-            if(score > biggest_score && bigCorner){
+            if(score > biggest_score){
                 biggest_score = score;
                 biggest_domino = domino;
             }
 
+            if (this.table.leftTail.freeCorners.includes(domino[0]) || this.table.leftTail.freeCorners.includes(domino[1])) {
+                return {domino : biggest_domino, corner : Corner.LEFT};
+            }  
+            if (this.table.rightTail.freeCorners.includes(domino[0]) || this.table.rightTail.freeCorners.includes(domino[1])) {
+                return {domino : biggest_domino, corner : Corner.RIGHT};
+            }
         }
-        return  {domino : biggest_domino, corner : bigCorner};
     }
 }
 
