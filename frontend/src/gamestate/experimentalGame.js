@@ -32,7 +32,7 @@ function MainGame() {
                     "23", "24", "25", "26", "33", "34", "35",
                     "36", "44", "45", "46", "55", "56", "66"
                 ];
-    
+
                 for (let i = 0; i < totalTiles; i++) {
                     newTileMap.set(dominoes[i], {
                         image: tileImage,
@@ -140,6 +140,8 @@ function MainGame() {
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
     const [showTurnNotification, setShowTurnNotification] = useState(false);
 
+    const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(true);
+
     const playSound = () => {
         const audio = document.getElementById('dominoPlaceSound');
         if (audio) {
@@ -170,7 +172,7 @@ function MainGame() {
                     TableState: tableData.TableState,
                     DrawMatrix: tableData.TableState.drawTable().split('\n')
                 });
-    
+
                 if (botData.BotPlayer.hand.length === 0) {
                     setShowLoserOverlay(true);
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
@@ -181,7 +183,7 @@ function MainGame() {
             } else if (tableData.TableState.availableDominos !== 0) {
                 // If the bot cannot play, and there are still dominos available to draw
                 botData.BotHand.push(tableData.TableState.grabRandomChip());
-    
+
                 // Update the bot's hand
                 setbotData(prevBotData => ({
                     ...prevBotData,
@@ -189,7 +191,7 @@ function MainGame() {
                     TileCount: botData.BotHand.length,
                     DbHand: drawBotChips(botData.BotHand.length)
                 }));
-    
+
                 // Retry playing after grabbing a new domino
                 botPlayTurn(botData, tableData, setbotData, setTableData);
             } else { //Bot cannot make a move and cannot draw more dominoes.
@@ -259,7 +261,7 @@ function MainGame() {
         }
     }, [data, playerData]);
 
-            // For displaying turn notification
+    // For displaying turn notification
     useEffect(() => {
         if (currentTurn === 'Player' && !showWinnerOverlay && !showLoserOverlay) {
             setShowTurnNotification(true);
@@ -345,12 +347,12 @@ function MainGame() {
             </div>
         );
     }
-    
+
 
     // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
     function drawBotChips(tileCount) {
         const backtileImage = '/backtile.png'; // Adjust this path as needed
-         // Use the same scale as in renderDominoImage
+        // Use the same scale as in renderDominoImage
         const displayWidth = tileWidth
         const displayHeight = tileHeight
 
@@ -383,10 +385,10 @@ function MainGame() {
                 <img
                     src={tile.image.src}
                     style={{
-                        width: `${tile.width }px`,
-                        height: `${tile.height }px`,
+                        width: `${tile.width}px`,
+                        height: `${tile.height}px`,
                         objectFit: 'none',
-                        objectPosition: `-${tile.sx }px 0px`,
+                        objectPosition: `-${tile.sx}px 0px`,
                         display: 'inline-block',
                         verticalAlign: 'middle',
                     }}
@@ -395,6 +397,16 @@ function MainGame() {
             );
         }
         return `[${domino[0]},${domino[1]}]`; // Fallback to text if image not found
+    }
+
+    const handleLobbyButton = () => {
+        if (showLoseProgressIfLobby) {
+            alert("Leaving game will cause you to lose progress.")
+            setShowLoseProgressIfLobby(false);
+        }
+        else {
+            navigate('/lobby')
+        }
     }
 
     function renderGameBoard() {
@@ -450,10 +462,7 @@ function MainGame() {
                             borderRadius: '5px',
                             cursor: 'pointer'
                         }}
-                        onClick={() => navigate('/lobby')}
-                    >
-                        Lobby
-                    </button>
+                        onClick={handleLobbyButton}>Lobby</button>
 
                     {/*Displays who's turn it is.*/}
                     <div className='turnInfo'>
