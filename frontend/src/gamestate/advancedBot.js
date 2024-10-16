@@ -53,18 +53,15 @@ class AdvancedBot extends DominoBot {
     }
 
     guessOpponentsHand(counts){
-        let possibleOpponentTiles = this.unplayedTiles.filter(tile => {
-            return !this.playedTiles.some(playedTile => playedTile[0] === tile[0] && playedTile[1] === tile[1]) &&
-                   !this.hand.some(handTile => handTile[0] === tile[0] && handTile[1] === tile[1]);
-        });
-    
+        let totalUnplayed = this.unplayedTiles.length;
         let estimatedOpponentScore = 0;
-    
-        for (let i = 0; i < possibleOpponentTiles.length; i++) {
-            let tile = possibleOpponentTiles[i];
-            estimatedOpponentScore += counts[tile[0]] + counts[tile[1]];
-        }
-    
+
+        this.unplayedTiles.forEach(tile => {
+            let probability = (counts[tile[0]] + counts[tile[1]]) / totalUnplayed;
+            let tileValue = tile[0] + tile[1];
+            estimatedOpponentScore += probability * tileValue;
+        });
+
         return estimatedOpponentScore;
     }
     
