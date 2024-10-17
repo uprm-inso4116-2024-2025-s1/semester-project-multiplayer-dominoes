@@ -66,13 +66,8 @@ class AdvancedBot extends DominoBot {
     }
     
     isPlayable(domino){
-            if (this.table.leftTail.freeCorners.includes(domino[0]) || this.table.leftTail.freeCorners.includes(domino[1])) {
-                return Corner.LEFT;
-            }  
-            if (this.table.rightTail.freeCorners.includes(domino[0]) || this.table.rightTail.freeCorners.includes(domino[1])) {
-                return Corner.RIGHT;
-            }
-        return null; 
+        return (this.table.leftTail.freeCorners.includes(domino[0]) || this.table.leftTail.freeCorners.includes(domino[1])) ||
+        (this.table.rightTail.freeCorners.includes(domino[0]) || this.table.rightTail.freeCorners.includes(domino[1])); 
     }
 
     chooseDomino() {
@@ -84,7 +79,7 @@ class AdvancedBot extends DominoBot {
             let domino = this.hand[i];
 
             //Check if playable, if not, skip
-            if(!this.isPlayable(domino)) continue;
+            if(!this.isPlayable(domino) || !domino) continue;
 
             let score = 0;
             // Check if there are more dominoes with the same numbers
@@ -98,14 +93,15 @@ class AdvancedBot extends DominoBot {
                 biggest_score = score;
                 biggest_domino = domino;
             }
-
-            if (this.table.leftTail.freeCorners.includes(domino[0]) || this.table.leftTail.freeCorners.includes(domino[1])) {
-                return {domino : biggest_domino, corner : Corner.LEFT};
-            }  
-            if (this.table.rightTail.freeCorners.includes(domino[0]) || this.table.rightTail.freeCorners.includes(domino[1])) {
-                return {domino : biggest_domino, corner : Corner.RIGHT};
-            }
         }
+        
+        if (this.table.leftTail.freeCorners.includes(biggest_domino[0]) || this.table.leftTail.freeCorners.includes(biggest_domino[1])) {
+            return {domino : biggest_domino, corner : Corner.LEFT};
+        }  
+        if (this.table.rightTail.freeCorners.includes(biggest_domino[0]) || this.table.rightTail.freeCorners.includes(biggest_domino[1])) {
+            return {domino : biggest_domino, corner : Corner.RIGHT};
+        }
+        return null;
     }
 }
 
