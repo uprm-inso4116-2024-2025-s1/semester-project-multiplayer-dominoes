@@ -95,11 +95,13 @@ class AdvancedBot extends DominoBot {
             }
         }
         
-        if (this.table.leftTail.freeCorners.includes(biggest_domino[0]) || this.table.leftTail.freeCorners.includes(biggest_domino[1])) {
-            return {domino : biggest_domino, corner : Corner.LEFT};
-        }  
-        if (this.table.rightTail.freeCorners.includes(biggest_domino[0]) || this.table.rightTail.freeCorners.includes(biggest_domino[1])) {
-            return {domino : biggest_domino, corner : Corner.RIGHT};
+        if(biggest_domino){
+            if (this.table.leftTail.freeCorners.includes(biggest_domino[0]) || this.table.leftTail.freeCorners.includes(biggest_domino[1])) {
+                return {domino : biggest_domino, corner : Corner.LEFT};
+            }  
+            if (this.table.rightTail.freeCorners.includes(biggest_domino[0]) || this.table.rightTail.freeCorners.includes(biggest_domino[1])) {
+                return {domino : biggest_domino, corner : Corner.RIGHT};
+            }
         }
         return null;
     }
