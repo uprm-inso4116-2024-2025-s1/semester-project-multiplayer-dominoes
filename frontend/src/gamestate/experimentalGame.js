@@ -1,5 +1,5 @@
 import { Table, Corner } from './table.js';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
 import RuleEngine from './RuleEngine.js';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -17,6 +17,29 @@ const tileMap = new Map();
 function MainGame() {
     const [tileMap, setTileMap] = useState(new Map());
     const [tilesInitialized, setTilesInitialized] = useState(false);
+
+    const backgroundMusic = useRef(null);
+    useEffect(() => {
+        const audio = backgroundMusic.current;
+        audio.volume = 0.1;
+    
+        const handleCanPlay = () => {
+          audio.play().catch((error) => {
+            console.log("Autoplay was prevented, retrying with mute...", error);
+            audio.muted = true; // Mute the audio if autoplay is blocked
+            audio.play();
+          });
+        };
+    
+        // Play the audio when it's ready
+        audio.addEventListener("canplay", handleCanPlay);
+    
+        return () => {
+          audio.pause(); // Pause the audio when leaving the page
+          audio.removeEventListener("canplay", handleCanPlay);
+        };
+      }, []);
+
 
     const tileImage = new Image();
     tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
@@ -447,6 +470,9 @@ function MainGame() {
 
     return (
         <div>
+            <audio id="backgroundMusic" ref={backgroundMusic} loop>
+                <source src="/BackgroundMusic.mp3" type="audio/mpeg" />
+            </audio>
             {!isPaused ? (
                 <div className='table_game'>
                     {/*Button to switch between gamestate and lobby ui*/}
