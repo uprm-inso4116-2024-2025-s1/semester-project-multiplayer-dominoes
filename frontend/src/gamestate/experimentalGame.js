@@ -21,8 +21,7 @@ function MainGame() {
     const backgroundMusic = useRef(null);
     useEffect(() => {
         const audio = backgroundMusic.current;
-        audio.volume = 0.1;
-    
+        audio.volume = 0.2;
         const handleCanPlay = () => {
           audio.play().catch((error) => {
             console.log("Autoplay was prevented, retrying with mute...", error);
@@ -30,10 +29,8 @@ function MainGame() {
             audio.play();
           });
         };
-    
         // Play the audio when it's ready
         audio.addEventListener("canplay", handleCanPlay);
-    
         return () => {
           audio.pause(); // Pause the audio when leaving the page
           audio.removeEventListener("canplay", handleCanPlay);
