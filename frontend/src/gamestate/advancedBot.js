@@ -85,7 +85,7 @@ class AdvancedBot extends DominoBot {
             // Check if there are more dominoes with the same numbers
             score += counts[domino[0]] + counts[domino[1]];
             //Guess the opponent's hand and likelyness of playing a domino. 
-            score += this.guessOpponentsHand(counts);
+            score -= this.guessOpponentsHand(counts);
             //Play doubles and heavy tiles early.
             score += domino[0] + domino[1];
 
