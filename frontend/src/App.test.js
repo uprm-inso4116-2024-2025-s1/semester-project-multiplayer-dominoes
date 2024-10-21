@@ -1,5 +1,7 @@
 import { Corner, Table } from './gamestate/table.js';
 import DominoBot from './gamestate/Bot.js';
+import IntermediateBot from './gamestate/intermediateBot.js';
+import RuleEngine from './gamestate/RuleEngine.js';
 
 function getDefaultTable() {
   return [
@@ -57,4 +59,58 @@ describe('Bot logic', () => {
     expect(dominoBot.playTurn()).toEqual(false);
   });
 
+});
+
+describe('Intermediate Bot logic', () => {
+  let table = new Table(getDefaultTable());
+  table.placeDomino([6, 6], Corner.LEFT);
+  table.placeDomino([6, 3], Corner.RIGHT);
+
+  test('No playable domino', () => {
+    let dominoBot = new IntermediateBot(table, [[5, 2], [4, 1], [2, 4], [5, 5]]);
+    const move = dominoBot.chooseDomino();
+    expect(move).toEqual(null);
+  });
+
+  test('Chooses highest domino in hand', () => {
+    let dominoBot = new IntermediateBot(table, [[5, 3], [4, 1], [3, 4], [6, 4]]);
+    const move = dominoBot.chooseDomino();
+    dominoBot.playTurn();
+    expect(move.domino).toEqual([6, 4]);
+    expect(move.corner).toEqual(Corner.LEFT);
+
+    const secondMove = dominoBot.chooseDomino();
+    expect(secondMove.domino).toEqual([5, 3]);
+    expect(secondMove.corner).toEqual(Corner.RIGHT);
+  });
+});
+
+describe('Rule engine logic', () => {
+  let table = new Table(getDefaultTable());
+  table.placeDomino([6, 6], Corner.LEFT);
+  table.placeDomino([6, 3], Corner.RIGHT);
+
+  describe('Rule engine - classic', () => {
+    let ruleEngine = new RuleEngine('classic');
+
+    test('Valid domino', () => {
+      expect(ruleEngine.validateMove([3, 4], table)).toBe(true);
+      expect(ruleEngine.validateMove([6, 2], table)).toBe(true);
+    });
+
+    test('Empty table - Valid move', () => {
+      let empty_table = new Table(getDefaultTable());
+      expect(ruleEngine.validateMove([6, 6], empty_table)).toBe(true);
+      expect(ruleEngine.validateMove([4, 3], empty_table)).toBe(true);
+    });
+
+    test('Invalid move', () => {
+      expect(ruleEngine.validateMove([6, 6], table)).toBe(true);
+      expect(ruleEngine.validateMove([4, 2], table)).toBe(false);
+    })
+  });
+
+  describe('Rule engine - allFives', () => {
+    // Unit tests will be added when allFives gets implemented.
+  });
 });

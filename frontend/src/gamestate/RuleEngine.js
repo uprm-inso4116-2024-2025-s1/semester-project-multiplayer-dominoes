@@ -29,10 +29,10 @@ class RuleEngine {
                 if (!leftTail && !rightTail) {
                     return true; // No dominoes placed yet, any domino can be placed
                 }
-    
+
+                const freeCorners = [leftTail.freeCorners[0], rightTail.freeCorners[0]];
                 // Otherwise, check if the domino can be placed at either the left or right tail
-                return (leftTail && leftTail.freeCorners.includes(domino[0])) || 
-                       (rightTail && rightTail.freeCorners.includes(domino[1]));
+                return (freeCorners.includes(domino[0])) || freeCorners.includes(domino[1]);
             },
             // Other core rules can be added here (e.g., scoring)
         };

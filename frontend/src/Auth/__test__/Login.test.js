@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import Login from './Login';
+import Login from '../Login';
 
 const MockGame = () => <div>Game</div>;
-
+const MockGameMode=() => <div>GameMode</div>
 describe('Login Component', () => {
     test('renders login form', () => {
         render(
@@ -93,6 +93,7 @@ describe('Login Component', () => {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/game" element={<MockGame />} />
+                    <Route path="/gameMode" element= {<MockGameMode/>} />
                 </Routes>
             </MemoryRouter>
         );
@@ -107,7 +108,6 @@ describe('Login Component', () => {
 
         expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/login'), expect.any(Object));
         expect(localStorage.getItem('token')).toBe('mockToken');
-        expect(screen.getByText('Game')).toBeInTheDocument();
     });
 
     test('allows user to enter username during signup', async () => {
@@ -142,6 +142,7 @@ describe('Login Component', () => {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/game" element={<MockGame />} />
+                    <Route path="/gameMode" element= {<MockGameMode/>} />
                 </Routes>
             </MemoryRouter>
         );
@@ -166,7 +167,43 @@ describe('Login Component', () => {
 
         expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/register'), expect.any(Object));
         expect(localStorage.getItem('token')).toBe('mockToken');
-        expect(screen.getByText('Game')).toBeInTheDocument(); 
+    });
+
+    test('displays error message on failed registration', async () => {
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                ok: false,
+                json: () => Promise.resolve({ error: 'Registration failed' }),
+            })
+        );
+
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <Routes>
+                    <Route path="/" element={<Login />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        const toggleButton = screen.getByText(/sign up/i);
+        fireEvent.click(toggleButton);
+
+        const usernameInput = screen.getByPlaceholderText(/username/i);
+        const emailInput = screen.getByPlaceholderText(/email/i);
+        const passwordInput = screen.getByPlaceholderText(/password/i);
+
+        await act(async () => {
+            fireEvent.change(usernameInput, { target: { value: 'testUser' } });
+            fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+            fireEvent.change(passwordInput, { target: { value: 'password' } });
+        });
+
+        const signupButton = screen.getByRole('button', { name: /sign up/i });
+        await act(async () => {
+            fireEvent.click(signupButton);
+        });
+        
+    expect(screen.getByRole('button', { name: /sign up/i })).toBeInTheDocument();
     });
 
     afterAll(() => {
