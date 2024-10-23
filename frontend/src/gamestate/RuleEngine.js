@@ -14,6 +14,8 @@ class RuleEngine {
             case 'allFives':
                 return this.getAllFivesRules();
                 // More modes can be added here
+            case 'drawDominoes':
+                return this.getDrawDominoesRules();
             default:
                 throw new Error('Unknown game mode');
         }
@@ -54,6 +56,13 @@ class RuleEngine {
                 const openEndsSum = table.calculateOpenEnds();
                 return openEndsSum % 5 === 0 ? openEndsSum : 0;
             }
+        };
+    }
+
+    // Placeholder for 'drawDominoes' rules
+    getDrawDominoesRules() {
+        return {
+            // Specific validation for 'drawDominoes' can go here
         };
     }
 
