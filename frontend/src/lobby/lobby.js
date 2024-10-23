@@ -37,13 +37,7 @@ const Lobby = () => {
     setErrorMessage("");
     setInstruction(false);
   };
-  // For incorrect display on lobby list table
-  const formatGameMode = (mode) => {
-    return mode
-      .replace(/([A-Z])/g, ' $1') // Adds space before capital letters (for CamelCase)
-      .trim() // Trim any leading or trailing spaces
-      .replace(/\b(\w)/g, (char) => char.toUpperCase()); // Capitalizes the first letter of each word
-  };
+
 
   // Later Implement with the database to do a getAllRooms
   useEffect(() => {
@@ -229,7 +223,12 @@ const Lobby = () => {
             {isSoloPlay &&(
               <div className="bot-selector" >
               <h1 className="heading"> Choose Bot Difficulty</h1>
-              <form className="bot-difficulty-form" style={{fontSize: "16 px"}}>
+              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
+              <label >
+                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="basic" />{" "}
+                  Basic
+                </label>
+                <br />
                 <label >
                   <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="intermediate" />{" "}
                   Intermediate
@@ -242,7 +241,7 @@ const Lobby = () => {
               </form>
 
               <h1 className="heading"> Choose Game Mode</h1>
-              <form className="bot-difficulty-form" style={{fontSize: "12 px"}}>
+              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
                 <label >
                   <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
                   Classic

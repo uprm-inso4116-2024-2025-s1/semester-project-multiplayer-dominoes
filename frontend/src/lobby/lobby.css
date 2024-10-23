@@ -146,12 +146,14 @@
   .bot-difficulty-form {
     display: flex;
     flex-direction: column;
+    gap: 10px; /* Add even spacing between labels */
     align-items: flex-start;
   }
   
   .bot-difficulty-form label {
-    margin-bottom: 10px; /* Spacing between radio buttons */
+    margin-bottom: 0; /* No need for margin-bottom if using gap */
   }
+  
   .game-mode-selection {
     font-size: 10px;
     display: flex;
