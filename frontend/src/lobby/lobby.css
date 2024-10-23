@@ -1,7 +1,33 @@
+.instruction-message {
+  color: rgb(244, 213, 75);  
+  font-size: 16px;
+  position: absolute;
+  font-family: 'Press Start 2P', sans-serif;
+  top: 0; 
+  margin: 20px 25%; 
+  text-align: center; 
+  font-weight: bold; 
+}
+
 .lobby-container {
     display: flex;
     flex-direction: row;
     width: 80%;
+    height: 300px;
+    border-radius: 15px;
+    background-color: rgb(161, 167, 252); 
+    box-shadow: 0 4px 8px rgb(0, 0, 0);
+    margin: 20px auto;
+    overflow: hidden;
+  }
+
+  .options-container {
+    display: flex;
+    gap: 30px;
+    flex-direction: column;
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    width: 25%;
     height: 300px;
     border-radius: 15px;
     background-color: rgb(161, 167, 252); 
@@ -14,6 +40,7 @@
     flex: 1;
     background-color: rgb(97, 108, 251);
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -49,7 +76,7 @@
   
   .rooms-table-container {
     width: 100%;
-    height: 150px; /* Adjusted height for table scroll */
+    height: 200px; /* Adjusted height for table scroll */
     overflow-y: auto; /* Enable scrolling */
     margin-top: 10px;
   }
@@ -76,6 +103,18 @@
   }
   
   /**/
+  .start_button {
+    padding: 10px 20px;
+    background-color: rgb(244, 213, 75); 
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', sans-serif;
+    cursor: pointer;
+  }
+  .start_button:hover{
+    background-color: #F7E28C;
+  }
   .createRoom_button {
     padding: 10px 20px;
     background-color: rgb(244, 213, 75); 
@@ -103,7 +142,29 @@
   .join-button:hover {
     background-color: #F7E28C;
   }
+
+  .bot-difficulty-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Add even spacing between labels */
+    align-items: flex-start;
+  }
   
+  .bot-difficulty-form label {
+    margin-bottom: 0; /* No need for margin-bottom if using gap */
+  }
+  
+  .game-mode-selection {
+    font-size: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .game-mode-selection label {
+    font-size: 10px;
+    margin-bottom: 10px; /* Spacing between radio buttons */
+  }
   .error {
     color: red;
     margin-top: 10px;
