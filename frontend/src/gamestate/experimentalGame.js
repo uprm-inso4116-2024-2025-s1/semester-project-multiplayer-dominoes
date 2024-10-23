@@ -126,6 +126,7 @@ function MainGame() {
     useEffect(() => {
         achievementManager.checkStartWithDoubleSix(initialPlayerHand);
         achievementManager.checkAllDoublesHand(initialPlayerHand);
+        achievementManager.checkHasAnyDoubles(initialPlayerHand);
     }, []);
 
 

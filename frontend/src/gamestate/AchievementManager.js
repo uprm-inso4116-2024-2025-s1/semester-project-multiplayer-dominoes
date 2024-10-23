@@ -6,7 +6,8 @@ class AchievementManager {
             "startWithDoubleSix": false,
             "winGame": false,
             "winWithoutDrawing": false,
-            "allDoublesHand": false
+            "allDoublesHand": false,
+            "hasAnyDoubles": false,
         };
         this.drewDomino = false;  // Track if player drew any domino
         this.achievementQueue = [];
@@ -47,7 +48,9 @@ class AchievementManager {
             imgSrc = 'DoubleSix.png';
         } else if (message === "All Doubles Hand!") {
             imgSrc = 'AllDoubles.png';
-        } 
+        } else if (message === "Has Any Doubles!") {
+            imgSrc = 'Dominodouble_achievement.png';
+        }
 
         if (imgSrc) {
             const img = document.createElement('img');
@@ -60,6 +63,23 @@ class AchievementManager {
             img.style.transition = 'right 0.5s ease-in-out'; // Add transition
             document.body.appendChild(img);
 
+            // Slide in after a short delay
+            setTimeout(() => {
+                img.style.right = '10px';
+            }, 50);
+
+            // Slide out after 3 seconds
+            setTimeout(() => {
+                img.style.right = '-310px';
+                
+                // Remove the image and show next achievement after the slide-out animation completes
+                setTimeout(() => {
+                    if (img.parentNode) {
+                        document.body.removeChild(img);
+                    }
+                    this.showNextAchievement();
+                }, 500); // Wait for slide out animation to complete
+            }, 3000);
         } else {
             // If there's no image for this achievement, move to the next one immediately
             this.showNextAchievement();
@@ -71,6 +91,13 @@ class AchievementManager {
         if (initialHand.some(domino => domino[0] === 6 && domino[1] === 6)) {
             this.achievements.startWithDoubleSix = true;
             this.showAchievementToast("Started with Double Six!");
+        }
+    }
+
+    checkHasAnyDoubles(initialHand){
+        if(initialHand.some(domino => domino[0] === domino[1])){
+            this.achievements.hasAnyDoubles = true;
+            this.showAchievementToast("Has Any Doubles!");
         }
     }
 
