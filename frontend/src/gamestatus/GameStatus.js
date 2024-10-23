@@ -3,35 +3,39 @@
  *  refreshed, closed, etc. it might be extended in the future. 
  *  Right now, it contains overall wins, the current table, current
  *  player and the player hands for the player's game.
+ * @param {TableData} table
+ * @param {PlayerData} current_player
+ * @param {string} current_turn
+ * @param {int} player_scores
  */
 
 class GameStatus {
     #current_table;
     #current_player;
-    #player_hands;
+    #current_turn;
     #scores;
-    constructor(table, current_player, player_hands, player_scores) {
+    constructor(table, current_player, current_turn, player_scores) {
         this.#current_table = table;
         this.#current_player = current_player;
-        this.#player_hands = player_hands;
+        this.#current_turn = current_turn;
         this.#scores = player_scores;
     }
 
     // getters
     get CurrentTable() { return this.#current_table; }
     get CurrentPlayer() { return this.#current_player; }
-    get PlayerHands() { return this.#player_hands; }
+    get CurrentTurn() { return this.#current_turn; }
     get Scores() { return this.#scores; }
 
     // setters
     set CurrentTable(table) { this.#current_table = table; }
     set CurrentPlayer(current_player) { this.#current_player = current_player; }
-    set PlayerHands(player_hands) { this.#player_hands = player_hands; }
+    set CurrentTurn(current_turn) { this.#current_turn = current_turn; }
     set Scores(scores) { this.#scores = scores; }
 
     // Calculates score when the game ends.
     calculateFinalScores(losingPlayer) {
-        const hand = this.#player_hands[losingPlayer];
+        const hand = this.#current_player.PlayerHand[losingPlayer];
         const score = hand.reduce((sum, domino) => sum + (domino.left + domino.right), 0);
         this.#scores[losingPlayer] = score; 
         return score;

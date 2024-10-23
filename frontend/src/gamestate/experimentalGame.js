@@ -1,14 +1,14 @@
-import { Table, Corner } from './table.js';
-import React, { useState, useEffect } from 'react';
-import DominoBot from './Bot.js';
-import RuleEngine from './RuleEngine.js';
-import { useNavigate, useLocation } from 'react-router-dom';
-import PauseScreen from './Pause.js';
-import AchievementManager from './AchievementManager.js';
-import { ToastContainer } from 'react-toastify';  // Import ToastContainer
-import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
-import IntermediateBot from './intermediateBot.js';
-import GameStatus from '../gamestatus/GameStatus.js';
+import { Table, Corner } from "./table.js";
+import React, { useCallback, useState, useEffect } from "react";
+import DominoBot from "./Bot.js";
+import { fromJSON, toJSON } from "flatted";
+import RuleEngine from "./RuleEngine.js";
+import { useNavigate, useLocation } from "react-router-dom";
+import PauseScreen from "./Pause.js";
+import AchievementManager from "./AchievementManager.js";
+import { ToastContainer } from "react-toastify";  // Import ToastContainer
+import "react-toastify/dist/ReactToastify.css";   // Import Toastify CSS
+import IntermediateBot from "./intermediateBot.js";
 
 const tileWidth = 3840 / 28; // Width of each tile (~137.14 pixels)
 const tileHeight = 91; // Height of each tile (91 pixels)
@@ -20,7 +20,7 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
 
     const tileImage = new Image();
-    tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
+    tileImage.src = "/Dominos-28-Horrizontally.png"; // Adjust this path as needed
     function initTiles() {
         return new Promise((resolve) => {
             console.log("Starting to load image...");
@@ -86,8 +86,7 @@ function MainGame() {
     ];
 
 
-    const [playerDominoIndex, setPlayerDominoIndex] = useState('');
-    const [currentTurn, setCurrentTurn] = useState('Player');
+    const [playerDominoIndex, setPlayerDominoIndex] = useState("");
 
     const [data, setData] = useState({
         Domino: undefined,
@@ -101,12 +100,22 @@ function MainGame() {
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
     let bot = new IntermediateBot(tempTableState, botHand);
+    const player_hand = localStorage.getItem("PlayerHand");
+    const player_input = localStorage.getItem("PlayerInput");
+    const current_turn = localStorage.getItem("currentTurn");
+    const draw_matrix = localStorage.getItem("DrawMatrix");
+    const player_hand_value = player_hand ? fromJSON(JSON.parse(player_hand)) : initialPlayerHand;
+    const player_input_value = player_input ? fromJSON(JSON.parse(player_input)) : false;
+    const draw_matrix_value = draw_matrix ? fromJSON(JSON.parse(draw_matrix)) : tempTableState.drawTable().split("\n");
+    const current_turn_value = current_turn ? fromJSON(JSON.parse(current_turn)) : "Player";
+
+    const [currentTurn, setCurrentTurn] = current_turn_value;
 
     const achievementManager = new AchievementManager();
 
     useEffect(() => {
-        achievementManager.checkStartWithDoubleSix(initialPlayerHand);
-        achievementManager.checkAllDoublesHand(initialPlayerHand);
+        achievementManager.checkStartWithDoubleSix(player_hand_value);
+        achievementManager.checkAllDoublesHand(player_hand_value);
     }, []);
 
 
@@ -119,15 +128,23 @@ function MainGame() {
 
     const [tableData, setTableData] = useState({
         TableState: tempTableState,
-        DrawMatrix: tempTableState.drawTable().split('\n'),
+        DrawMatrix: draw_matrix_value,
     });
     const [playerData, setPlayerData] = useState({
-        PlayerHand: initialPlayerHand,
-        DrawHand: drawChips(initialPlayerHand),
-        PlayerInput: false,
+        PlayerHand: player_hand_value,
+        DrawHand: drawChips(player_hand_value),
+        PlayerInput: player_input_value,
     });
 
     const [isPaused, setPaused] = useState(false);
+
+    useEffect(() => {
+        console.log("game was saved...")
+        localStorage.setItem("PlayerHand", JSON.stringify(toJSON(playerData.PlayerHand)));
+        localStorage.setItem("PlayerInput", JSON.stringify(toJSON(playerData.PlayerInput)));
+        localStorage.setItem("DrawMatrix", JSON.stringify(toJSON(tableData.DrawMatrix)));
+        localStorage.setItem("currentTurn", JSON.stringify(toJSON(currentTurn)));
+    }, [currentTurn])
 
     const pauseGame = () => {
         setPaused(true);
@@ -144,7 +161,7 @@ function MainGame() {
     const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(true);
 
     const playSound = () => {
-        const audio = document.getElementById('dominoPlaceSound');
+        const audio = document.getElementById("dominoPlaceSound");
         if (audio) {
             audio.play();
         }
@@ -171,7 +188,7 @@ function MainGame() {
                 }));
                 setTableData({
                     TableState: tableData.TableState,
-                    DrawMatrix: tableData.TableState.drawTable().split('\n')
+                    DrawMatrix: tableData.TableState.drawTable().split("\n")
                 });
 
                 if (botData.BotPlayer.hand.length === 0) {
@@ -179,7 +196,7 @@ function MainGame() {
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
                     return;
                 }
-                setCurrentTurn('Player');
+                setCurrentTurn("Player");
                 playSound();
             } else if (tableData.TableState.availableDominos !== 0) {
                 // If the bot cannot play, and there are still dominos available to draw
@@ -196,7 +213,7 @@ function MainGame() {
                 // Retry playing after grabbing a new domino
                 botPlayTurn(botData, tableData, setbotData, setTableData);
             } else { //Bot cannot make a move and cannot draw more dominoes.
-                setCurrentTurn('Player');
+                setCurrentTurn("Player");
             }
         }, 3000); // Give a 3-second delay before the bot plays
     }
@@ -215,7 +232,7 @@ function MainGame() {
 
                 setTableData({
                     TableState: tempTableState,
-                    DrawMatrix: tempTableState.drawTable().split('\n'),
+                    DrawMatrix: tempTableState.drawTable().split("\n"),
                 });
 
                 playerData.PlayerHand.splice(playerDominoIndex, 1);
@@ -226,7 +243,7 @@ function MainGame() {
                     PlayerInput: false,
                 });
 
-                setPlayerDominoIndex('');
+                setPlayerDominoIndex("");
                 playSound();
 
                 // Check win condition for player
@@ -238,7 +255,7 @@ function MainGame() {
                     return;
                 }
                 // Bot's turn to play
-                setCurrentTurn('bot');
+                setCurrentTurn("bot");
                 botPlayTurn(botData, tableData, setbotData, setTableData);
             }
         }
@@ -257,14 +274,14 @@ function MainGame() {
 
             setTableData({
                 TableState: tableData.TableState,
-                DrawMatrix: tableData.TableState.drawTable().split('\n')
+                DrawMatrix: tableData.TableState.drawTable().split("\n")
             });
         }
     }, [data, playerData]);
 
     // For displaying turn notification
     useEffect(() => {
-        if (currentTurn === 'Player' && !showWinnerOverlay && !showLoserOverlay) {
+        if (currentTurn === "Player" && !showWinnerOverlay && !showLoserOverlay) {
             setShowTurnNotification(true);
             setTimeout(() => setShowTurnNotification(false), 2000); // Show "Your Turn" notification for 2 seconds
         }
@@ -279,29 +296,29 @@ function MainGame() {
         }
 
         const containerStyle = {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            padding: '10px',
-            width: '100%',
-            overflowX: 'auto'
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            padding: "10px",
+            width: "100%",
+            overflowX: "auto"
         };
 
         const rowStyle = {
-            display: 'flex',
-            gap: '10px',
+            display: "flex",
+            gap: "10px",
         };
 
         const itemStyle = {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
         };
 
         const numberStyle = {
-            marginTop: '5px',
-            fontWeight: 'bold',
-            fontSize: '14px'
+            marginTop: "5px",
+            fontWeight: "bold",
+            fontSize: "14px"
         };
 
         // Group dominoes into rows of 7
@@ -332,7 +349,7 @@ function MainGame() {
                                             style={{
                                                 width: `${tile.width}px`,
                                                 height: `${tile.height}px`,
-                                                objectFit: 'none',
+                                                objectFit: "none",
                                                 objectPosition: `-${tile.sx}px 0px`,
                                             }}
                                             alt={`Domino ${chip[0]}-${chip[1]}`}
@@ -352,21 +369,21 @@ function MainGame() {
 
     // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
     function drawBotChips(tileCount) {
-        const backtileImage = '/backtile.png'; // Adjust this path as needed
+        const backtileImage = "/backtile.png"; // Adjust this path as needed
         // Use the same scale as in renderDominoImage
         const displayWidth = tileWidth
         const displayHeight = tileHeight
 
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 {[...Array(tileCount)].map((_, index) => (
-                    <div key={index} style={{ margin: '0 2px' }}>
+                    <div key={index} style={{ margin: "0 2px" }}>
                         <img
                             src={backtileImage}
                             style={{
                                 width: `${displayWidth}px`,
                                 height: `${displayHeight}px`,
-                                objectFit: 'cover'
+                                objectFit: "cover"
                             }}
                             alt={`Bot's domino ${index + 1}`}
                         />
@@ -388,10 +405,10 @@ function MainGame() {
                     style={{
                         width: `${tile.width}px`,
                         height: `${tile.height}px`,
-                        objectFit: 'none',
+                        objectFit: "none",
                         objectPosition: `-${tile.sx}px 0px`,
-                        display: 'inline-block',
-                        verticalAlign: 'middle',
+                        display: "inline-block",
+                        verticalAlign: "middle",
                     }}
                     alt={`Domino ${domino[0]}-${domino[1]}`}
                 />
@@ -406,18 +423,18 @@ function MainGame() {
             setShowLoseProgressIfLobby(false);
         }
         else {
-            navigate('/lobby')
+            navigate("/lobby")
         }
     }
 
     function renderGameBoard() {
         return tableData.DrawMatrix.map((row, rowIndex) => (
-            <div key={rowIndex} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40px' }}>
-                {row.split(' ').map((cell, cellIndex) => {
-                    if (cell === '===') {
-                        return <span key={cellIndex} style={{ width: '40px', display: 'inline-block' }}></span>;
-                    } else if (cell.startsWith('|')) {
-                        const [val1, val2] = cell.slice(1, -1).split('|').map(Number);
+            <div key={rowIndex} style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "40px" }}>
+                {row.split(" ").map((cell, cellIndex) => {
+                    if (cell === "===") {
+                        return <span key={cellIndex} style={{ width: "40px", display: "inline-block" }}></span>;
+                    } else if (cell.startsWith("|")) {
+                        const [val1, val2] = cell.slice(1, -1).split("|").map(Number);
                         return <span key={cellIndex}>{renderDominoImage([val1, val2])}</span>;
                     }
                     return null;
@@ -431,14 +448,14 @@ function MainGame() {
     function Popup({ message }) {
         return (
             <div style={{
-                position: 'fixed',
-                bottom: '20px',
-                right: '20px',
-                backgroundColor: '#f8d7da',
-                color: '#721c24',
-                padding: '10px 20px',
-                borderRadius: '5px',
-                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                position: "fixed",
+                bottom: "20px",
+                right: "20px",
+                backgroundColor: "#f8d7da",
+                color: "#721c24",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
                 zIndex: 1000
             }}>
                 {message}
@@ -449,62 +466,62 @@ function MainGame() {
     return (
         <div>
             {!isPaused ? (
-                <div className='table_game'>
+                <div className="table_game">
                     {/*Button to switch between gamestate and lobby ui*/}
                     <button
                         style={{
-                            position: 'absolute',
-                            top: '10px',
-                            right: '10px',
-                            padding: '10px',
-                            backgroundColor: '#1A3636',
-                            color: '#FFFFFF',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer'
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                            padding: "10px",
+                            backgroundColor: "#1A3636",
+                            color: "#FFFFFF",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer"
                         }}
                         onClick={handleLobbyButton}>Lobby</button>
 
                     {/*Displays who's turn it is.*/}
-                    <div className='turnInfo'>
-                        <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
+                    <div className="turnInfo">
+                        <p>{currentTurn === "Player" ? "It's your turn!" : "Bot is thinking..."}</p>
                     </div>
                     {/* Turn notification overlay */}
                     {showTurnNotification && (
                         <div className="overlay">
-                            <img src={'yourTurn.png'} alt="Your Turn" />
+                            <img src={"yourTurn.png"} alt="Your Turn" />
                         </div>
                     )}
 
                     {/* Winner overlay */}
                     {showWinnerOverlay && (
                         <div className="overlay">
-                            <img src={'winner.png'} alt="Winner" />
+                            <img src={"winner.png"} alt="Winner" />
                         </div>
                     )}
 
                     {/* Loser overlay */}
                     {showLoserOverlay && (
                         <div className="overlay">
-                            <img src={'loser.png'} alt="Loser" />
+                            <img src={"loser.png"} alt="Loser" />
                         </div>
                     )}
                     {/*Shows the placeholder dominoes for the bot.*/}
-                    <div className='BotInfo'>
+                    <div className="BotInfo">
                         <p>{botData.DbHand}</p>
                     </div>
 
-                    <div className='table'>
+                    <div className="table">
                         {renderGameBoard()}
                     </div>
-                    <div className='input_chips'>
-                        <div className='Player1'>
+                    <div className="input_chips">
+                        <div className="Player1">
                             <p>{playerData.DrawHand}</p>
 
-                            <input type='number'
+                            <input type="number"
                                 value={playerDominoIndex}
                                 onChange={(e) => setPlayerDominoIndex(e.target.value)}
-                                placeholder='Enter the position of a domino' />
+                                placeholder="Enter the position of a domino" />
 
                             <button onClick={() => {
                                 if (playerDominoIndex) {
