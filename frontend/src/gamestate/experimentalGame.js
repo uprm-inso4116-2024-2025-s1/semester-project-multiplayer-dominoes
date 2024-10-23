@@ -427,8 +427,7 @@ function MainGame() {
         const displayHeight = tileHeight
 
         return (
-            <div style={{ display: 'flex', flexDirection:'horizontal', gap:'0', justifyContent:'center'}}>
-                {[...Array(tileCount)].map((_, index) => (
+                [...Array(tileCount)].map((_, index) => (
                     <div key={index}>
                         <img
                             src={backtileImage}
@@ -441,8 +440,7 @@ function MainGame() {
                             alt={`Bot's domino ${index + 1}`}
                         />
                     </div>
-                ))}
-            </div>
+                ))
         );
     }
 
@@ -566,24 +564,23 @@ function MainGame() {
                             <img src={'loser.png'} alt="Loser" />
                         </div>
                     )}
-                    {/*Shows the placeholder dominoes for the bot.*/}
-                    <div className='BotInfo' style={{display:'flex',flexDirection:'column'}}>
-                        <p style={{ margin:'0px'}} >{botData.DbHand}</p>
-                        <p style={{ margin:'0px'}} >{ botData2 ? botData2.DbHand : null}</p>
-                        <p style={{ margin:'0px'}} >{ botData3 ? botData3.DbHand : null}</p>
-                    </div>
-                    <div style={{display:'flex',justifyContent:'center'}}>
-                        <div className='table' style={{ /* Start with 4x4 */
-                                                        display: 'grid',
-                                                        gridTemplateColumns: 'repeat(11,3vmax)',
-                                                        gridTemplateRows: 'repeat(11,3vmax)',
-                                                        gap: '1rem',
-                                                        height: '67vh',
-                                                    }}>
-                            {renderGameBoard()}
+                    <p style={{  display:'flex', flexDirection:'horizontal', justifyContent:'center'}} >{ botData3 ? botData2.DbHand : botData.DbHand}</p>
+                    <div style={{display:'flex'}}>
+                        <p style={{display:'flex', flexDirection:'column', justifyContent:'center'}} >{ botData2 ? (botData3 ? botData3.DbHand : botData2.DbHand) : null}</p>
+                        <div style={{display:'flex',justifyContent:'center'}}>
+                            <div className='table' style={{ /* Start with 4x4 */
+                                                            display: 'grid',
+                                                            gridTemplateColumns: 'repeat(11,4.4rem)',
+                                                            gridTemplateRows: 'repeat(11,4.4rem)',
+                                                            gap: '1rem',
+                                                            height: '48rem',
+                                                        }}>
+                                {renderGameBoard()}
+                            </div>
                         </div>
+                        <p style={{display:'flex', flexDirection:'column', justifyContent:'center'}} >{ botData3 ? botData.DbHand: null}</p>
                     </div>
-                    <div className='input_chips'>
+                    <div style={{display:'inline-block'}} className='input_chips'>
                         <div className='Player1'>
                             <p>{playerData.DrawHand}</p>
 
