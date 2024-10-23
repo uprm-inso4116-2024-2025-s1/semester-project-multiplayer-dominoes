@@ -530,6 +530,7 @@ function MainGame() {
                                         DominoDirection: Corner.LEFT
                                     });
                                 }
+                                saveGame();
                             }}>Left Tail</button>
                             <button onClick={() => {
                                 if (playerDominoIndex) {
@@ -538,6 +539,7 @@ function MainGame() {
                                         DominoDirection: Corner.RIGHT
                                     });
                                 }
+                                saveGame();
                             }}>Right Tail</button>
                             <button onClick={() => {
                                 if (tableData.TableState.availableDominos === 0) {
