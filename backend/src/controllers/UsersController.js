@@ -54,5 +54,15 @@ export default class UsersController {
             res.status(500).json({ error: error.message });
         }
     }
+
+    async logoutUser(req, res) {
+        try {
+            const userId = req.user.id;
+            await this.userHandler.logoutUser(userId);
+            res.status(200).json({ message: 'Logged out successfully' });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
 
