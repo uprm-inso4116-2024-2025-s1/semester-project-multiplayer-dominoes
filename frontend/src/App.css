@@ -105,3 +105,22 @@
 .rules h2, .rules p {
   color: #582400; 
 }
+
+.chat-button {
+  position: fixed;
+  bottom: 20px; /* Change top to bottom */
+  right: 20px; /* Change left to right */
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 10px;
+  background-color: #FFFEC9; 
+  border: none;
+  border-radius: 5px;
+  color: #582400; 
+  cursor: pointer;
+  z-index: 1001; 
+}
+
+.chat-button:hover {
+  background-color: rgb(244, 213, 75); 
+}
