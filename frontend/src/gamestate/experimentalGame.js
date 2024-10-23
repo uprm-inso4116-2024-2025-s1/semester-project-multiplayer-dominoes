@@ -453,7 +453,7 @@ function MainGame() {
         if (tile && tile.image) {
             const scale = 0.5; // Adjust this value to change the size of the domino
             return (
-                <div style={{width:"100px",height:"auto"}}>
+                <div style={{width:`${tile.width}px`,height:`${tile.height}px`}}>
                     <img
                         src={tile.image.src}
                         style={{
