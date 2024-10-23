@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from 'uuid'; // Import the UUID package
 import UserModel from "../models/UserModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '../index.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 export default class UsersHandler {
     async getAllUsers() {
         return await UserModel.find();
@@ -26,7 +26,6 @@ export default class UsersHandler {
         return await UserModel.findOne({ username });
     }
     
-
     async validatePassword(inputPassword, storedPassword) {
         return await bcrypt.compare(inputPassword, storedPassword);
     }

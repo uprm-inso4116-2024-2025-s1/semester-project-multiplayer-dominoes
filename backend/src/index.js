@@ -2,16 +2,16 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import createMongoDbConnection from './database/MongoDbConnection.js';
-
 import HealthCheckController from './controllers/HealthCheckController.js';
 import UsersController from './controllers/UsersController.js';
-
-import UsersHandler from './handlers/UsersHandler.js';
-import authenticateJWT from './middleware/authenticateJWT.js';
 
 // Load environment variables
 dotenv.config();
 
+import authenticateJWT from './middleware/authenticateJWT.js';
+import UsersHandler from './handlers/UsersHandler.js';
+
+export const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key';
 // Setup database connection
 createMongoDbConnection(process.env.MONGODB_URI);
 
