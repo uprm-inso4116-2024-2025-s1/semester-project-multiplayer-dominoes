@@ -94,6 +94,13 @@ class RuleEngine {
         };
     }
 
+    // Placeholder for 'drawDominoes' rules
+    getDrawDominoesRules() {
+        return {
+            // Specific validation for 'drawDominoes' can go here
+        };
+    }
+
     // Function to validate moves based on the game mode
     validateMove(domino, table) {
         return this.rules.validateMove(domino, table);
