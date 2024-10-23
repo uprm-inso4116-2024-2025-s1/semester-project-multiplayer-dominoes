@@ -120,6 +120,10 @@ function MainGame() {
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
     let bot = new IntermediateBot(tempTableState, botHand);
+    let botHand2 = null;
+    let bot2 = null;
+    let botHand3 = null;
+    let bot3 = null;
 
     const achievementManager = new AchievementManager();
 
@@ -135,6 +139,37 @@ function MainGame() {
         BotPlayer: bot,
         TileCount: botHand.length
     })
+
+    const [botData2, setbotData2] = useState(null)
+    const [botData3, setbotData3] = useState(null)
+
+    if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+        botHand2 = tempTableState.playerChips();
+        bot2 = new IntermediateBot(tempTableState, botHand2);
+    }
+    if(gameMode === 'threeBots'){
+        botHand3 = tempTableState.playerChips();
+        bot3 = new IntermediateBot(tempTableState, botHand3);
+    }
+    useEffect(()=>{
+        if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+            setbotData2({
+                BotHand: botHand2,
+                DbHand: drawBotChips(botHand2.length),
+                BotPlayer: bot2,
+                TileCount: botHand2.length
+            })
+        }
+        if(gameMode === 'threeBots'){
+            setbotData3({
+                BotHand: botHand3,
+                DbHand: drawBotChips(botHand3.length),
+                BotPlayer: bot3,
+                TileCount: botHand3.length
+            })
+        }
+    },[])
+
 
     const [tableData, setTableData] = useState({
         TableState: tempTableState,
@@ -178,7 +213,7 @@ function MainGame() {
      * @param {*} setTableData - Setter for the table data.
      */
     function botPlayTurn(botData, tableData, setbotData, setTableData) {
-        setTimeout(() => {
+        
             let botMoved = botData.BotPlayer.playTurn();
             if (botMoved) {
                 // Update bot data and table if a move was successfully made
@@ -198,9 +233,8 @@ function MainGame() {
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
                     return;
                 }
-                setCurrentTurn('Player');
                 playSound();
-            } else if (tableData.TableState.availableDominos !== 0) {
+            } else if (tableData.TableState.availableDominos > 0) {
                 // If the bot cannot play, and there are still dominos available to draw
                 botData.BotHand.push(tableData.TableState.grabRandomChip());
 
@@ -214,10 +248,8 @@ function MainGame() {
 
                 // Retry playing after grabbing a new domino
                 botPlayTurn(botData, tableData, setbotData, setTableData);
-            } else { //Bot cannot make a move and cannot draw more dominoes.
-                setCurrentTurn('Player');
             }
-        }, 3000); // Give a 3-second delay before the bot plays
+
     }
 
     useEffect(() => {
@@ -258,7 +290,25 @@ function MainGame() {
                 }
                 // Bot's turn to play
                 setCurrentTurn('bot');
-                botPlayTurn(botData, tableData, setbotData, setTableData);
+
+                setTimeout(()=>{
+                    botPlayTurn(botData, tableData, setbotData, setTableData);
+                },1000)
+                if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+                    setTimeout(()=>{
+                        botPlayTurn(botData2, tableData, setbotData2, setTableData);
+                    },2000)
+                }
+                if(gameMode === 'threeBots'){
+                    setTimeout(()=>{
+                        botPlayTurn(botData3, tableData, setbotData3, setTableData);
+                    },3000)
+                }
+
+                setTimeout(()=>{
+                    setCurrentTurn('Player');
+                },4000)
+
             }
         }
 
@@ -514,6 +564,8 @@ function MainGame() {
                     {/*Shows the placeholder dominoes for the bot.*/}
                     <div className='BotInfo'>
                         <p>{botData.DbHand}</p>
+                        <p>{ botData2 ? botData2.DbHand : null}</p>
+                        <p>{ botData3 ? botData3.DbHand : null}</p>
                     </div>
 
                     <div className='table'>

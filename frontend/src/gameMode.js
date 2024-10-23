@@ -5,6 +5,8 @@ export default function GameMode() {
     return (
         <div><p>Choose game mode:</p>
             <button onClick={() => navigate('/game', { state: { gameMode: 'classic' } })}>vs. AI</button>
+            <button onClick={() => navigate('/game', { state: { gameMode: 'twoBots' } })}>vs. 2 AI</button>
+            <button onClick={() => navigate('/game', { state: { gameMode: 'threeBots' } })}>vs. 3 AI</button>
             <button onClick={() => {
                 navigate('/game', { state: { gameMode: 'allFives' } })
             }}>All Fives</button>
