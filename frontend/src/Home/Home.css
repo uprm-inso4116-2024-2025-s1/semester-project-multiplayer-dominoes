@@ -125,7 +125,9 @@ img {
 
 
 .leaderboard-container {
+    flex: 1;
     position: relative;
+    width: 100%;
 }
 
 .leaderboard-img {
@@ -135,45 +137,66 @@ img {
 }
 
 .leaderboard-rows {
+    flex: 1;
     position: absolute;
-    top: 170px;
+    top: 30%;
     left: 0;
     right: 0;
     bottom: 0;
+    padding: 0 15px;
 }
 
 .leaderboard-row {
     display: flex;
-    color: black;
+    justify-content: space-between;
     font-weight: bold;
     padding: 5px;
 }
 
 .leaderboard-column {
-    padding-left: 20px;
+    font-family: 'Orbitron', cursive;
+    color: white;
     text-align: center;
+    font-size: 1.2vw; /* Responsive font size */
 }
 
 .column-rank {
-  width: 175px;
-  padding-left: 20px;
+    width: 9vw; /* Responsive width */
 }
 
 .column-player {
-  width: 200px;
-  text-align: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
+    width: 22vw; /* Responsive width for player names */
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
 }
 
-.column-wins {
-  width: 140px;
+.column-wins, .column-losses {
+    width: 9vw; /* Responsive width for wins and losses */
 }
 
-.column-losses {
-  width: 200px;
+@media (max-width: 768px) {
+    .leaderboard-rows {
+        top: 15%;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px;
+    }
+
+    .leaderboard-column {
+        font-size: 3vw;
+        padding-left: 2vw;
+    }
+
+    .column-rank, .column-wins, .column-losses {
+        width: 15vw;
+    }
+
+    .column-player {
+        width: 40vw;
+    }
 }
 
 /* Media queries for smaller screens */

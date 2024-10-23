@@ -52,25 +52,25 @@ const Home = () => {
                             <div class="leaderboard-row">
                                 <div class="leaderboard-column column-rank">1</div>
                                 <div class="leaderboard-column column-player" title='TheTileWhisperer'>TheTileWhisperer</div>
-                                <div class="leaderboard-column column-wins">2435</div>
+                                <div class="leaderboard-column column-wins">24</div>
                                 <div class="leaderboard-column column-losses">50</div>
                             </div>
                             <div class="leaderboard-row">
                                 <div class="leaderboard-column column-rank">2</div>
-                                <div class="leaderboard-column column-player">WittyWorm19</div>
-                                <div class="leaderboard-column column-wins" title='WittyWorm19'>2256</div>
+                                <div class="leaderboard-column column-player" title='WittyWorm19'>WittyWorm19</div>
+                                <div class="leaderboard-column column-wins">22</div>
                                 <div class="leaderboard-column column-losses">80</div>
                             </div>
                             <div class="leaderboard-row">
                                 <div class="leaderboard-column column-rank">3</div>
-                                <div class="leaderboard-column column-player">BlockBuster</div>
-                                <div class="leaderboard-column column-wins" title='BlockBuster'>2200</div>
+                                <div class="leaderboard-column column-player" title='BlockBuster'>BlockBuster</div>
+                                <div class="leaderboard-column column-wins">22</div>
                                 <div class="leaderboard-column column-losses">60</div>
                             </div>
                             <div class="leaderboard-row">
                                 <div class="leaderboard-column column-rank">4</div>
                                 <div class="leaderboard-column column-player" title='NarutoBoy64'>NarutoBoy64</div>
-                                <div class="leaderboard-column column-wins">2190</div>
+                                <div class="leaderboard-column column-wins">21</div>
                                 <div class="leaderboard-column column-losses">90</div>
                             </div>
                             </div>
