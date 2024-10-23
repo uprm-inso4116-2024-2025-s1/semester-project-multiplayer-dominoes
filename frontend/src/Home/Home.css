@@ -139,7 +139,7 @@ img {
 .leaderboard-rows {
     flex: 1;
     position: absolute;
-    top: 30%;
+    top: 31%;
     left: 0;
     right: 0;
     bottom: 0;
@@ -150,7 +150,6 @@ img {
     display: flex;
     justify-content: space-between;
     font-weight: bold;
-    padding: 5px;
 }
 
 .leaderboard-column {
@@ -173,7 +172,11 @@ img {
     cursor: pointer;
 }
 
-.column-wins, .column-losses {
+.column-wins {
+    width: 11vw; /* Responsive width for wins and losses */
+}
+
+.column-losses {
     width: 9vw; /* Responsive width for wins and losses */
 }
 
