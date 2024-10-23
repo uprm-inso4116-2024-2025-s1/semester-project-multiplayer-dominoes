@@ -105,3 +105,37 @@
 .rules h2, .rules p {
   color: #582400; 
 }
+
+.pause-image {
+  width: 40vw;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.button-container {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-container button {
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 12px;
+  background-color: #FFFEC9;
+  border: none;
+  border-radius: 5px;
+  color: #582400;
+  cursor: pointer;
+}
+
+.button-container button:hover {
+  background-color: rgb(244, 213, 75);
+}
