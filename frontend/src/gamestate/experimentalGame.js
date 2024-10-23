@@ -104,10 +104,12 @@ function MainGame() {
     const player_input = localStorage.getItem("PlayerInput");
     const current_turn = localStorage.getItem("currentTurn");
     const draw_matrix = localStorage.getItem("DrawMatrix");
+    const bot_hand = localStorage.getItem("BotHand");
     const player_hand_value = player_hand ? fromJSON(JSON.parse(player_hand)) : initialPlayerHand;
     const player_input_value = player_input ? fromJSON(JSON.parse(player_input)) : false;
     const draw_matrix_value = draw_matrix ? fromJSON(JSON.parse(draw_matrix)) : tempTableState.drawTable().split("\n");
     const current_turn_value = current_turn ? fromJSON(JSON.parse(current_turn)) : "Player";
+    const bot_hand_value = bot_hand ? fromJSON(JSON.parse(bot_hand)) : tempTableState.playerChips();
 
     const [currentTurn, setCurrentTurn] = useState(current_turn_value);
 
@@ -120,10 +122,10 @@ function MainGame() {
 
 
     const [botData, setbotData] = useState({
-        BotHand: botHand,
-        DbHand: drawBotChips(botHand.length),
+        BotHand: bot_hand_value,
+        DbHand: drawBotChips(bot_hand_value.length),
         BotPlayer: bot,
-        TileCount: botHand.length
+        TileCount:bot_hand_value.length,
     })
 
     const [tableData, setTableData] = useState({
@@ -144,6 +146,7 @@ function MainGame() {
         localStorage.setItem("PlayerInput", JSON.stringify(toJSON(playerData.PlayerInput)));
         localStorage.setItem("DrawMatrix", JSON.stringify(toJSON(tableData.DrawMatrix)));
         localStorage.setItem("currentTurn", JSON.stringify(toJSON(currentTurn)));
+        localStorage.setItem("BotHand", JSON.stringify(toJSON(botData.BotHand)));
     }, [currentTurn])
 
     const pauseGame = () => {
@@ -427,6 +430,26 @@ function MainGame() {
         }
     }
 
+    const resetGame = () => {
+        console.log("I'm here!");
+        setPlayerData({
+            PlayerHand: initialPlayerHand,
+            DrawHand: drawChips(initialPlayerHand),
+            PlayerInput: false,
+        });
+        setTableData({
+            TableState: tempTableState,
+            DrawMatrix: tempTableState.drawTable().split('\n'),
+        });
+        setCurrentTurn(false);
+        setbotData({
+            BotHand: botHand,
+            DbHand: drawBotChips(botHand.length),
+            BotPlayer: bot,
+            TileCount: botHand.length
+        });
+    }
+
     function renderGameBoard() {
         return tableData.DrawMatrix.map((row, rowIndex) => (
             <div key={rowIndex} style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "40px" }}>
@@ -480,7 +503,10 @@ function MainGame() {
                             borderRadius: "5px",
                             cursor: "pointer"
                         }}
-                        onClick={handleLobbyButton}>Lobby</button>
+                        onClick={() => {
+                            handleLobbyButton();
+                            resetGame();
+                        }}>Lobby</button>
 
                     {/*Displays who's turn it is.*/}
                     <div className="turnInfo">
