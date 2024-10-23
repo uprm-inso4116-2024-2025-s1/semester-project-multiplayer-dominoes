@@ -598,7 +598,6 @@ function MainGame() {
     }
 
     const resetGame = () => {
-        console.log("I'm here!");
         setPlayerData({
             PlayerHand: initialPlayerHand,
             DrawHand: drawChips(initialPlayerHand),
@@ -657,9 +656,6 @@ function MainGame() {
 
     return (
         <div>
-            <audio id="backgroundMusic" ref={backgroundMusic} loop>
-                <source src="/BackgroundMusic.mp3" type="audio/mpeg" />
-            </audio>
             {!isPaused ? (
                 <div className="table_game">
                     {/*Button to switch between gamestate and lobby ui*/}
@@ -678,7 +674,7 @@ function MainGame() {
                         onClick={() => {
                             handleLobbyButton();
                             resetGame();
-                        }}>Lobby</button>
+                            }}>Lobby</button>
 
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
