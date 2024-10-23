@@ -29,7 +29,7 @@ const usersHandler = new UsersHandler();
 // Create Controllers
 const healthCheckController = new HealthCheckController();
 const usersController = new UsersController(usersHandler);
-
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 // Register endpoints
 app.get('/', (req, res) => res.send('Welcome to Multiplayer Dominoes backend!'));
 app.get('/healthz', async (req, res) => healthCheckController.index(req, res));
