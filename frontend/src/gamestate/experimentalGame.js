@@ -427,15 +427,16 @@ function MainGame() {
         const displayHeight = tileHeight
 
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection:'horizontal', gap:'0', justifyContent:'center'}}>
                 {[...Array(tileCount)].map((_, index) => (
-                    <div key={index} style={{ margin: '0 2px' }}>
+                    <div key={index}>
                         <img
                             src={backtileImage}
                             style={{
                                 width: `${displayWidth}px`,
                                 height: `${displayHeight}px`,
-                                objectFit: 'cover'
+                                transform: 'scale(.6)',
+
                             }}
                             alt={`Bot's domino ${index + 1}`}
                         />
@@ -450,20 +451,22 @@ function MainGame() {
         const tileKey = domino[0].toString() + domino[1].toString();
         const tile = tileMap.get(tileKey);
         if (tile && tile.image) {
-            const scale = 0.3; // Adjust this value to change the size of the domino
+            const scale = 0.5; // Adjust this value to change the size of the domino
             return (
-                <img
-                    src={tile.image.src}
-                    style={{
-                        width: `${tile.width}px`,
-                        height: `${tile.height}px`,
-                        objectFit: 'none',
-                        objectPosition: `-${tile.sx}px 0px`,
-                        display: 'inline-block',
-                        verticalAlign: 'middle',
-                    }}
-                    alt={`Domino ${domino[0]}-${domino[1]}`}
-                />
+                <div style={{width:"100px",height:"auto"}}>
+                    <img
+                        src={tile.image.src}
+                        style={{
+                            width: `${tile.width}px`,
+                            height: `${tile.height}px`,
+                            objectFit: 'none',
+                            objectPosition: `-${tile.sx}px 0px`,
+                            transform: 'scale(0.6)',
+                            transformOrigin: 'top left',
+                        }}
+                        alt={`Domino ${domino[0]}-${domino[1]}`}
+                    />
+                </div>
             );
         }
         return `[${domino[0]},${domino[1]}]`; // Fallback to text if image not found
@@ -480,19 +483,21 @@ function MainGame() {
     }
 
     function renderGameBoard() {
-        return tableData.DrawMatrix.map((row, rowIndex) => (
-            <div key={rowIndex} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40px' }}>
-                {row.split(' ').map((cell, cellIndex) => {
-                    if (cell === '===') {
-                        return <span key={cellIndex} style={{ width: '40px', display: 'inline-block' }}></span>;
-                    } else if (cell.startsWith('|')) {
-                        const [val1, val2] = cell.slice(1, -1).split('|').map(Number);
-                        return <span key={cellIndex}>{renderDominoImage([val1, val2])}</span>;
-                    }
-                    return null;
-                })}
-            </div>
-        ));
+        console.log(tableData.TableState.dominoesMatrix)
+        let matrix = tableData.TableState.dominoesMatrix;
+        let html = [];
+        for (let i = 0; i < matrix.length; i++){
+            for(let j = 0; j < matrix[0].length; j++){
+                let domino = matrix[i][j]
+                if(domino != null){
+                    const [val1, val2] = [domino.values[0],domino.values[1]]
+                    html.push(<div key = {[i,j]} style={{display:'grid',placeItems: 'center'}}>{renderDominoImage([val1, val2])}</div>)
+                }else{
+                    html.push(<div key = {[i,j]} className="gridSquare" style={{display:'grid',placeItems: 'center'}}></div>)
+                }
+            }
+        }
+        return html;
     }
 
     const [showPopup, setShowPopup] = useState(false);
@@ -562,14 +567,21 @@ function MainGame() {
                         </div>
                     )}
                     {/*Shows the placeholder dominoes for the bot.*/}
-                    <div className='BotInfo'>
-                        <p>{botData.DbHand}</p>
-                        <p>{ botData2 ? botData2.DbHand : null}</p>
-                        <p>{ botData3 ? botData3.DbHand : null}</p>
+                    <div className='BotInfo' style={{display:'flex',flexDirection:'column'}}>
+                        <p style={{ margin:'0px'}} >{botData.DbHand}</p>
+                        <p style={{ margin:'0px'}} >{ botData2 ? botData2.DbHand : null}</p>
+                        <p style={{ margin:'0px'}} >{ botData3 ? botData3.DbHand : null}</p>
                     </div>
-
-                    <div className='table'>
-                        {renderGameBoard()}
+                    <div style={{display:'flex',justifyContent:'center'}}>
+                        <div className='table' style={{ /* Start with 4x4 */
+                                                        display: 'grid',
+                                                        gridTemplateColumns: 'repeat(11,3vmax)',
+                                                        gridTemplateRows: 'repeat(11,3vmax)',
+                                                        gap: '1rem',
+                                                        height: '67vh',
+                                                    }}>
+                            {renderGameBoard()}
+                        </div>
                     </div>
                     <div className='input_chips'>
                         <div className='Player1'>
