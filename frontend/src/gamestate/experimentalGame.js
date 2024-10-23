@@ -109,7 +109,7 @@ function MainGame() {
     const draw_matrix_value = draw_matrix ? fromJSON(JSON.parse(draw_matrix)) : tempTableState.drawTable().split("\n");
     const current_turn_value = current_turn ? fromJSON(JSON.parse(current_turn)) : "Player";
 
-    const [currentTurn, setCurrentTurn] = current_turn_value;
+    const [currentTurn, setCurrentTurn] = useState(current_turn_value);
 
     const achievementManager = new AchievementManager();
 
@@ -530,7 +530,6 @@ function MainGame() {
                                         DominoDirection: Corner.LEFT
                                     });
                                 }
-                                saveGame();
                             }}>Left Tail</button>
                             <button onClick={() => {
                                 if (playerDominoIndex) {
@@ -539,7 +538,6 @@ function MainGame() {
                                         DominoDirection: Corner.RIGHT
                                     });
                                 }
-                                saveGame();
                             }}>Right Tail</button>
                             <button onClick={() => {
                                 if (tableData.TableState.availableDominos === 0) {
