@@ -46,15 +46,36 @@ const Home = () => {
                 {/* Leaderboard Section */}
                 <div className="leaderboard">
                     <h2>WORLDWIDE LEADERBOARD</h2>
-                    <ul>
-                        <ol>
-                        <li>TheTileWhisperer: 2435</li>
-                        <li>WittyWorm19: 2256</li>
-                        <li>BlockBuster: 2200</li>
-                        <li>NarutoBoy64: 2190</li>
-                        </ol>
-                    </ul>
-                </div>
+                    <div class="leaderboard-container">
+                        <img src="images/leaderboard.png" class="leaderboard-img" alt="Leaderboard background"></img>
+                            <div class="leaderboard-rows">
+                            <div class="leaderboard-row">
+                                <div class="leaderboard-column column-rank">1</div>
+                                <div class="leaderboard-column column-player" title='TheTileWhisperer'>TheTileWhisperer</div>
+                                <div class="leaderboard-column column-wins">2435</div>
+                                <div class="leaderboard-column column-losses">50</div>
+                            </div>
+                            <div class="leaderboard-row">
+                                <div class="leaderboard-column column-rank">2</div>
+                                <div class="leaderboard-column column-player">WittyWorm19</div>
+                                <div class="leaderboard-column column-wins" title='WittyWorm19'>2256</div>
+                                <div class="leaderboard-column column-losses">80</div>
+                            </div>
+                            <div class="leaderboard-row">
+                                <div class="leaderboard-column column-rank">3</div>
+                                <div class="leaderboard-column column-player">BlockBuster</div>
+                                <div class="leaderboard-column column-wins" title='BlockBuster'>2200</div>
+                                <div class="leaderboard-column column-losses">60</div>
+                            </div>
+                            <div class="leaderboard-row">
+                                <div class="leaderboard-column column-rank">4</div>
+                                <div class="leaderboard-column column-player" title='NarutoBoy64'>NarutoBoy64</div>
+                                <div class="leaderboard-column column-wins">2190</div>
+                                <div class="leaderboard-column column-losses">90</div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
 
                 {/* Reviews Section */}
                 <div className="reviews">
