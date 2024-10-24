@@ -1,20 +1,18 @@
 import logo from './logo.svg';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-
 import React, { useState } from 'react';
 
 import Lobby from './lobby/lobby.js';
 import Login from './Auth/Login.js';
 import MainGame from './gamestate/experimentalGame.js';
-
-import Home from './Home/Home.js'; // Import the Home component
-
+import Home from './Home/Home.js';
 import GameMode from './gameMode.js';
-
+import ChatPopup from './gamestate/Chat.js';
 
 function App() {
   const [showRules, setShowRules] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const toggleRules = () => {
     setShowRules(!showRules);
@@ -25,6 +23,10 @@ function App() {
     if (audio) {
       audio.play();
     }
+  };
+
+  const toggleChat = () => {
+    setShowChat(!showChat);
   };
 
   return (
@@ -40,6 +42,7 @@ function App() {
                 <button onClick={() => { toggleRules(); playSound(); }} className="rules-button">
                   {showRules ? 'Close' : 'How to Play'}
                 </button>
+                <button onClick={toggleChat} className="chat-button">Chat</button>
                 <MainGame />
                 {showRules && (
                   <div className="rules-overlay">
@@ -53,6 +56,7 @@ function App() {
                     </div>
                   </div>
                 )}
+                {showChat && <ChatPopup onClose={toggleChat} />} 
               </>
             } 
           />
