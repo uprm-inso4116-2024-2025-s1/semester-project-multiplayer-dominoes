@@ -351,8 +351,8 @@ function MainGame() {
                             return;
                         }
                     } else if (gameMode === "drawDominoes") {
-                        ruleEngine.getDrawDominoesRules().domino_win_score(botHand);
-                        if (ruleEngine.getDrawDominoesRules().has_won_game_set()) {
+                        const score = ruleEngine.getDrawDominoesRules().domino_win_score(botHand);
+                        if (ruleEngine.getDrawDominoesRules(score).has_won_game_set()) {
                             // Player has won draw dominoes and game can end.
                             setShowWinnerOverlay(true);
                             setTimeout(() => setShowWinnerOverlay(false), 3000);           
