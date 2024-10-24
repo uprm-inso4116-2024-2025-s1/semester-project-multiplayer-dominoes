@@ -319,7 +319,12 @@ function MainGame() {
                     let openEndsSum = tableData.TableState.calculateOpenEnds();
                     if (openEndsSum % 5 === 0) {
                         toast.success(`Scored ${openEndsSum} points!`);
-                            setPlayerScore(prevScore => prevScore + openEndsSum);
+                        setPlayerScore(prevScore => prevScore + openEndsSum);
+    
+                        // **Trigger achievement checks**
+                        achievementManager.check15Points(playerScore);
+                        achievementManager.check10Exact(openEndsSum);
+                        
                     }
                 }
                 
@@ -328,6 +333,7 @@ function MainGame() {
                     if(gameMode === 'allFives'){   
                         if(playerScore > botScore){
                             toast.success(`Final Score: ${playerScore} points!`);
+                            achievementManager.checkWinWith5Points(playerScore);
                             setShowWinnerOverlay(true);
                             setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
                             return;
