@@ -2,12 +2,15 @@ import UsersHandler from "../handlers/UsersHandler.js";
 import UsersController from "../controllers/UsersController.js";
 import HealthCheckController from "../controllers/HealthCheckController.js";
 import UserRepository from "../repositories/UserRepository.js";
+import MatchRepository from "../repositories/MatchRepository.js";
 import UserModel from "../models/UserModel.js";
+import MatchModel from "../models/MatchModel.js";
 
 const componentNames = Object.freeze({
     usersHandler: 'UsersHandler',
     usersController: 'UsersController',
     usersRepository: 'UsersRepository',
+    matchRepository: 'MatchRepository',
     healthCheckController: 'HealthCheckController'
 });
 
@@ -21,6 +24,7 @@ class Container {
 
         // Register Repositories
         this.#container.set(componentNames.usersRepository, new UserRepository(UserModel));
+        this.#container.set(componentNames.matchRepository, new MatchRepository(MatchModel));
 
         // Register Handlers
         this.#container.set(componentNames.usersHandler, 
