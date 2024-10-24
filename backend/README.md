@@ -71,6 +71,22 @@ MONGODB_URI=mongodb://<yourUser>:<your userPassword>@localhost:27017/multiplayer
 ```
 > NOTE: Make sure you get rid of the *"<>"* when replacing your user name and password.
 
+## Add a secret key to the `.env` file
+* Run the following command in ther terminal to generate a secret key:
+```
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+>NOTE: Not necessary, but should be done for added security.
+
+* Add to the existing `.env` file in the root the following text:
+```
+JWT_SECRET='<your_secret_key>'
+```
+
+>NOTE: For testing you could just leave the secret key like that without the "<>"
+
+>NOTE: If the secret key is changed mid testing the previous login will be invalidated and you will need to login again.
+
 ## Run the server
 Execute `npm run dev` to run the server with `nodemon`, you should get the following output:
 ```sh
