@@ -8,6 +8,8 @@ class RuleEngine {
     getRulesForMode(mode) {
         switch (mode) {
             case 'classic':
+            case 'twoBots':
+            case 'threeBots':
                 return this.getClassicRules();
             case 'allFives':
                 return this.getAllFivesRules();

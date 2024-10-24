@@ -63,18 +63,23 @@ class Table{
     #path_matrix = [];
     #right_domino = null;
     #left_domino = null;
+    #dominoes_available = this.#dominoes.length;
     constructor(path_matrix, dominoes){
         this.#path_matrix = path_matrix;
         this.#data_matrix = this.#createDominoesDataMatrix();
-        if(dominoes) this.#dominoes = dominoes;
+        if(dominoes) {
+            this.#dominoes = dominoes;
+            this.#dominoes_available = dominoes.length;
+        };
     }
 
     // Getters
     // Returns the dominoes that are at each corner.
     get leftTail(){return this.#left_domino}
     get rightTail(){return this.#right_domino}
-    get availableDominos(){return (this.#dominoes.length - this.#dominoes_on_table)}
+    get availableDominos(){return this.#dominoes_available}
     get dominoesMatrix(){return this.#data_matrix}
+    get dominoesOnTable(){return this.#dominoes_on_table}
 
     // Private Methods
     #createDominoesDataMatrix(){
@@ -123,6 +128,7 @@ class Table{
         for(let i = 0; i < 7; i++){
             player_dominoes.push(this.grabRandomChip());
         }
+        this.#dominoes_available -= 7;
         return player_dominoes;
     }
 
@@ -130,6 +136,7 @@ class Table{
         let random_index = Math.floor(Math.random() * this.#dominoes.length);
         let random_domino = this.#dominoes[random_index];
         this.#dominoes.splice(random_index,1);
+        this.#dominoes_available -= 1;
         return random_domino;
     }
 
