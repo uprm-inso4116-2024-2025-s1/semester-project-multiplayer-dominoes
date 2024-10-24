@@ -350,7 +350,13 @@ function MainGame() {
                             setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
                             return;
                         }
-                    } else{
+                    } else if (gameMode == "drawDominoes") {
+                        ruleEngine.getDrawDominoesRules().domino_win_score(botHand);
+                        if (ruleEngine.getDrawDominoesRules().has_won_game_set()) {
+                            setShowWinnerOverlay(true);
+                            setTimeout(() => setShowWinnerOverlay(false), 3000);           
+                        }
+                    } else {
                         setShowWinnerOverlay(true);
                         setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
                         return;
