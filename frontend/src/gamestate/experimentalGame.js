@@ -120,6 +120,10 @@ function MainGame() {
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
     let bot = new IntermediateBot(tempTableState, botHand);
+    let botHand2 = null;
+    let bot2 = null;
+    let botHand3 = null;
+    let bot3 = null;
 
     const achievementManager = new AchievementManager();
 
@@ -135,6 +139,37 @@ function MainGame() {
         BotPlayer: bot,
         TileCount: botHand.length
     })
+
+    const [botData2, setbotData2] = useState(null)
+    const [botData3, setbotData3] = useState(null)
+
+    if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+        botHand2 = tempTableState.playerChips();
+        bot2 = new IntermediateBot(tempTableState, botHand2);
+    }
+    if(gameMode === 'threeBots'){
+        botHand3 = tempTableState.playerChips();
+        bot3 = new IntermediateBot(tempTableState, botHand3);
+    }
+    useEffect(()=>{
+        if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+            setbotData2({
+                BotHand: botHand2,
+                DbHand: drawBotChips(botHand2.length),
+                BotPlayer: bot2,
+                TileCount: botHand2.length
+            })
+        }
+        if(gameMode === 'threeBots'){
+            setbotData3({
+                BotHand: botHand3,
+                DbHand: drawBotChips(botHand3.length),
+                BotPlayer: bot3,
+                TileCount: botHand3.length
+            })
+        }
+    },[])
+
 
     const [tableData, setTableData] = useState({
         TableState: tempTableState,
@@ -159,8 +194,9 @@ function MainGame() {
     const [showWinnerOverlay, setShowWinnerOverlay] = useState(false);
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
     const [showTurnNotification, setShowTurnNotification] = useState(false);
-
     const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(true);
+
+    const [passButton, setPassButton] = useState(false);
 
     const playSound = () => {
         const audio = document.getElementById('dominoPlaceSound');
@@ -178,7 +214,7 @@ function MainGame() {
      * @param {*} setTableData - Setter for the table data.
      */
     function botPlayTurn(botData, tableData, setbotData, setTableData) {
-        setTimeout(() => {
+        
             let botMoved = botData.BotPlayer.playTurn();
             if (botMoved) {
                 // Update bot data and table if a move was successfully made
@@ -198,9 +234,8 @@ function MainGame() {
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
                     return;
                 }
-                setCurrentTurn('Player');
                 playSound();
-            } else if (tableData.TableState.availableDominos !== 0) {
+            } else if (tableData.TableState.availableDominos > 0) {
                 // If the bot cannot play, and there are still dominos available to draw
                 botData.BotHand.push(tableData.TableState.grabRandomChip());
 
@@ -214,10 +249,8 @@ function MainGame() {
 
                 // Retry playing after grabbing a new domino
                 botPlayTurn(botData, tableData, setbotData, setTableData);
-            } else { //Bot cannot make a move and cannot draw more dominoes.
-                setCurrentTurn('Player');
             }
-        }, 3000); // Give a 3-second delay before the bot plays
+
     }
 
     useEffect(() => {
@@ -258,7 +291,24 @@ function MainGame() {
                 }
                 // Bot's turn to play
                 setCurrentTurn('bot');
-                botPlayTurn(botData, tableData, setbotData, setTableData);
+
+                setTimeout(()=>{
+                    botPlayTurn(botData, tableData, setbotData, setTableData);
+                },1000)
+                if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+                    setTimeout(()=>{
+                        botPlayTurn(botData2, tableData, setbotData2, setTableData);
+                    },2000)
+                }
+                if(gameMode === 'threeBots'){
+                    setTimeout(()=>{
+                        botPlayTurn(botData3, tableData, setbotData3, setTableData);
+                    },3000)
+                }
+
+                setTimeout(()=>{
+                    setCurrentTurn('Player');
+                },4000)
             }
         }
 
@@ -288,6 +338,32 @@ function MainGame() {
             setTimeout(() => setShowTurnNotification(false), 2000); // Show "Your Turn" notification for 2 seconds
         }
     }, [currentTurn]);
+
+    // For activating the bots when you pass your turn.
+    useEffect(()=>{
+        if(passButton){
+            setCurrentTurn('bot');
+    
+            setTimeout(()=>{
+                botPlayTurn(botData, tableData, setbotData, setTableData);
+            },1000)
+            if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+                setTimeout(()=>{
+                    botPlayTurn(botData2, tableData, setbotData2, setTableData);
+                },2000)
+            }
+            if(gameMode === 'threeBots'){
+                setTimeout(()=>{
+                    botPlayTurn(botData3, tableData, setbotData3, setTableData);
+                },3000)
+            }
+    
+            setTimeout(()=>{
+                setCurrentTurn('Player');
+            },4000)
+            setPassButton(false);
+        }
+    }, [passButton])
 
     // Convert a matrix into a string to visualize the player's hand.
     function drawChips(chips) {
@@ -377,21 +453,20 @@ function MainGame() {
         const displayHeight = tileHeight
 
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                {[...Array(tileCount)].map((_, index) => (
-                    <div key={index} style={{ margin: '0 2px' }}>
+                [...Array(tileCount)].map((_, index) => (
+                    <div key={index}>
                         <img
                             src={backtileImage}
                             style={{
                                 width: `${displayWidth}px`,
                                 height: `${displayHeight}px`,
-                                objectFit: 'cover'
+                                transform: 'scale(.6)',
+
                             }}
                             alt={`Bot's domino ${index + 1}`}
                         />
                     </div>
-                ))}
-            </div>
+                ))
         );
     }
 
@@ -400,20 +475,22 @@ function MainGame() {
         const tileKey = domino[0].toString() + domino[1].toString();
         const tile = tileMap.get(tileKey);
         if (tile && tile.image) {
-            const scale = 0.3; // Adjust this value to change the size of the domino
+            const scale = 0.5; // Adjust this value to change the size of the domino
             return (
-                <img
-                    src={tile.image.src}
-                    style={{
-                        width: `${tile.width}px`,
-                        height: `${tile.height}px`,
-                        objectFit: 'none',
-                        objectPosition: `-${tile.sx}px 0px`,
-                        display: 'inline-block',
-                        verticalAlign: 'middle',
-                    }}
-                    alt={`Domino ${domino[0]}-${domino[1]}`}
-                />
+                <div style={{width:`${tile.width}px`,height:`${tile.height}px`}}>
+                    <img
+                        src={tile.image.src}
+                        style={{
+                            width: `${tile.width}px`,
+                            height: `${tile.height}px`,
+                            objectFit: 'none',
+                            objectPosition: `-${tile.sx}px 0px`,
+                            transform: 'scale(0.6)',
+                            transformOrigin: 'top left',
+                        }}
+                        alt={`Domino ${domino[0]}-${domino[1]}`}
+                    />
+                </div>
             );
         }
         return `[${domino[0]},${domino[1]}]`; // Fallback to text if image not found
@@ -430,19 +507,21 @@ function MainGame() {
     }
 
     function renderGameBoard() {
-        return tableData.DrawMatrix.map((row, rowIndex) => (
-            <div key={rowIndex} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40px' }}>
-                {row.split(' ').map((cell, cellIndex) => {
-                    if (cell === '===') {
-                        return <span key={cellIndex} style={{ width: '40px', display: 'inline-block' }}></span>;
-                    } else if (cell.startsWith('|')) {
-                        const [val1, val2] = cell.slice(1, -1).split('|').map(Number);
-                        return <span key={cellIndex}>{renderDominoImage([val1, val2])}</span>;
-                    }
-                    return null;
-                })}
-            </div>
-        ));
+        console.log(tableData.TableState.dominoesMatrix)
+        let matrix = tableData.TableState.dominoesMatrix;
+        let html = [];
+        for (let i = 0; i < matrix.length; i++){
+            for(let j = 0; j < matrix[0].length; j++){
+                let domino = matrix[i][j]
+                if(domino != null){
+                    const [val1, val2] = [domino.values[0],domino.values[1]]
+                    html.push(<div key = {[i,j]} style={{display:'grid',placeItems: 'center'}}>{renderDominoImage([val1, val2])}</div>)
+                }else{
+                    html.push(<div key = {[i,j]} className="gridSquare" style={{display:'grid',placeItems: 'center'}}></div>)
+                }
+            }
+        }
+        return html;
     }
 
     const [showPopup, setShowPopup] = useState(false);
@@ -511,15 +590,23 @@ function MainGame() {
                             <img src={'loser.png'} alt="Loser" />
                         </div>
                     )}
-                    {/*Shows the placeholder dominoes for the bot.*/}
-                    <div className='BotInfo'>
-                        <p>{botData.DbHand}</p>
+                    <p style={{  display:'flex', flexDirection:'horizontal', justifyContent:'center'}} >{ botData3 ? botData2.DbHand : botData.DbHand}</p>
+                    <div style={{display:'flex'}}>
+                        <p style={{display:'flex', flexDirection:'column', justifyContent:'center'}} >{ botData2 ? (botData3 ? botData3.DbHand : botData2.DbHand) : null}</p>
+                        <div style={{display:'flex',justifyContent:'center'}}>
+                            <div className='table' style={{ /* Start with 4x4 */
+                                                            display: 'grid',
+                                                            gridTemplateColumns: 'repeat(11,4.4rem)',
+                                                            gridTemplateRows: 'repeat(11,4.4rem)',
+                                                            gap: '1rem',
+                                                            height: '48rem',
+                                                        }}>
+                                {renderGameBoard()}
+                            </div>
+                        </div>
+                        <p style={{display:'flex', flexDirection:'column', justifyContent:'center'}} >{ botData3 ? botData.DbHand: null}</p>
                     </div>
-
-                    <div className='table'>
-                        {renderGameBoard()}
-                    </div>
-                    <div className='input_chips'>
+                    <div style={{display:'inline-block'}} className='input_chips'>
                         <div className='Player1'>
                             <p>{playerData.DrawHand}</p>
 
@@ -556,6 +643,11 @@ function MainGame() {
                                     });
                                 }
                             }}>Grab a Random Chip</button>
+                            <button onClick={() => {
+                                if(tableData.TableState.dominoesOnTable > 0){
+                                    setPassButton(true);
+                                }
+                            }}>Pass Turn</button>
                             <button onClick={pauseGame}>Pause Game</button>
                         </div>
                     </div>
