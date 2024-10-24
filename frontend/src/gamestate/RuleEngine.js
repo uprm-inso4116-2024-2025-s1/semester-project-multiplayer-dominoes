@@ -45,13 +45,12 @@ class RuleEngine {
                 const leftTail = table.leftTail;
                 const rightTail = table.rightTail;
                 if (!leftTail && !rightTail) return true;
-                return leftTail.freeCorners.includes(domino[0]) || rightTail.freeCorners.includes(domino[1]);
+                const freeCorners = [leftTail.freeCorners[0], rightTail.freeCorners[0]];
+                return (freeCorners.includes(domino[0])) || freeCorners.includes(domino[1]);
             },
-            calculateScore: (table) => {
-                const leftTail = table.leftTail ? table.leftTail.values[0] : 0;
-                const rightTail = table.rightTail ? table.rightTail.values[1] : 0;
-                const score = leftTail + rightTail;
-                return score % 5 === 0 ? score : 0;
+            calculateScore(table) {
+                const openEndsSum = table.calculateOpenEnds();
+                return openEndsSum % 5 === 0 ? openEndsSum : 0;
             }
         };
     }
