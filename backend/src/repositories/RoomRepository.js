@@ -14,11 +14,11 @@ export default class RoomRepository {
     }
 
     async createRoom(data) {
-        const roomObject = {
+        const room = new this.#roomModel({
             name: data.name,
             creator: data.creator,
-        };
-        return await this.#roomModel.create(roomObject);
+        });
+        return await room.save();
     }
 
     async updateRoom(room) {

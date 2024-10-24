@@ -4,9 +4,11 @@ import HealthCheckController from "../controllers/HealthCheckController.js";
 import UserRepository from "../repositories/UserRepository.js";
 import MatchRepository from "../repositories/MatchRepository.js";
 import RoomRepository from "../repositories/RoomRepository.js";
+import AchievementRepository from "../repositories/AchievementRepository.js";
 import UserModel from "../models/UserModel.js";
 import MatchModel from "../models/MatchModel.js";
-import RoomModel from "../models/RoomModel.js";
+import RoomsModel from "../models/RoomsModel.js";
+import AchievementModel from "../models/AchievementModel.js";
 
 const componentNames = Object.freeze({
     usersHandler: 'UsersHandler',
@@ -14,6 +16,7 @@ const componentNames = Object.freeze({
     usersRepository: 'UsersRepository',
     matchRepository: 'MatchRepository',
     roomRepository: 'RoomRepository',
+    achievementRepository: 'AchievementRepository',
     healthCheckController: 'HealthCheckController'
 });
 
@@ -28,7 +31,8 @@ class Container {
         // Register Repositories
         this.#container.set(componentNames.usersRepository, new UserRepository(UserModel));
         this.#container.set(componentNames.matchRepository, new MatchRepository(MatchModel));
-        this.#container.set(componentNames.roomRepository, new RoomRepository(RoomModel));
+        this.#container.set(componentNames.roomRepository, new RoomRepository(RoomsModel));
+        this.#container.set(componentNames.achievementRepository, new AchievementRepository(AchievementModel));
 
         // Register Handlers
         this.#container.set(componentNames.usersHandler, 
