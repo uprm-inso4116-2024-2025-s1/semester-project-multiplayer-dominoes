@@ -6,7 +6,10 @@ class AchievementManager {
             "startWithDoubleSix": false,
             "winGame": false,
             "winWithoutDrawing": false,
-            "allDoublesHand": false
+            "allDoublesHand": false,
+            "score15": false,
+            "hitExact10": false,
+            "winWith5Points": false
         };
         this.drewDomino = false;  // Track if player drew any domino
     }
@@ -56,6 +59,29 @@ class AchievementManager {
     trackDrawing() {
         this.drewDomino = true;
     }
+
+    check15Points(score) {
+        if (score >= 15 && !this.achievements.score15) {
+            this.achievements.score15 = true;
+            this.showAchievementToast("You made it to 15 points");
+        }
+    }
+    
+    check10Exact(score) {
+        if (score === 10 && !this.achievements.hitExact10) {
+            this.achievements.hitExact10 = true;
+            this.showAchievementToast("You hit exactly 10 points");
+        }
+    }
+
+    checkWinWith5Points(score) {
+        if (score === 5 && !this.achievements.winWith5Points) {
+            this.achievements.winWith5Points = true;
+            this.showAchievementToast("You won with 5 points");
+        }
+    }
+
+
 
     // Get all achievements
     getAchievements() {
