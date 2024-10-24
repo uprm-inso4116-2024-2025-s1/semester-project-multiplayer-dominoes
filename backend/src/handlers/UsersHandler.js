@@ -2,7 +2,8 @@ import { v4 as uuidv4 } from 'uuid'; // Import the UUID package
 import UserModel from "../models/UserModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../index.js';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'my_super_secret_key';
 
 export default class UsersHandler {
     async getAllUsers() {
@@ -25,6 +26,10 @@ export default class UsersHandler {
     async findUserByUsername(username) {
         return await UserModel.findOne({ username });
     }
+    async findUserById(id) {
+        return await UserModel.findById(id); 
+    }
+    
     
     async validatePassword(inputPassword, storedPassword) {
         return await bcrypt.compare(inputPassword, storedPassword);
@@ -54,5 +59,14 @@ export default class UsersHandler {
     async logoutUser(userId) {
         return await UserModel.findByIdAndUpdate(userId, { $inc: { tokenVersion: 1 } });
     }
+
+    generateResetToken(user) {
+        return jwt.sign(
+            { id: user._id, email: user.email },  // Payload
+            JWT_SECRET,  // Secret key
+            { expiresIn: '1h' }  // Token válido por 1 hora
+        );
+    }
+    
     
 };
