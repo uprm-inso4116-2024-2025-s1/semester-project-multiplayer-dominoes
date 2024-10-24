@@ -140,6 +140,23 @@ class Table{
         return random_domino;
     }
 
+    calculateOpenEnds() {
+        if (!this.leftTail && !this.rightTail) {
+            return 0; // No dominoes placed, return 0
+        }
+    
+        const leftEnd = this.leftTail ? (this.leftTail.freeCorners[0] || 0) : 0;
+        const rightEnd = this.rightTail ? (this.rightTail.freeCorners[0] || 0) : 0;
+
+        // Check if only one domino is placed (leftTail and rightTail are the same)
+        if (this.leftTail === this.rightTail) {
+            return this.leftTail.values[0] + this.leftTail.values[1];
+        }
+    
+        // Return the sum of open ends
+        return leftEnd + rightEnd;
+    }
+
     // placeDomino places the given domino in the correct spot on the matrix and updates the state.
     // If the domino is not playable, it will be ignored and no action will be taken.
     // Inputs: 
@@ -197,6 +214,7 @@ class Table{
                         this.#right_domino = current_domino;
                     }
                     this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino;
+
                 }
             }
         }

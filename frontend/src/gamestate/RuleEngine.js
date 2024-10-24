@@ -43,7 +43,17 @@ class RuleEngine {
     // Placeholder for 'allFives' rules
     getAllFivesRules() {
         return {
-            // Specific validation for 'allFives' can go here
+            validateMove: (domino, table) => {
+                const leftTail = table.leftTail;
+                const rightTail = table.rightTail;
+                if (!leftTail && !rightTail) return true;
+                const freeCorners = [leftTail.freeCorners[0], rightTail.freeCorners[0]];
+                return (freeCorners.includes(domino[0])) || freeCorners.includes(domino[1]);
+            },
+            calculateScore(table) {
+                const openEndsSum = table.calculateOpenEnds();
+                return openEndsSum % 5 === 0 ? openEndsSum : 0;
+            }
         };
     }
 
@@ -53,6 +63,12 @@ class RuleEngine {
     }
 
     // Additional methods for scoring, game win/lose conditions can be added here
+    calculateScore(table) {
+        if (this.gameMode === 'allFives') {
+            return this.rules.calculateScore(table);
+        }
+        return 0;
+    }
 }
 
 export default RuleEngine;

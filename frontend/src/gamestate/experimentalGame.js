@@ -5,7 +5,7 @@ import RuleEngine from './RuleEngine.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
-import { ToastContainer } from 'react-toastify';  // Import ToastContainer
+import { ToastContainer, toast } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 import IntermediateBot from './intermediateBot.js';
 
@@ -17,7 +17,8 @@ const tileMap = new Map();
 function MainGame() {
     const [tileMap, setTileMap] = useState(new Map());
     const [tilesInitialized, setTilesInitialized] = useState(false);
-
+    const [playerScore, setPlayerScore] = useState(0);
+    const [botScore, setBotScore] = useState(0);
     const backgroundMusic = useRef(null);
     useEffect(() => {
         const audio = backgroundMusic.current;
@@ -217,7 +218,6 @@ function MainGame() {
     function botPlayTurn(botData, tableData, setbotData, setTableData) {
         
             let botMoved = botData.BotPlayer.playTurn();
-            if (botMoved) {
                 // Update bot data and table if a move was successfully made
                 setbotData(prevBotData => ({
                     ...prevBotData,
@@ -229,11 +229,41 @@ function MainGame() {
                     TableState: tableData.TableState,
                     DrawMatrix: tableData.TableState.drawTable().split('\n')
                 });
+                if (botMoved) {
+                    if (gameMode === 'allFives') {
+                        let openEndsSum = tableData.TableState.calculateOpenEnds();
+                        if (openEndsSum % 5 === 0) {
+                            toast.success(`Bot scored ${openEndsSum} points!`);
+                            setBotScore(prevScore => prevScore + openEndsSum);
+                        }
+                    }
 
                 if (botData.BotPlayer.hand.length === 0) {
+                    if(gameMode === 'allFives'){   
+                        //add here bot vs player score comparison
+                        if(playerScore > botScore){
+                            toast.success(`Final Score: ${playerScore} points!`);
+                            setShowWinnerOverlay(true);
+                            setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
+                            return;
+                        }
+                        else if (playerScore < botScore){
+                            toast.success(`Final Score: ${botScore} points!`);
+                            setShowLoserOverlay(true);
+                            setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
+                            return;
+                        }
+                        else{
+                            toast.success(`Final Score: TIE`);
+                            setShowWinnerOverlay(true);
+                            setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
+                            return;
+                        }
+                    } else{
                     setShowLoserOverlay(true);
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
                     return;
+                    }
                 }
                 playSound();
             } else if (tableData.TableState.availableDominos > 0) {
@@ -285,10 +315,40 @@ function MainGame() {
                 // Check win condition for player
                 achievementManager.checkWin(playerData.PlayerHand);
 
+                if (gameMode === 'allFives') {
+                    let openEndsSum = tableData.TableState.calculateOpenEnds();
+                    if (openEndsSum % 5 === 0) {
+                        toast.success(`Scored ${openEndsSum} points!`);
+                            setPlayerScore(prevScore => prevScore + openEndsSum);
+                    }
+                }
+                
+
                 if (playerData.PlayerHand.length === 0) {
-                    setShowWinnerOverlay(true);
-                    setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
-                    return;
+                    if(gameMode === 'allFives'){   
+                        if(playerScore > botScore){
+                            toast.success(`Final Score: ${playerScore} points!`);
+                            setShowWinnerOverlay(true);
+                            setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
+                            return;
+                        }
+                        else if (playerScore < botScore){
+                            toast.success(`Final Score: ${botScore} points!`);
+                            setShowLoserOverlay(true);
+                            setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
+                            return;
+                        }
+                        else{
+                            toast.success(`Final Score: TIE`);
+                            setShowWinnerOverlay(true);
+                            setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
+                            return;
+                        }
+                    } else{
+                        setShowWinnerOverlay(true);
+                        setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
+                        return;
+                    }
                 }
                 // Bot's turn to play
                 setCurrentTurn('bot');
@@ -566,6 +626,22 @@ function MainGame() {
                             cursor: 'pointer'
                         }}
                         onClick={handleLobbyButton}>Lobby</button>
+
+                    {/* Display the scores with inline styling */}
+                    {gameMode === 'allFives' && (
+                    <div style={{
+                        position: 'absolute',
+                        top: '50px',
+                        left: '20px',
+                        padding: '10px',
+                        borderRadius: '5px',
+                        color: 'white',
+                        fontSize: '16px'
+                    }}>
+                        <p>Player Score: {playerScore}</p>
+                        <p>Bot Score: {botScore}</p>
+                    </div>
+                    )}
 
                     {/*Displays who's turn it is.*/}
                     <div className='turnInfo'>
