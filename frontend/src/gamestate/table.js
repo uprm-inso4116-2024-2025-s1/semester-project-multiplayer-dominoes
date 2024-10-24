@@ -79,6 +79,7 @@ class Table{
     get rightTail(){return this.#right_domino}
     get availableDominos(){return this.#dominoes_available}
     get dominoesMatrix(){return this.#data_matrix}
+    get dominoesOnTable(){return this.#dominoes_on_table}
 
     // Private Methods
     #createDominoesDataMatrix(){

@@ -194,8 +194,9 @@ function MainGame() {
     const [showWinnerOverlay, setShowWinnerOverlay] = useState(false);
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
     const [showTurnNotification, setShowTurnNotification] = useState(false);
-
     const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(true);
+
+    const [passButton, setPassButton] = useState(false);
 
     const playSound = () => {
         const audio = document.getElementById('dominoPlaceSound');
@@ -308,7 +309,6 @@ function MainGame() {
                 setTimeout(()=>{
                     setCurrentTurn('Player');
                 },4000)
-
             }
         }
 
@@ -338,6 +338,32 @@ function MainGame() {
             setTimeout(() => setShowTurnNotification(false), 2000); // Show "Your Turn" notification for 2 seconds
         }
     }, [currentTurn]);
+
+    // For activating the bots when you pass your turn.
+    useEffect(()=>{
+        if(passButton){
+            setCurrentTurn('bot');
+    
+            setTimeout(()=>{
+                botPlayTurn(botData, tableData, setbotData, setTableData);
+            },1000)
+            if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+                setTimeout(()=>{
+                    botPlayTurn(botData2, tableData, setbotData2, setTableData);
+                },2000)
+            }
+            if(gameMode === 'threeBots'){
+                setTimeout(()=>{
+                    botPlayTurn(botData3, tableData, setbotData3, setTableData);
+                },3000)
+            }
+    
+            setTimeout(()=>{
+                setCurrentTurn('Player');
+            },4000)
+            setPassButton(false);
+        }
+    }, [passButton])
 
     // Convert a matrix into a string to visualize the player's hand.
     function drawChips(chips) {
@@ -617,6 +643,11 @@ function MainGame() {
                                     });
                                 }
                             }}>Grab a Random Chip</button>
+                            <button onClick={() => {
+                                if(tableData.TableState.dominoesOnTable > 0){
+                                    setPassButton(true);
+                                }
+                            }}>Pass Turn</button>
                             <button onClick={pauseGame}>Pause Game</button>
                         </div>
                     </div>
