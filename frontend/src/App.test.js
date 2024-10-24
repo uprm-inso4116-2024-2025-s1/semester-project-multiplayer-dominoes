@@ -86,11 +86,11 @@ describe('Intermediate Bot logic', () => {
 });
 
 describe('Rule engine logic', () => {
-  let table = new Table(getDefaultTable());
-  table.placeDomino([6, 6], Corner.LEFT);
-  table.placeDomino([6, 3], Corner.RIGHT);
 
   describe('Rule engine - classic', () => {
+    let table = new Table(getDefaultTable());
+    table.placeDomino([6, 6], Corner.LEFT);
+    table.placeDomino([6, 3], Corner.RIGHT);
     let ruleEngine = new RuleEngine('classic');
 
     test('Valid domino', () => {
@@ -111,6 +111,73 @@ describe('Rule engine logic', () => {
   });
 
   describe('Rule engine - allFives', () => {
-    // Unit tests will be added when allFives gets implemented.
-  });
+    test('should calculate correct score when open ends are multiple of 5', () => {
+        const table = new Table(getDefaultTable());
+        const ruleEngine = new RuleEngine('allFives');
+
+        table.placeDomino([6, 6], Corner.LEFT);
+        table.placeDomino([6, 4], Corner.RIGHT);
+
+        const openEndsSum = table.calculateOpenEnds();
+        expect(openEndsSum).toBe(10);  // The sum of the ends should be 10 (6 + 4).
+        
+        const score = ruleEngine.calculateScore(table);
+        expect(score).toBe(10);  // Score should be 10 as it’s divisible by 5.
+    });
+
+    test('should return zero score if open ends are not multiple of 5', () => {
+        const table = new Table(getDefaultTable());
+        const ruleEngine = new RuleEngine('allFives');
+
+        table.placeDomino([6, 6], Corner.LEFT);
+        table.placeDomino([6, 3], Corner.RIGHT);
+
+        const openEndsSum = table.calculateOpenEnds();
+        expect(openEndsSum).toBe(9);  // Sum of the ends is 9 (6 + 3).
+
+        const score = ruleEngine.calculateScore(table);
+        expect(score).toBe(0);  // No score as 9 isn't divisible by 5.
+    });
+
+    test('should calculate score for a single domino placement', () => {
+        const table = new Table(getDefaultTable());
+        const ruleEngine = new RuleEngine('allFives');
+
+        table.placeDomino([5, 5], Corner.LEFT);  // Place a double domino (5|5)
+
+        const openEndsSum = table.calculateOpenEnds();
+        expect(openEndsSum).toBe(10);  // Single [5, 5] means open ends sum is 10.
+
+        const score = ruleEngine.calculateScore(table);
+        expect(score).toBe(10);  // Score should be 10 as it's divisible by 5.
+    });
+
+    test('should calculate correct score after placing multiple dominos', () => {
+        const table = new Table(getDefaultTable());
+        const ruleEngine = new RuleEngine('allFives');
+
+        table.placeDomino([6, 6], Corner.LEFT);
+        table.placeDomino([6, 4], Corner.RIGHT);
+        table.placeDomino([4, 2], Corner.RIGHT);  // Adding another domino (4|2)
+
+        const openEndsSum = table.calculateOpenEnds();
+        expect(openEndsSum).toBe(8);  // After placing [4, 2], open ends should be 6 + 2 = 8.
+
+        const score = ruleEngine.calculateScore(table);
+        expect(score).toBe(0);  // No score as 8 isn't divisible by 5.
+    });
+
+    test('should handle no score when open ends are zero', () => {
+        const table = new Table(getDefaultTable());
+        const ruleEngine = new RuleEngine('allFives');
+
+        table.placeDomino([0, 0], Corner.LEFT);  // Placing a [0, 0] domino
+
+        const openEndsSum = table.calculateOpenEnds();
+        expect(openEndsSum).toBe(0);  // Open ends should sum to 0.
+
+        const score = ruleEngine.calculateScore(table);
+        expect(score).toBe(0);  // Score should be 0 since the open ends sum is 0.
+    });
+});
 });
