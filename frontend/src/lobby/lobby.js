@@ -1,22 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import './lobby.css';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import "./lobby.css";
+import { useNavigate } from "react-router-dom";
 
 const Lobby = () => {
-
   /*Variable added to navigate between gamestate and lobby */
   const navigate = useNavigate();
   // State to manage the list of rooms and room creation
   const [rooms, setRooms] = useState([]);
-  const [newRoomName, setNewRoomName] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [newRoomName, setNewRoomName] = useState("");
+  const [roomMode, setRoomMode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showLobby, setShowLobby] = useState(false);
+  const [showOptions, setShowOptions] = useState(true);
+  const [showInstruction, setInstruction] = useState(true);
+  const [isSoloPlay, setIsSoloPlay] = useState(true);
+  const [botdifficulty, setBotlevel] = useState("");
+  const [gameMode, setGameMode] = useState("");
 
   const playSound = () => {
-    const audio = document.getElementById('lobbyClickSound');
+    const audio = document.getElementById("lobbyClickSound");
     if (audio) {
       audio.play();
     }
   };
+  const handleDifficultyChange = (event) => {
+    setBotlevel(event.target.value); 
+  };
+  const handleGameMode= (event) => {
+    setGameMode(event.target.value); 
+    setRoomMode(event.target.value);
+  };
+  const handleDisplay = (solo) => {
+    setIsSoloPlay(solo); 
+    setShowLobby(true); 
+    setShowOptions(false); 
+    setErrorMessage("");
+    setInstruction(false);
+  };
+
 
   // Later Implement with the database to do a getAllRooms
   useEffect(() => {
@@ -24,42 +45,51 @@ const Lobby = () => {
   }, []);
 
   const fetchRooms = async () => {
-    //dummy daya for rooms 
-    //replace with API calls and decide which info the rooms have to show in the interface 
+    //dummy daya for rooms
+    //replace with API calls and decide which info the rooms have to show in the interface
     const fetchedRooms = [
-      { id: 1, name: 'Room 1', players: 2, maxPlayers: 4 },
-      { id: 2, name: 'Room 2', players: 1, maxPlayers: 4 },
-      { id: 3, name: 'Room 3', players: 1, maxPlayers: 4 },
-      { id: 4, name: 'Room 4', players: 1, maxPlayers: 4 },
+
     ];
-    //Change this to a fetchedRooms with the GET response 
+    //Change this to a fetchedRooms with the GET response
     setRooms(fetchedRooms);
   };
   //room creating. Missing backend post?
   const handleCreateRoom = async () => {
-    if (newRoomName.trim() === '') {
-      setErrorMessage('Room name cannot be empty.');
+    if (newRoomName.trim() === "") {
+      setErrorMessage("Room name cannot be empty.");
       return;
-    }
+    } else if (roomMode === "") {
+      setErrorMessage("Please select a game mode.");
+      return;
+    } else {
+      setErrorMessage("");
 
-    // Dummy post 
-    //Replace with response, can use stringify on the json response 
-    const newRoom = { id: rooms.length + 1, name: newRoomName, players: 1, maxPlayers: 4 };
-    setRooms([...rooms, newRoom]);
-    setNewRoomName(''); //Clear input if success
+      // Dummy post
+      //Replace with response, can use stringify on the json response
+      const newRoom = {
+        id: rooms.length + 1,
+        name: newRoomName,
+        gamemode: roomMode,
+        players: 1,
+        maxPlayers: 4,
+      };
+      setRooms([...rooms, newRoom]);
+      setNewRoomName(""); //Clear input if success
+      setRoomMode(''); 
+    }
   };
 
-  //handle joining 
+  //handle joining
   const joinRooms = (roomId) => {
-    //handleling the update of the players count 
-    setRooms(prevRooms => {
-      const updatedRooms = prevRooms.map(room => {
+    //handleling the update of the players count
+    setRooms((prevRooms) => {
+      const updatedRooms = prevRooms.map((room) => {
         if (room.id === roomId) {
           // Check if the room is not full
           if (room.players < room.maxPlayers) {
             return { ...room, players: room.players + 1 }; // Increment player count
           } else {
-            alert('Room is full.');
+            alert("Room is full.");
             return room; // No change if room is full
           }
         }
@@ -69,77 +99,217 @@ const Lobby = () => {
     });
   };
   return (
-  
-    <div className="lobby-container">
-              {/*Button to switch between gamestate and lobby ui*/}
-              <button
-                style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    padding: '10px',
-                    backgroundColor: '#1A3636',
-                    color: '#FFFFFF',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer'
-                }}
-                onClick={() => {
-                  playSound(); 
-                  navigate('/game');
-                }}
-              >
-            
-                GameState
-            </button>
-      <div className="left-column">
-        <h2 className="heading">Create Lobby</h2>
-        <input 
-          type="text"
-          value={newRoomName}
-          onChange={(e) => setNewRoomName(e.target.value)}
-          placeholder="Enter Room Name"
-          className="text-box"
-        />
-        <button className="createRoom_button" onClick={() => { handleCreateRoom(); playSound(); }}>Create Room</button>
-        {errorMessage && <p className="error">{errorMessage}</p>}
-      </div>
+    <div className="selection-box" style={{ display: "block", width: "100%" }}>
+      {showInstruction && (
+        <p className="instruction-message">
+          {" "}
+          Choose between a clever bot in solo play or
+          <br />
+          play with friends by creating a lobby!
+        </p>
+      )}
 
-      <div className="right-column">
-        <h1 className="heading">Available Rooms</h1>
-        {rooms.length > 0 ? (
-          <div className="rooms-table-container">
-            <table className="rooms-table">
-              <thead>
-                <tr>
-                  <th>Room Name</th>
-                  <th>Players</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rooms.map((room) => (
-                  <tr key={room.id}>
-                    <td>{room.name}</td>
-                    <td>{room.players}/{room.maxPlayers}</td>
-                    <td>
-                      <button onClick={() => { joinRooms(room.id); playSound(); }} className="join-button">Join Room</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {showOptions && (
+        <div className="options-container">
+          <button
+            style={{ height: "20%", width: "80%" }}
+            className="createRoom_button"
+            onClick={() => {
+              handleDisplay(true);
+              playSound();
+            }}
+          >
+            Solo Play
+          </button>
+          <button
+            style={{ height: "20%", width: "80%" }}
+            className="createRoom_button"
+            onClick={() => {
+              playSound();
+              handleDisplay(false);
+            }}
+          >
+            Multiplayer
+          </button>
+        </div>
+      )}
+
+      {showLobby && (
+        <div
+          className="lobby-container"
+          style={{ display: showLobby ? "flex" : "none" }}>
+
+          <div className="left-column">
+            <p
+              style={{
+                cursor: "pointer",
+                color: "blue",
+                fontSize: "10px",
+                margin: "0",
+                position: "absolute",
+                top: "10px",
+                left: "10px",
+              }}
+              onClick={() => {
+                setShowLobby(false);
+                setShowOptions(true);
+                setInstruction(true);
+              }}
+            >
+              Back
+            </p>
+            {isSoloPlay && (
+            <div className="solo_play">
+              <button
+              className="start_button" style={{height:"70px"}}
+              onClick={() => {
+                handleCreateRoom();
+                playSound();
+                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty} })
+              }}
+              disabled={!gameMode || !botdifficulty}
+              
+            >
+              Start Game
+            </button>
+            
+            </div> )}
+            {!isSoloPlay &&(
+            <div className="create_lobby" >
+            <h2 style={{fontSize: "20px"}} className="heading">Create Lobby</h2>
+            <input
+              type="text"
+              value={newRoomName}
+              onChange={(e) => setNewRoomName(e.target.value)}
+              placeholder="Enter Room Name"
+              className="text-box"
+            />
+            <div className="game-mode-selection" style={{ display: "flex", justifyContent: "space-around", marginTop: "10px" }}>
+      <label>
+        <input
+          type="radio"
+          name="gamemode"
+          value="classic"
+          onChange={handleGameMode}
+        />{" "}
+        Classic
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="gamemode"
+          value="allFives"
+          onChange={handleGameMode}
+        />{" "}
+        All Fives
+      </label>
+    </div>
+            <button
+              className="createRoom_button"
+              onClick={() => {
+                handleCreateRoom();
+                playSound();
+              }}
+            >
+              Create Room
+            </button>
+            {errorMessage && <p className="error">{errorMessage}</p>} 
+            </div> )}
+
           </div>
-        ) : (
-          <p>No rooms available. Create one to get started!</p>
-        )}
-      </div>
-      <audio id="lobbyClickSound" src="/DominoesClick.wav" preload="auto"></audio>
+            
+          <div className="right-column">
+            {/* Options for solo players */}
+            {isSoloPlay &&(
+              <div className="bot-selector" >
+              <h1 className="heading"> Choose Bot Difficulty</h1>
+              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
+              <label >
+                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="basic" />{" "}
+                  Basic
+                </label>
+                <br />
+                <label >
+                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="intermediate" />{" "}
+                  Intermediate
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="advanced" />{" "}
+                  Advanced
+                </label>
+              </form>
+
+              <h1 className="heading"> Choose Game Mode</h1>
+              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
+                <label >
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
+                  Classic
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
+                  All fives
+                </label>
+              </form>
+            </div>)}
+            {!isSoloPlay &&(
+              <div className="lobby'list" >
+              <h1 className="heading">Available Rooms</h1>
+              {rooms.length > 0 ? (
+                <div className="rooms-table-container">
+                  <table className="rooms-table">
+                    <thead>
+                      <tr>
+                        <th>Room Name</th>
+                        <th>Players</th>
+                        <th>GameMode</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rooms.map((room) => (
+                        <tr key={room.id}>
+                          <td>{room.name}</td>
+                          <td>
+                            {room.players}/{room.maxPlayers}
+                          </td>
+                          <td>
+                            {room.gamemode}
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => {
+                                joinRooms(room.id);
+                                playSound();
+                                navigate('/game', { state: { gameMode: gameMode, bot: "multiplayer"} })
+                              }}
+                              className="join-button"
+                              
+                            >
+                              Join Room
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p>No rooms available. Create one to get started!</p>
+              )}
+            </div>)}
+          </div>
+
+          <audio
+            id="lobbyClickSound"
+            src="/DominoesClick.wav"
+            preload="auto"
+          ></audio>
+        </div>
+      )}
     </div>
   );
-
 };
 
-
-
-export default Lobby
+export default Lobby;

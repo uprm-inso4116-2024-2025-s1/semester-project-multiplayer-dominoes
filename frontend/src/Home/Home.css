@@ -6,6 +6,7 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #282c34; /* Dark background */
     color: #FFF6F4; /* White text color */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* Use Press Start 2P for pixel-like headings */
@@ -64,6 +65,7 @@ nav ul li a {
 /* Content layout */
 .content {
     display: flex;
+    flex-wrap: wrap; /* Enable wrapping of sections */
     justify-content: space-around;
     padding: 20px;
 }
@@ -75,6 +77,7 @@ nav ul li a {
     padding: 15px;
     margin: 10px;
     flex: 1; /* Equal space for each section */
+    max-width: 100%; /* Prevent overflow on small screens */
 }
 
 /* Section header styling */
@@ -105,17 +108,33 @@ footer {
     text-decoration: none;
 }
 
-.content {
-    display: flex; /* Use flexbox for layout */
-    justify-content: space-between; /* Space between the two sections */
-    padding: 20px;
+/* Ensure images are responsive */
+img {
+    max-width: 100%; /* Make images scale down with the screen size */
+    height: auto; /* Maintain the aspect ratio */
 }
 
-/* Individual section styling */
-.leaderboard, .reviews {
-    background-color: #1e2125; /* Same as header */
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px; /* Space around sections */
-    flex: 1; /* Equal space for each section */
+/* Media queries for smaller screens */
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column; /* Stack sections vertically */
+        align-items: center; /* Center the content */
+    }
+
+    header {
+        flex-direction: column; /* Stack header items */
+        align-items: center;
+    }
+
+    header .logo img {
+        height: 40px; /* Adjust logo size */
+    }
+
+    .hero h1 {
+        font-size: 2em; /* Adjust heading size */
+    }
+
+    footer {
+        padding: 50px; /* Adjust padding */
+    }
 }

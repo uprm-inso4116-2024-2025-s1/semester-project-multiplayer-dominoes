@@ -1,5 +1,5 @@
 import { Table, Corner } from './table.js';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
 import RuleEngine from './RuleEngine.js';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -19,6 +19,26 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [currentScore, setCurrentScore] = useState(0); // Track player score
 
+    const backgroundMusic = useRef(null);
+    useEffect(() => {
+        const audio = backgroundMusic.current;
+        audio.volume = 0.2;
+        const handleCanPlay = () => {
+          audio.play().catch((error) => {
+            console.log("Autoplay was prevented, retrying with mute...", error);
+            audio.muted = true; // Mute the audio if autoplay is blocked
+            audio.play();
+          });
+        };
+        // Play the audio when it's ready
+        audio.addEventListener("canplay", handleCanPlay);
+        return () => {
+          audio.pause(); // Pause the audio when leaving the page
+          audio.removeEventListener("canplay", handleCanPlay);
+        };
+      }, []);
+
+
     const tileImage = new Image();
     tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
     const gameMode = useLocation().state.gameMode || 'classic'; // Default to 'classic' mode if not provided
@@ -35,7 +55,7 @@ function MainGame() {
                     "23", "24", "25", "26", "33", "34", "35",
                     "36", "44", "45", "46", "55", "56", "66"
                 ];
-    
+
                 for (let i = 0; i < totalTiles; i++) {
                     newTileMap.set(dominoes[i], {
                         image: tileImage,
@@ -140,6 +160,8 @@ function MainGame() {
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
     const [showTurnNotification, setShowTurnNotification] = useState(false);
 
+    const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(true);
+
     const playSound = () => {
         const audio = document.getElementById('dominoPlaceSound');
         if (audio) {
@@ -170,7 +192,7 @@ function MainGame() {
                     TableState: tableData.TableState,
                     DrawMatrix: tableData.TableState.drawTable().split('\n')
                 });
-    
+
                 if (botData.BotPlayer.hand.length === 0) {
                     setShowLoserOverlay(true);
                     setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
@@ -181,7 +203,7 @@ function MainGame() {
             } else if (tableData.TableState.availableDominos !== 0) {
                 // If the bot cannot play, and there are still dominos available to draw
                 botData.BotHand.push(tableData.TableState.grabRandomChip());
-    
+
                 // Update the bot's hand
                 setbotData(prevBotData => ({
                     ...prevBotData,
@@ -189,7 +211,7 @@ function MainGame() {
                     TileCount: botData.BotHand.length,
                     DbHand: drawBotChips(botData.BotHand.length)
                 }));
-    
+
                 // Retry playing after grabbing a new domino
                 botPlayTurn(botData, tableData, setbotData, setTableData);
             } else { //Bot cannot make a move and cannot draw more dominoes.
@@ -269,7 +291,7 @@ function MainGame() {
         }
     }, [data, playerData]);
 
-            // For displaying turn notification
+    // For displaying turn notification
     useEffect(() => {
         if (currentTurn === 'Player' && !showWinnerOverlay && !showLoserOverlay) {
             setShowTurnNotification(true);
@@ -284,43 +306,83 @@ function MainGame() {
             console.log("Tiles not initialized or empty tileMap");
             return <div>Loading...</div>;
         }
+
+        const containerStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            padding: '10px',
+            width: '100%',
+            overflowX: 'auto'
+        };
+
+        const rowStyle = {
+            display: 'flex',
+            gap: '10px',
+        };
+
+        const itemStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        };
+
+        const numberStyle = {
+            marginTop: '5px',
+            fontWeight: 'bold',
+            fontSize: '14px'
+        };
+
+        // Group dominoes into rows of 7
+        const rows = [];
+        for (let i = 0; i < chips.length; i += 7) {
+            rows.push(chips.slice(i, i + 7));
+        }
+        
+
         return (
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                {chips.map((chip, index) => {
-                    const tileKey = chip[0].toString() + chip[1].toString();
-                    const tile = tileMap.get(tileKey);
-                    console.log(`Chip ${index}:`, tileKey, "Tile:", tile);
-                    if (tile && tile.image) {
-                        return (
-                            <div key={index} style={{ display: 'inline-block', textAlign: 'center', margin: '0 5px' }}>
-                                <img
-                                    src={tile.image.src}
-                                    style={{
-                                        width: `${tile.width}px`,
-                                        height: `${tile.height}px`,
-                                        display: 'block',
-                                        objectFit: 'none',
-                                        objectPosition: `-${tile.sx}px 0px`,
-                                    }}
-                                    alt={`Domino ${chip[0]}-${chip[1]}`}
-                                />
-                                <div style={{ marginTop: '5px', fontWeight: 'bold', fontSize: '14px' }}>
-                                    {index % 7}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return null;
-                })}
+            <div style={containerStyle}>
+                {rows.map((row, rowIndex) => (
+                    <div key={rowIndex} style={rowStyle}>
+                        {row.map((chip, index) => {
+                            if (!chip) {
+                                console.log(`Undefined chip at index ${rowIndex * 7 + index}`);
+                                return null; // Just return null without setting the popup
+                            }
+                            const tileKey = chip[0].toString() + chip[1].toString();
+                            const tile = tileMap.get(tileKey);
+                            const globalIndex = rowIndex * 7 + index;
+                            console.log(`Chip ${globalIndex}:`, tileKey, "Tile:", tile);
+                            if (tile && tile.image) {
+                                return (
+                                    <div key={globalIndex} style={itemStyle}>
+                                        <img
+                                            src={tile.image.src}
+                                            style={{
+                                                width: `${tile.width}px`,
+                                                height: `${tile.height}px`,
+                                                objectFit: 'none',
+                                                objectPosition: `-${tile.sx}px 0px`,
+                                            }}
+                                            alt={`Domino ${chip[0]}-${chip[1]}`}
+                                        />
+                                        <div style={numberStyle}>{globalIndex}</div>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })}
+                    </div>
+                ))}
             </div>
         );
     }
-    
+
 
     // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
     function drawBotChips(tileCount) {
         const backtileImage = '/backtile.png'; // Adjust this path as needed
-         // Use the same scale as in renderDominoImage
+        // Use the same scale as in renderDominoImage
         const displayWidth = tileWidth
         const displayHeight = tileHeight
 
@@ -353,10 +415,10 @@ function MainGame() {
                 <img
                     src={tile.image.src}
                     style={{
-                        width: `${tile.width }px`,
-                        height: `${tile.height }px`,
+                        width: `${tile.width}px`,
+                        height: `${tile.height}px`,
                         objectFit: 'none',
-                        objectPosition: `-${tile.sx }px 0px`,
+                        objectPosition: `-${tile.sx}px 0px`,
                         display: 'inline-block',
                         verticalAlign: 'middle',
                     }}
@@ -365,6 +427,16 @@ function MainGame() {
             );
         }
         return `[${domino[0]},${domino[1]}]`; // Fallback to text if image not found
+    }
+
+    const handleLobbyButton = () => {
+        if (showLoseProgressIfLobby) {
+            alert("Leaving game will cause you to lose progress.")
+            setShowLoseProgressIfLobby(false);
+        }
+        else {
+            navigate('/lobby')
+        }
     }
 
     function renderGameBoard() {
@@ -383,8 +455,31 @@ function MainGame() {
         ));
     }
 
+    const [showPopup, setShowPopup] = useState(false);
+
+    function Popup({ message }) {
+        return (
+            <div style={{
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+                backgroundColor: '#f8d7da',
+                color: '#721c24',
+                padding: '10px 20px',
+                borderRadius: '5px',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                zIndex: 1000
+            }}>
+                {message}
+            </div>
+        );
+    }
+
     return (
         <div>
+            <audio id="backgroundMusic" ref={backgroundMusic} loop>
+                <source src="/BackgroundMusic.mp3" type="audio/mpeg" />
+            </audio>
             {!isPaused ? (
                 <div className='table_game'>
                     {/*Button to switch between gamestate and lobby ui*/}
@@ -400,10 +495,7 @@ function MainGame() {
                             borderRadius: '5px',
                             cursor: 'pointer'
                         }}
-                        onClick={() => navigate('/lobby')}
-                    >
-                        Lobby
-                    </button>
+                        onClick={handleLobbyButton}>Lobby</button>
 
                     {/*Displays who's turn it is.*/}
                     <div className='turnInfo'>
@@ -463,11 +555,16 @@ function MainGame() {
                                 }
                             }}>Right Tail</button>
                             <button onClick={() => {
-                                setPlayerData({
-                                    PlayerHand: playerData.PlayerHand,
-                                    DrawHand: playerData.DrawHand,
-                                    PlayerInput: true,
-                                })
+                                if (tableData.TableState.availableDominos === 0) {
+                                    setShowPopup(true);
+                                    setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
+                                } else {
+                                    setPlayerData({
+                                        PlayerHand: playerData.PlayerHand,
+                                        DrawHand: playerData.DrawHand,
+                                        PlayerInput: true,
+                                    });
+                                }
                             }}>Grab a Random Chip</button>
                             <button onClick={pauseGame}>Pause Game</button>
                         </div>
@@ -489,7 +586,10 @@ function MainGame() {
 
                     {/* Button and UI for navigating and game controls */}
                 </div>
-            ) : (<PauseScreen onResume={resumeGame} />)}</div>
+                //Continues the popup message for when the player has no more tiles to pick up after the game has been paused. 
+            ) : (<PauseScreen onResume={resumeGame} />)}
+            {showPopup && <Popup message="There are no more tiles to pick up!" />}  
+        </div>
     );
 
 }
