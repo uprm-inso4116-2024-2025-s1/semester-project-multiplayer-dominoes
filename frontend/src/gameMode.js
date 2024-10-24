@@ -10,6 +10,9 @@ export default function GameMode() {
             <button onClick={() => {
                 navigate('/game', { state: { gameMode: 'allFives', bot: 'placeholder' } })
             }}>All Fives</button>
+                     <button onClick={() => {
+                navigate('/game', { state: { gameMode: 'drawDominoes', bot: 'placeholder' } })
+            }}>Draw Dominoes</button>
         </div >
     )
 }
