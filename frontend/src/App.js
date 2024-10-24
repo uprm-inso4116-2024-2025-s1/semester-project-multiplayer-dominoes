@@ -12,6 +12,9 @@ import Home from './Home/Home.js'; // Import the Home component
 
 import GameMode from './gameMode.js';
 
+import ForgotPassword from './Auth/ForgotPassword.js';
+import ResetPassword from './Auth/ResetPassword.js';
+
 
 function App() {
   const [showRules, setShowRules] = useState(false);
@@ -34,6 +37,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/game" 
             element={
               <>
