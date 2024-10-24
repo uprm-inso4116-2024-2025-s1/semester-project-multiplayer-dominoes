@@ -7,7 +7,7 @@ import MongoDbConnection from './database/MongoDbConnection.js';
 
 // Load environment variables
 dotenv.config();
-
+export const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key';
 // Create an express application
 const app = express();
 const port = process.env.PORT || 8080;

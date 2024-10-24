@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'my_super_secret_key';
+
 export default class UsersHandler {
     async getAllUsers() {
         return await UserModel.find();
@@ -30,7 +31,6 @@ export default class UsersHandler {
     }
     
     
-
     async validatePassword(inputPassword, storedPassword) {
         return await bcrypt.compare(inputPassword, storedPassword);
     }
