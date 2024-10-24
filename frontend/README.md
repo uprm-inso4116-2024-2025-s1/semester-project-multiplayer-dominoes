@@ -59,3 +59,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ## Dependencies 
 When installing a library, make sure you add the necessary dependencies into the .json files, otherwise it will fail to compile!
+
+## To be able to use the Password Reset feature:
+* Make sure that the '.env' looks like this:
+```txt
+REACT_APP_BACKEND_URL=http://localhost:8080
+```

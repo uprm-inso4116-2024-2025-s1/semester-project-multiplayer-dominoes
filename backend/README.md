@@ -89,3 +89,16 @@ Connected to MongoDB
 ```
 
 You have successfully setup the backend! If needed, visit the [frontend README](../frontend/README.md) to setup it up locally.
+
+## To be able to use the Password Reset feature:
+* Run 'npm install nodemailer'
+* Make sure that the '.env' looks like this:
+```txt
+MONGODB_URI=mongodb://<yourUser>:<your userPassword>@localhost:27017/multiplayerDominoes
+JWT_SECRET=23b3f7bb2c2993a97f8b13c96389939d2b9a0c69dbf836f4a79a7d1dd82aa2bc
+PORT=8080
+EMAIL_SERVICE=gmail
+EMAIL_USER=multiplayerdominoes@gmail.com
+EMAIL_PASSWORD=zdlsyxlsrbvltqsu
+FRONTEND_URL=http://localhost:3000
+```
