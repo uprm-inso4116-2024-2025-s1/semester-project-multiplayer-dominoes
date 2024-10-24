@@ -37,7 +37,6 @@ const usersHandler = new UsersHandler();
 // Create Controllers
 const healthCheckController = new HealthCheckController();
 const usersController = new UsersController(usersHandler);
-console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
 // Register endpoints
 routes(app, container);
