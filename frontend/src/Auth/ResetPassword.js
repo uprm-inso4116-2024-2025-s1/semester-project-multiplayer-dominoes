@@ -10,7 +10,6 @@ function ResetPassword() {
 
     // Obtener el token de la URL
     const token = searchParams.get('token');
-    console.log("Token received from URL:", token); // Muestra el token en la consola del navegador
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
@@ -65,11 +64,6 @@ function ResetPassword() {
                 <button type="submit">Reset Password</button>
             </form>
             {message && <p>{message}</p>}
-
-            {/* Mostrar el token directamente en la página para depuración */}
-            <div style={{ marginTop: '20px', color: 'red' }}>
-                <p><strong>Token from URL:</strong> {token}</p>
-            </div>
         </div>
     );
 }
