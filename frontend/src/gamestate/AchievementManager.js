@@ -6,22 +6,84 @@ class AchievementManager {
             "startWithDoubleSix": false,
             "winGame": false,
             "winWithoutDrawing": false,
-            "allDoublesHand": false
+            "allDoublesHand": false,
+            "hasAnyDoubles": false,
         };
         this.drewDomino = false;  // Track if player drew any domino
+        this.achievementQueue = [];
+        this.isShowingAchievement = false;
+        this.shownAchievements = new Set(); // To track already shown achievements
     }
 
     // Show toast notification for unlocked achievement
     showAchievementToast(message) {
-        toast.success(`Achievement Unlocked: ${message}`, {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        console.log(`Attempting to show achievement: ${message}`); // Logging
+        if (!this.shownAchievements.has(message)) {
+            this.shownAchievements.add(message);
+            this.achievementQueue.push(message);
+            console.log(`Added to queue: ${message}`); // Logging
+            if (!this.isShowingAchievement) {
+                this.showNextAchievement();
+            }
+        } else {
+            console.log(`Achievement already shown: ${message}`); // Logging
+        }
+    }
+
+    showNextAchievement() {
+        if (this.achievementQueue.length === 0) {
+            this.isShowingAchievement = false;
+            return;
+        }
+
+        this.isShowingAchievement = true;
+        const message = this.achievementQueue.shift();
+        let imgSrc = '';
+
+        if (message === "Won Without Drawing!") {
+            imgSrc = 'Cleansweep.png';
+        } else if (message === "Won the Game!") {
+            imgSrc = 'FirstWinAchievement.png';
+        } else if (message === "Started with Double Six!") {
+            imgSrc = 'DoubleSix.png';
+        } else if (message === "All Doubles Hand!") {
+            imgSrc = 'AllDoubles.png';
+        } else if (message === "Has Any Doubles!") {
+            imgSrc = 'Dominodouble_achievement.png';
+        }
+
+        if (imgSrc) {
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.style.position = 'fixed';
+            img.style.top = '10px';
+            img.style.right = '-310px'; // Start off-screen
+            img.style.width = '300px';
+            img.style.zIndex = '9999';
+            img.style.transition = 'right 0.5s ease-in-out'; // Add transition
+            document.body.appendChild(img);
+
+            // Slide in after a short delay
+            setTimeout(() => {
+                img.style.right = '10px';
+            }, 50);
+
+            // Slide out after 3 seconds
+            setTimeout(() => {
+                img.style.right = '-310px';
+                
+                // Remove the image and show next achievement after the slide-out animation completes
+                setTimeout(() => {
+                    if (img.parentNode) {
+                        document.body.removeChild(img);
+                    }
+                    this.showNextAchievement();
+                }, 500); // Wait for slide out animation to complete
+            }, 3000);
+        } else {
+            // If there's no image for this achievement, move to the next one immediately
+            this.showNextAchievement();
+        }
     }
 
     // Check if the player starts with 6:6
@@ -29,6 +91,13 @@ class AchievementManager {
         if (initialHand.some(domino => domino[0] === 6 && domino[1] === 6)) {
             this.achievements.startWithDoubleSix = true;
             this.showAchievementToast("Started with Double Six!");
+        }
+    }
+
+    checkHasAnyDoubles(initialHand){
+        if(initialHand.some(domino => domino[0] === domino[1])){
+            this.achievements.hasAnyDoubles = true;
+            this.showAchievementToast("Has Any Doubles!");
         }
     }
 
