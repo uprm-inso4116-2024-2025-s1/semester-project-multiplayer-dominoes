@@ -31,7 +31,7 @@ function MainGame() {
           } else {
             audioRef.current.play();
           }
-          setIsPlaying(!isPlaying);
+          setIsPlaying(prevIsPlaying => !isPlaying);
         };
       
         const handleVolumeChange = (event) => {
@@ -142,6 +142,7 @@ function MainGame() {
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
+    let initialBotHand = botHand;
     let bot = new IntermediateBot(tempTableState, botHand);
     let botHand2 = null;
     let bot2 = null;
@@ -154,9 +155,7 @@ function MainGame() {
         achievementManager.checkStartWithDoubleSix(initialPlayerHand);
         achievementManager.checkAllDoublesHand(initialPlayerHand);
         achievementManager.checkHasAnyDoubles(initialPlayerHand);
-    }, []);
-
-    const [score, setScore] = useState(0);    
+    }, []);    
 
     const [botData, setbotData] = useState({
         BotHand: botHand,
@@ -218,10 +217,10 @@ function MainGame() {
         setPaused(false);
     }
 
-    const ScoreTracker = ({temp_score}) => {
+    const ScoreTracker = ({temp_score, message}) => {
         return (
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <h1>Current Score: {temp_score}</h1>
+            <h1>{message} {temp_score}</h1>
           </div>
         );
       };
@@ -387,30 +386,59 @@ function MainGame() {
                             return;
                         }
                     } else if (gameMode === "drawDominoes") {
-                        setScore(prevScore => prevScore + ruleEngine.getDrawDominoesRules().domino_win_score(botHand));
-                        if (ruleEngine.getDrawDominoesRules().has_won_game_set(score)) {
-                            // Player has won draw dominoes and game can end.
-                            setShowWinnerOverlay(true);
-                            setTimeout(() => setShowWinnerOverlay(false), 3000);    
-                            
-                        } else {
-                            // Game repeats itself until player has won.
-                            setbotData({
-                                BotHand: botHand,
-                                DbHand: drawBotChips(botHand.length),
-                                BotPlayer: bot,
-                                TileCount: botHand.length
-                            });                           
-                            setTableData({
-                                TableState: tempTableState,
-                                DrawMatrix: tempTableState.drawTable().split('\n'),
-                            });
-                            setPlayerData({
-                                PlayerHand: initialPlayerHand,
-                                DrawHand: drawChips(initialPlayerHand),
-                                PlayerInput: false,
-                            });
-                            setCurrentTurn("Player");
+                        if (botHand.length <= 0 && playerData.PlayerHand.length > 0) {
+                            console.log("Bot won! Setting score now... ");
+                            setBotScore(prevScore => prevScore + ruleEngine.getDrawDominoesRules().domino_win_score(playerData.PlayerHand));
+                            if (ruleEngine.getDrawDominoesRules().has_won_game_set(botScore)) {
+                                // Player has won draw dominoes and game can end.
+                                setShowLoserOverlay(true);
+                                setTimeout(() => setShowWinnerOverlay(false), 3000);    
+                                
+                            } else {
+                                // Game repeats itself until player has won.
+                                setbotData({
+                                    BotHand: initialBotHand,
+                                    DbHand: drawBotChips(initialBotHand.length),
+                                    BotPlayer: bot,
+                                    TileCount: botHand.length
+                                });                           
+                                setTableData({
+                                    TableState: tempTableState,
+                                    DrawMatrix: tempTableState.drawTable().split('\n'),
+                                });
+                                setPlayerData({
+                                    PlayerHand: initialPlayerHand,
+                                    DrawHand: drawChips(initialPlayerHand),
+                                    PlayerInput: false,
+                                });
+                                setCurrentTurn("Player");
+                            }
+                        } else if (playerData.PlayerHand.length <= 0) {
+                            setPlayerScore(prevScore => prevScore + ruleEngine.getDrawDominoesRules().domino_win_score(botHand));
+                            if (ruleEngine.getDrawDominoesRules().has_won_game_set(playerScore)) {
+                                // Player has won draw dominoes and game can end.
+                                setShowWinnerOverlay(true);
+                                setTimeout(() => setShowWinnerOverlay(false), 3000);    
+                                
+                            } else {
+                                // Game repeats itself until player has won.
+                                setbotData({
+                                    BotHand: initialBotHand,
+                                    DbHand: drawBotChips(initialBotHand.length),
+                                    BotPlayer: bot,
+                                    TileCount: botHand.length
+                                });                           
+                                setTableData({
+                                    TableState: tempTableState,
+                                    DrawMatrix: tempTableState.drawTable().split('\n'),
+                                });
+                                setPlayerData({
+                                    PlayerHand: initialPlayerHand,
+                                    DrawHand: drawChips(initialPlayerHand),
+                                    PlayerInput: false,
+                                });
+                                setCurrentTurn("Player");
+                            }
                         }
                     } else {
                         setShowWinnerOverlay(true);
@@ -720,7 +748,10 @@ function MainGame() {
                     )}
 
                     {playingDraw && (
-                        <ScoreTracker temp_score={score}/>
+                        <div>
+                            <ScoreTracker temp_score={playerScore} message={"Player score is: "}/>
+                            <ScoreTracker temp_score={botScore} message={"Bot score is: "}/>
+                        </div>
                     )}
 
                     {/* Winner overlay */}
