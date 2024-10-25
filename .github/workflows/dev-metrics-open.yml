@@ -1,4 +1,4 @@
-name: Daily Project Metrics Generation
+name: Daily Project Metrics Generation OPEN
 
 on:
   schedule:
@@ -42,7 +42,7 @@ jobs:
       - name: Run metrics generator
         run: |
           cd inso-gh-query-metrics
-          poetry run python src/generateMilestoneMetricsForActions.py ${{ github.workspace }}/metrics/gh_metrics_config.json
+          poetry run python src/generateMilestoneMetricsForActions.py ${{ github.workspace }}/metrics/gh_metrics_config_open_issues.json
         shell: bash
         env:
           GITHUB_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
           branch: inso-metrics
           push_options: "--force"
           create_branch: true
-          file_pattern: metrics/*.md
+          file_pattern: metrics/*_open.md
           commit_user_name: GitHub Action
           commit_user_email: action@github.com
           commit_author: GitHub Action <action@github.com>
