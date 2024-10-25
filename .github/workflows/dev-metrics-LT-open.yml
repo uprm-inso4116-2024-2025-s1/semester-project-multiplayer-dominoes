@@ -1,4 +1,4 @@
-name: Daily Project Metrics Generation
+name: Daily Project Metrics Generation Lecture Topic OPEN
 
 on:
   schedule:
@@ -42,7 +42,7 @@ jobs:
       - name: Run metrics generator
         run: |
           cd inso-gh-query-metrics
-          poetry run python src/generateMilestoneMetricsForActions.py ${{ github.workspace }}/metrics/gh_metrics_config.json
+          poetry run python src/exportMetricsForLectureTopicTask.py ${{ github.workspace }}/metrics/gh_metrics_config_open_issues.json
         shell: bash
         env:
           GITHUB_API_TOKEN: ${{ secrets.GH_API_TOKEN }}

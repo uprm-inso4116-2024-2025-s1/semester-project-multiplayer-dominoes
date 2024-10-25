@@ -19,6 +19,6 @@
       "projectedGroupGrade": 100.0
     }
   },
-  "lectureTopicTaskQuota": 0,
-  "countOpenIssues": false
+  "lectureTopicTaskQuota": 4,
+  "countOpenIssues": true
 }
