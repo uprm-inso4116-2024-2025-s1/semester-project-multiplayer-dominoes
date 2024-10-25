@@ -114,6 +114,94 @@ img {
     height: auto; /* Maintain the aspect ratio */
 }
 
+/* Individual section styling */
+.leaderboard, .reviews {
+    background-color: #1e2125; /* Same as header */
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px; /* Space around sections */
+    flex: 1; /* Equal space for each section */
+}
+
+
+.leaderboard-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+}
+
+.leaderboard-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.leaderboard-rows {
+    flex: 1;
+    position: absolute;
+    top: 31%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 15px;
+}
+
+.leaderboard-row {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+.leaderboard-column {
+    font-family: 'Orbitron', cursive;
+    color: white;
+    text-align: center;
+    font-size: 1.2vw; /* Responsive font size */
+}
+
+.column-rank {
+    width: 9vw; /* Responsive width */
+}
+
+.column-player {
+    width: 22vw; /* Responsive width for player names */
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.column-wins {
+    width: 11vw; /* Responsive width for wins and losses */
+}
+
+.column-losses {
+    width: 9vw; /* Responsive width for wins and losses */
+}
+
+@media (max-width: 768px) {
+    .leaderboard-rows {
+        top: 15%;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px;
+    }
+
+    .leaderboard-column {
+        font-size: 3vw;
+        padding-left: 2vw;
+    }
+
+    .column-rank, .column-wins, .column-losses {
+        width: 15vw;
+    }
+
+    .column-player {
+        width: 40vw;
+    }
+}
+
 /* Media queries for smaller screens */
 @media (max-width: 768px) {
     .content {

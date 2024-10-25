@@ -19,7 +19,6 @@ export default class UsersController {
         }
     }
 
-
     async createUser(req, res) {
         try {
             const { email, username } = req.body;
