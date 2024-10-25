@@ -217,13 +217,13 @@ function MainGame() {
         setPaused(false);
     }
 
-    const ScoreTracker = ({temp_score, message}) => {
+    const ScoreTracker = ({ temp_score, message }) => {
         return (
-          <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <h1>{message} {temp_score}</h1>
-          </div>
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <h1 style={{ fontSize: '24px' }}>{message} {temp_score}</h1> {/* Adjust the size as needed */}
+            </div>
         );
-      };
+    };
 
     const [showWinnerOverlay, setShowWinnerOverlay] = useState(false);
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
@@ -748,9 +748,9 @@ function MainGame() {
                     )}
 
                     {playingDraw && (
-                        <div>
-                            <ScoreTracker temp_score={playerScore} message={"Player score is: "}/>
-                            <ScoreTracker temp_score={botScore} message={"Bot score is: "}/>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <ScoreTracker temp_score={playerScore} message={"Player score is: "} />
+                            <ScoreTracker temp_score={botScore} message={"Bot score is: "} />
                         </div>
                     )}
 
