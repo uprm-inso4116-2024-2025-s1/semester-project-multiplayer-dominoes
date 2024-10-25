@@ -20,64 +20,46 @@ function MainGame() {
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
 
-    const BackgroundMusic = React.memo(({ src }) => {
-        const audioRef = useRef(null); // Initialize as null
+    const BackgroundMusic = ({ src }) => {
+        const audioRef = useRef(new Audio(src));
         const [isPlaying, setIsPlaying] = useState(false);
-        const volumeRef = useRef(0.5); // Use ref to keep track of volume
-    
-        // Effect to initialize the audio when the component mounts
-        useEffect(() => {
-            audioRef.current = new Audio(src); // Initialize audio object once
-            audioRef.current.volume = volumeRef.current; // Set initial volume
-    
-            const handleVolumeChange = (newVolume) => {
-                volumeRef.current = newVolume; // Update ref for volume
-                audioRef.current.volume = newVolume; // Set the new volume directly
-            };
-    
-            // Clean up on unmount
-            return () => {
-                audioRef.current.pause(); // Pause the audio
-                audioRef.current = null; // Clear the reference
-            };
-        }, [src]); // Dependency on `src` in case it changes
-    
+        const [volume, setVolume] = useState(0.5);
+      
         const togglePlay = () => {
-            if (isPlaying) {
-                audioRef.current.pause();
-            } else {
-                audioRef.current.play();
-            }
-            setIsPlaying(prev => !prev);
+          if (isPlaying) {
+            audioRef.current.pause();
+          } else {
+            audioRef.current.play();
+          }
+          setIsPlaying(prevIsPlaying => !isPlaying);
         };
-    
+      
         const handleVolumeChange = (event) => {
-            const newVolume = parseFloat(event.target.value); // Ensure the value is a number
-            if (audioRef.current) {
-                volumeRef.current = newVolume; // Update ref for volume
-                audioRef.current.volume = newVolume; // Set the new volume directly
-            }
+          const newVolume = event.target.value;
+          setVolume(newVolume);
+          audioRef.current.volume = newVolume;
         };
-    
+      
         return (
-            <div>
-                <button onClick={togglePlay}>
-                    {isPlaying ? 'Pause background music...' : 'Press for background music!'}
-                </button>
-                <label>
-                    Volume:
-                    <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.01"
-                        value={volumeRef.current} // Use ref for value
-                        onChange={handleVolumeChange}
-                    />
-                </label>
-            </div>
+          <div>
+            <button onClick={togglePlay}>
+              {isPlaying ? 'Pause background music...' : 'Press for background music!'}
+            </button>
+            <label>
+              Volume:
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={handleVolumeChange}
+              />
+            </label>
+          </div>
         );
-    });
+      };
+      
 
     const tileImage = new Image();
     tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
