@@ -110,54 +110,6 @@ describe('UsersHandler', () => {
         });
     });
 
-    // // Fix this later!
-    // describe('createUser', () => {
-    //     it('should create a new user with hashed password and mocked UUID', async () => {
-    //         const mockUuid = '123e4567-e89b-12d3-a456-426614174000';
-    //         uuidv4.mockReturnValue(mockUuid);
-
-    //         const mockHashedPassword = 'hashedPassword';
-    //         bcrypt.hash.mockResolvedValue(mockHashedPassword);
-
-    //         const mockUserData = {
-    //             username: 'testuser',
-    //             email: 'test@example.com',
-    //             password: 'plainPassword'
-    //         };
-
-    //         const saveMock = jest.fn().mockResolvedValue({
-    //             username: mockUserData.username,
-    //             email: mockUserData.email,
-    //             password: mockHashedPassword,
-    //             uuid: mockUuid
-    //         });
-
-    //         UserModel.mockImplementation(() => ({
-    //             save: saveMock
-    //         }));
-
-    //         // Act
-    //         const result = await usersHandler.createUser(mockUserData);
-
-    //         // Assert
-    //         expect(bcrypt.hash).toHaveBeenCalledWith(mockUserData.password, 10);
-    //         expect(uuidv4).toHaveBeenCalled();
-    //         expect(UserModel).toHaveBeenCalledWith({
-    //             username: mockUserData.username,
-    //             email: mockUserData.email,
-    //             password: mockHashedPassword,
-    //             uuid: mockUuid
-    //         });
-    //         expect(saveMock).toHaveBeenCalled();
-    //         expect(result).toEqual({
-    //             username: mockUserData.username,
-    //             email: mockUserData.email,
-    //             password: mockHashedPassword,
-    //             uuid: mockUuid
-    //         });
-    //     });
-    // });
-
     describe('logoutUser', () => {
         it('should increment the token version for the user on logout', async () => {
             const mockUserId = 'userId';
