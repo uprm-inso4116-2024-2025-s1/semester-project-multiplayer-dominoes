@@ -50,7 +50,7 @@ jobs:
       - name: Move Generated Metrics to Source Repo
         run: |
           mkdir -p ./metrics
-          mv inso-gh-query-metrics/*${{ github.repository_owner }}_open.md metrics/
+          mv inso-gh-query-metrics/*${{ github.repository_owner }}.md metrics/
         shell: bash
       - name: Auto Commit Results
         uses: stefanzweifel/git-auto-commit-action@v4
