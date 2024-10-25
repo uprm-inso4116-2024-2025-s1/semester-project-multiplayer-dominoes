@@ -1,5 +1,5 @@
 import GameStatus from "./GameStatus.js"
-import {Table} from "../../../frontend/src/gamestate/table.js"
+import {Table} from "../gamestate/table.js"
 
 describe('Game status logic', () => {
     let test_table = new Table("a", "a")

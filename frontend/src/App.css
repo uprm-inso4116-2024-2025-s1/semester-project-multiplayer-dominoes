@@ -139,6 +139,7 @@
 .button-container button:hover {
   background-color: rgb(244, 213, 75);
 }
+
 .chat-button {
   position: fixed;
   bottom: 20px; /* Change top to bottom */

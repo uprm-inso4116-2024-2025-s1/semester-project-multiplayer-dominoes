@@ -1,3 +1,94 @@
+//     const ruleEngine = new RuleEngine(gameMode);
+//     let tempTableState = new Table(default_path);
+//     let initialPlayerHand = tempTableState.playerChips();
+//     let botHand = tempTableState.playerChips();
+//     let bot = new IntermediateBot(tempTableState, botHand);
+//     let botHand2 = null;
+//     let bot2 = null;
+//     let botHand3 = null;
+//     let bot3 = null;
+//     const player_hand = localStorage.getItem("PlayerHand");
+//     const player_input = localStorage.getItem("PlayerInput");
+//     const current_turn = localStorage.getItem("currentTurn");
+//     const draw_matrix = localStorage.getItem("DrawMatrix");
+//     const bot_hand = localStorage.getItem("BotHand");
+//     const player_hand_value = player_hand ? fromJSON(JSON.parse(player_hand)) : initialPlayerHand;
+//     const player_input_value = player_input ? fromJSON(JSON.parse(player_input)) : false;
+//     const draw_matrix_value = draw_matrix ? fromJSON(JSON.parse(draw_matrix)) : tempTableState.drawTable().split("\n");
+//     const current_turn_value = current_turn ? fromJSON(JSON.parse(current_turn)) : "Player";
+//     const bot_hand_value = bot_hand ? fromJSON(JSON.parse(bot_hand)) : tempTableState.playerChips();
+
+//     const [currentTurn, setCurrentTurn] = useState(current_turn_value);
+
+//     const achievementManager = new AchievementManager();
+
+//     useEffect(() => {
+//         achievementManager.checkStartWithDoubleSix(player_hand_value);
+//         achievementManager.checkAllDoublesHand(player_hand_value);
+//         achievementManager.checkHasAnyDoubles(player_hand_value);
+//     }, []);
+
+
+//     const [botData, setbotData] = useState({
+//         BotHand: bot_hand_value,
+//         DbHand: drawBotChips(bot_hand_value.length),
+//         BotPlayer: bot,
+//         TileCount:bot_hand_value.length,
+//     })
+
+//     const [botData2, setbotData2] = useState(null)
+//     const [botData3, setbotData3] = useState(null)
+
+//     if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+//         botHand2 = tempTableState.playerChips();
+//         bot2 = new IntermediateBot(tempTableState, botHand2);
+//     }
+//     if(gameMode === 'threeBots'){
+//         botHand3 = tempTableState.playerChips();
+//         bot3 = new IntermediateBot(tempTableState, botHand3);
+//     }
+//     useEffect(()=>{
+//         if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+//             setbotData2({
+//                 BotHand: botHand2,
+//                 DbHand: drawBotChips(botHand2.length),
+//                 BotPlayer: bot2,
+//                 TileCount: botHand2.length
+//             })
+//         }
+//         if(gameMode === 'threeBots'){
+//             setbotData3({
+//                 BotHand: botHand3,
+//                 DbHand: drawBotChips(botHand3.length),
+//                 BotPlayer: bot3,
+//                 TileCount: botHand3.length
+//             })
+//         }
+//     },[])
+
+
+//     const [tableData, setTableData] = useState({
+//         TableState: tempTableState,
+//         DrawMatrix: draw_matrix_value,
+//     });
+//     const [playerData, setPlayerData] = useState({
+//         PlayerHand: player_hand_value,
+//         DrawHand: drawChips(player_hand_value),
+//         PlayerInput: player_input_value,
+//     });
+
+//     const [isPaused, setPaused] = useState(false);
+
+//     useEffect(() => {
+//         console.log("game was saved...")
+//         localStorage.setItem("PlayerHand", JSON.stringify(toJSON(playerData.PlayerHand)));
+//         localStorage.setItem("PlayerInput", JSON.stringify(toJSON(playerData.PlayerInput)));
+//         localStorage.setItem("DrawMatrix", JSON.stringify(toJSON(tableData.DrawMatrix)));
+//         localStorage.setItem("currentTurn", JSON.stringify(toJSON(currentTurn)));
+//         localStorage.setItem("BotHand", JSON.stringify(toJSON(botData.BotHand)));
+//     }, [currentTurn])
+// Stuff for save game implementation commented out
+
 import { Table, Corner } from './table.js';
 import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
@@ -19,25 +110,47 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
-    const backgroundMusic = useRef(null);
-    useEffect(() => {
-        const audio = backgroundMusic.current;
-        audio.volume = 0.2;
-        const handleCanPlay = () => {
-          audio.play().catch((error) => {
-            console.log("Autoplay was prevented, retrying with mute...", error);
-            audio.muted = true; // Mute the audio if autoplay is blocked
-            audio.play();
-          });
-        };
-        // Play the audio when it's ready
-        audio.addEventListener("canplay", handleCanPlay);
-        return () => {
-          audio.pause(); // Pause the audio when leaving the page
-          audio.removeEventListener("canplay", handleCanPlay);
-        };
-      }, []);
 
+    const BackgroundMusic = ({ src }) => {
+        const audioRef = useRef(new Audio(src));
+        const [isPlaying, setIsPlaying] = useState(false);
+        const [volume, setVolume] = useState(0.5);
+      
+        const togglePlay = () => {
+          if (isPlaying) {
+            audioRef.current.pause();
+          } else {
+            audioRef.current.play();
+          }
+          setIsPlaying(prevIsPlaying => !isPlaying);
+        };
+      
+        const handleVolumeChange = (event) => {
+          const newVolume = event.target.value;
+          setVolume(newVolume);
+          audioRef.current.volume = newVolume;
+        };
+      
+        return (
+          <div>
+            <button onClick={togglePlay}>
+              {isPlaying ? 'Pause background music...' : 'Press for background music!'}
+            </button>
+            <label>
+              Volume:
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={handleVolumeChange}
+              />
+            </label>
+          </div>
+        );
+      };
+      
 
     const tileImage = new Image();
     tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
@@ -120,6 +233,7 @@ function MainGame() {
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
+    let initialBotHand = botHand;
     let bot = new IntermediateBot(tempTableState, botHand);
     let botHand2 = null;
     let bot2 = null;
@@ -132,8 +246,7 @@ function MainGame() {
         achievementManager.checkStartWithDoubleSix(initialPlayerHand);
         achievementManager.checkAllDoublesHand(initialPlayerHand);
         achievementManager.checkHasAnyDoubles(initialPlayerHand);
-    }, []);
-
+    }, []);    
 
     const [botData, setbotData] = useState({
         BotHand: botHand,
@@ -185,6 +298,8 @@ function MainGame() {
 
     const [isPaused, setPaused] = useState(false);
 
+    const [playingDraw, setPlayingDraw] = useState(false);
+
     const pauseGame = () => {
         setPaused(true);
     }
@@ -192,6 +307,14 @@ function MainGame() {
     const resumeGame = () => {
         setPaused(false);
     }
+
+    const ScoreTracker = ({ temp_score, message }) => {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <h1 style={{ fontSize: '24px' }}>{message} {temp_score}</h1> {/* Adjust the size as needed */}
+            </div>
+        );
+    };
 
     const [showWinnerOverlay, setShowWinnerOverlay] = useState(false);
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
@@ -286,6 +409,9 @@ function MainGame() {
 
     useEffect(() => {
         // This runs when the player places a domino on the table.
+        if (gameMode === "drawDominoes") {
+            setPlayingDraw(true);
+        }
         if (data.Domino && data.Domino.length === 2) {
             let tempTableState = tableData.TableState;
             if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, tempTableState)) {
@@ -350,7 +476,62 @@ function MainGame() {
                             setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
                             return;
                         }
-                    } else{
+                    } else if (gameMode === "drawDominoes") {
+                        if (botHand.length <= 0 && playerData.PlayerHand.length > 0) {
+                            console.log("Bot won! Setting score now... ");
+                            setBotScore(prevScore => prevScore + ruleEngine.getDrawDominoesRules().domino_win_score(playerData.PlayerHand));
+                            if (ruleEngine.getDrawDominoesRules().has_won_game_set(botScore)) {
+                                // Player has won draw dominoes and game can end.
+                                setShowLoserOverlay(true);
+                                setTimeout(() => setShowWinnerOverlay(false), 3000);    
+                                
+                            } else {
+                                // Game repeats itself until player has won.
+                                setbotData({
+                                    BotHand: initialBotHand,
+                                    DbHand: drawBotChips(initialBotHand.length),
+                                    BotPlayer: bot,
+                                    TileCount: botHand.length
+                                });                           
+                                setTableData({
+                                    TableState: tempTableState,
+                                    DrawMatrix: tempTableState.drawTable().split('\n'),
+                                });
+                                setPlayerData({
+                                    PlayerHand: initialPlayerHand,
+                                    DrawHand: drawChips(initialPlayerHand),
+                                    PlayerInput: false,
+                                });
+                                setCurrentTurn("Player");
+                            }
+                        } else if (playerData.PlayerHand.length <= 0) {
+                            setPlayerScore(prevScore => prevScore + ruleEngine.getDrawDominoesRules().domino_win_score(botHand));
+                            if (ruleEngine.getDrawDominoesRules().has_won_game_set(playerScore)) {
+                                // Player has won draw dominoes and game can end.
+                                setShowWinnerOverlay(true);
+                                setTimeout(() => setShowWinnerOverlay(false), 3000);    
+                                
+                            } else {
+                                // Game repeats itself until player has won.
+                                setbotData({
+                                    BotHand: initialBotHand,
+                                    DbHand: drawBotChips(initialBotHand.length),
+                                    BotPlayer: bot,
+                                    TileCount: botHand.length
+                                });                           
+                                setTableData({
+                                    TableState: tempTableState,
+                                    DrawMatrix: tempTableState.drawTable().split('\n'),
+                                });
+                                setPlayerData({
+                                    PlayerHand: initialPlayerHand,
+                                    DrawHand: drawChips(initialPlayerHand),
+                                    PlayerInput: false,
+                                });
+                                setCurrentTurn("Player");
+                            }
+                        }
+                    } else {
                         setShowWinnerOverlay(true);
                         setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
                         return;
@@ -613,9 +794,6 @@ function MainGame() {
 
     return (
         <div>
-            <audio id="backgroundMusic" ref={backgroundMusic} loop>
-                <source src="/BackgroundMusic.mp3" type="audio/mpeg" />
-            </audio>
             {!isPaused ? (
                 <div className='table_game'>
                     {/*Button to switch between gamestate and lobby ui*/}
@@ -657,6 +835,13 @@ function MainGame() {
                     {showTurnNotification && (
                         <div className="overlay">
                             <img src={'yourTurn.png'} alt="Your Turn" />
+                        </div>
+                    )}
+
+                    {playingDraw && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <ScoreTracker temp_score={playerScore} message={"Player score is: "} />
+                            <ScoreTracker temp_score={botScore} message={"Bot score is: "} />
                         </div>
                     )}
 
@@ -715,7 +900,7 @@ function MainGame() {
                                 }
                             }}>Right Tail</button>
                             <button onClick={() => {
-                                if (tableData.TableState.availableDominos === 0) {
+                                if (tableData.TableState.availableDominos <= 0) {
                                     setShowPopup(true);
                                     setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
                                 } else {
@@ -732,6 +917,7 @@ function MainGame() {
                                 }
                             }}>Pass Turn</button>
                             <button onClick={pauseGame}>Pause Game</button>
+                            <BackgroundMusic src={"/BackgroundMusic.mp3"}/> 
                         </div>
                     </div>
                     {/* Add ToastContainer to display toast notifications */}
@@ -753,7 +939,7 @@ function MainGame() {
                 </div>
                 //Continues the popup message for when the player has no more tiles to pick up after the game has been paused. 
             ) : (<PauseScreen onResume={resumeGame} />)}
-            {showPopup && <Popup message="There are no more tiles to pick up!" />}  
+            {showPopup && <Popup message="There are no more tiles to pick up!" />} 
         </div>
     );
 

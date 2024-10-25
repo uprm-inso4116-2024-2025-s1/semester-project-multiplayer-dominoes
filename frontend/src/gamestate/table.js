@@ -128,7 +128,6 @@ class Table{
         for(let i = 0; i < 7; i++){
             player_dominoes.push(this.grabRandomChip());
         }
-        this.#dominoes_available -= 7;
         return player_dominoes;
     }
 
