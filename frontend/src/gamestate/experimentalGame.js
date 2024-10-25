@@ -134,6 +134,7 @@ function MainGame() {
         achievementManager.checkHasAnyDoubles(initialPlayerHand);
     }, []);
 
+    const [score, setScore] = useState(0);    
 
     const [botData, setbotData] = useState({
         BotHand: botHand,
@@ -185,6 +186,8 @@ function MainGame() {
 
     const [isPaused, setPaused] = useState(false);
 
+    const [playingDraw, setPlayingDraw] = useState(false);
+
     const pauseGame = () => {
         setPaused(true);
     }
@@ -192,6 +195,14 @@ function MainGame() {
     const resumeGame = () => {
         setPaused(false);
     }
+
+    const ScoreTracker = ({temp_score}) => {
+        return (
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <h1>Current Score: {temp_score}</h1>
+          </div>
+        );
+      };
 
     const [showWinnerOverlay, setShowWinnerOverlay] = useState(false);
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
@@ -286,6 +297,9 @@ function MainGame() {
 
     useEffect(() => {
         // This runs when the player places a domino on the table.
+        if (gameMode === "drawDominoes") {
+            setPlayingDraw(true);
+        }
         if (data.Domino && data.Domino.length === 2) {
             let tempTableState = tableData.TableState;
             if (playerDominoIndex >= 0 && playerDominoIndex < playerData.PlayerHand.length && ruleEngine.validateMove(data.Domino, tempTableState)) {
@@ -351,11 +365,12 @@ function MainGame() {
                             return;
                         }
                     } else if (gameMode === "drawDominoes") {
-                        const score = ruleEngine.getDrawDominoesRules().domino_win_score(botHand);
+                        setScore(prevScore => prevScore + ruleEngine.getDrawDominoesRules().domino_win_score(botHand));
                         if (ruleEngine.getDrawDominoesRules().has_won_game_set(score)) {
                             // Player has won draw dominoes and game can end.
                             setShowWinnerOverlay(true);
-                            setTimeout(() => setShowWinnerOverlay(false), 3000);           
+                            setTimeout(() => setShowWinnerOverlay(false), 3000);    
+                            
                         } else {
                             // Game repeats itself until player has won.
                             setbotData({
@@ -685,6 +700,10 @@ function MainGame() {
                         </div>
                     )}
 
+                    {playingDraw && (
+                        <ScoreTracker temp_score={score}/>
+                    )}
+
                     {/* Winner overlay */}
                     {showWinnerOverlay && (
                         <div className="overlay">
@@ -740,7 +759,7 @@ function MainGame() {
                                 }
                             }}>Right Tail</button>
                             <button onClick={() => {
-                                if (tableData.TableState.availableDominos === 0) {
+                                if (tableData.TableState.availableDominos <= 0) {
                                     setShowPopup(true);
                                     setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
                                 } else {

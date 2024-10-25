@@ -71,7 +71,7 @@ class RuleEngine {
                 // this calculates the score of the player by the end of the game by getting all the dominoes
                 // in the player hand.
                 let score = 0;
-                for (let i = 0; i < player_hand.length; i++) {
+                for (let i = 0; i < 7; i++) {
                     score += player_hand[i][0] + player_hand[i][1];
                 }
                 return score;
