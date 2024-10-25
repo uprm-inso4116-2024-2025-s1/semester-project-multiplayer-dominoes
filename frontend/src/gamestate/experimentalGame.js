@@ -43,7 +43,7 @@ function MainGame() {
         return (
           <div>
             <button onClick={togglePlay}>
-              {isPlaying ? 'Pause' : 'Play'}
+              {isPlaying ? 'Pause background music...' : 'Press for background music!'}
             </button>
             <label>
               Volume:
