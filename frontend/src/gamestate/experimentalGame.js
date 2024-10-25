@@ -19,25 +19,47 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
-    const backgroundMusic = useRef(null);
-    useEffect(() => {
-        const audio = backgroundMusic.current;
-        audio.volume = 0.2;
-        const handleCanPlay = () => {
-          audio.play().catch((error) => {
-            console.log("Autoplay was prevented, retrying with mute...", error);
-            audio.muted = true; // Mute the audio if autoplay is blocked
-            audio.play();
-          });
-        };
-        // Play the audio when it's ready
-        audio.addEventListener("canplay", handleCanPlay);
-        return () => {
-          audio.pause(); // Pause the audio when leaving the page
-          audio.removeEventListener("canplay", handleCanPlay);
-        };
-      }, []);
 
+    const BackgroundMusic = ({ src }) => {
+        const audioRef = useRef(new Audio(src));
+        const [isPlaying, setIsPlaying] = useState(false);
+        const [volume, setVolume] = useState(0.5);
+      
+        const togglePlay = () => {
+          if (isPlaying) {
+            audioRef.current.pause();
+          } else {
+            audioRef.current.play();
+          }
+          setIsPlaying(!isPlaying);
+        };
+      
+        const handleVolumeChange = (event) => {
+          const newVolume = event.target.value;
+          setVolume(newVolume);
+          audioRef.current.volume = newVolume;
+        };
+      
+        return (
+          <div>
+            <button onClick={togglePlay}>
+              {isPlaying ? 'Pause' : 'Play'}
+            </button>
+            <label>
+              Volume:
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={handleVolumeChange}
+              />
+            </label>
+          </div>
+        );
+      };
+      
 
     const tileImage = new Image();
     tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
@@ -653,9 +675,6 @@ function MainGame() {
 
     return (
         <div>
-            <audio id="backgroundMusic" ref={backgroundMusic} loop>
-                <source src="/BackgroundMusic.mp3" type="audio/mpeg" />
-            </audio>
             {!isPaused ? (
                 <div className='table_game'>
                     {/*Button to switch between gamestate and lobby ui*/}
@@ -776,6 +795,7 @@ function MainGame() {
                                 }
                             }}>Pass Turn</button>
                             <button onClick={pauseGame}>Pause Game</button>
+                            <BackgroundMusic src={"/BackgroundMusic.mp3"}/> 
                         </div>
                     </div>
                     {/* Add ToastContainer to display toast notifications */}
@@ -797,7 +817,7 @@ function MainGame() {
                 </div>
                 //Continues the popup message for when the player has no more tiles to pick up after the game has been paused. 
             ) : (<PauseScreen onResume={resumeGame} />)}
-            {showPopup && <Popup message="There are no more tiles to pick up!" />}  
+            {showPopup && <Popup message="There are no more tiles to pick up!" />} 
         </div>
     );
 
