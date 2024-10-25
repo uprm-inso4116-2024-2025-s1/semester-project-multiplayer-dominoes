@@ -1,3 +1,94 @@
+//     const ruleEngine = new RuleEngine(gameMode);
+//     let tempTableState = new Table(default_path);
+//     let initialPlayerHand = tempTableState.playerChips();
+//     let botHand = tempTableState.playerChips();
+//     let bot = new IntermediateBot(tempTableState, botHand);
+//     let botHand2 = null;
+//     let bot2 = null;
+//     let botHand3 = null;
+//     let bot3 = null;
+//     const player_hand = localStorage.getItem("PlayerHand");
+//     const player_input = localStorage.getItem("PlayerInput");
+//     const current_turn = localStorage.getItem("currentTurn");
+//     const draw_matrix = localStorage.getItem("DrawMatrix");
+//     const bot_hand = localStorage.getItem("BotHand");
+//     const player_hand_value = player_hand ? fromJSON(JSON.parse(player_hand)) : initialPlayerHand;
+//     const player_input_value = player_input ? fromJSON(JSON.parse(player_input)) : false;
+//     const draw_matrix_value = draw_matrix ? fromJSON(JSON.parse(draw_matrix)) : tempTableState.drawTable().split("\n");
+//     const current_turn_value = current_turn ? fromJSON(JSON.parse(current_turn)) : "Player";
+//     const bot_hand_value = bot_hand ? fromJSON(JSON.parse(bot_hand)) : tempTableState.playerChips();
+
+//     const [currentTurn, setCurrentTurn] = useState(current_turn_value);
+
+//     const achievementManager = new AchievementManager();
+
+//     useEffect(() => {
+//         achievementManager.checkStartWithDoubleSix(player_hand_value);
+//         achievementManager.checkAllDoublesHand(player_hand_value);
+//         achievementManager.checkHasAnyDoubles(player_hand_value);
+//     }, []);
+
+
+//     const [botData, setbotData] = useState({
+//         BotHand: bot_hand_value,
+//         DbHand: drawBotChips(bot_hand_value.length),
+//         BotPlayer: bot,
+//         TileCount:bot_hand_value.length,
+//     })
+
+//     const [botData2, setbotData2] = useState(null)
+//     const [botData3, setbotData3] = useState(null)
+
+//     if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+//         botHand2 = tempTableState.playerChips();
+//         bot2 = new IntermediateBot(tempTableState, botHand2);
+//     }
+//     if(gameMode === 'threeBots'){
+//         botHand3 = tempTableState.playerChips();
+//         bot3 = new IntermediateBot(tempTableState, botHand3);
+//     }
+//     useEffect(()=>{
+//         if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+//             setbotData2({
+//                 BotHand: botHand2,
+//                 DbHand: drawBotChips(botHand2.length),
+//                 BotPlayer: bot2,
+//                 TileCount: botHand2.length
+//             })
+//         }
+//         if(gameMode === 'threeBots'){
+//             setbotData3({
+//                 BotHand: botHand3,
+//                 DbHand: drawBotChips(botHand3.length),
+//                 BotPlayer: bot3,
+//                 TileCount: botHand3.length
+//             })
+//         }
+//     },[])
+
+
+//     const [tableData, setTableData] = useState({
+//         TableState: tempTableState,
+//         DrawMatrix: draw_matrix_value,
+//     });
+//     const [playerData, setPlayerData] = useState({
+//         PlayerHand: player_hand_value,
+//         DrawHand: drawChips(player_hand_value),
+//         PlayerInput: player_input_value,
+//     });
+
+//     const [isPaused, setPaused] = useState(false);
+
+//     useEffect(() => {
+//         console.log("game was saved...")
+//         localStorage.setItem("PlayerHand", JSON.stringify(toJSON(playerData.PlayerHand)));
+//         localStorage.setItem("PlayerInput", JSON.stringify(toJSON(playerData.PlayerInput)));
+//         localStorage.setItem("DrawMatrix", JSON.stringify(toJSON(tableData.DrawMatrix)));
+//         localStorage.setItem("currentTurn", JSON.stringify(toJSON(currentTurn)));
+//         localStorage.setItem("BotHand", JSON.stringify(toJSON(botData.BotHand)));
+//     }, [currentTurn])
+// Stuff for save game implementation commented out
+
 import { Table, Corner } from './table.js';
 import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
