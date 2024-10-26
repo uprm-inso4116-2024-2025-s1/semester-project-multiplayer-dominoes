@@ -22,21 +22,8 @@ class AdvancedBot extends DominoBot {
         ];
     }
 
-    updateTable(table){
-        this.table = table;
-    }
-
-    getUnplayedTiles() {
-        return this.unplayedTiles;
-    }
-
-    getPlayedTiles(){
-        return this.playedTiles
-    }
-
-    getHand(){
-        return this.hand;
-    }
+    getUnplayedTiles() {return this.unplayedTiles;}
+    getPlayedTiles(){return this.playedTiles;}
 
     /**
      * Updates the unplayedTiles array depending on the tiles that are on the table and the tiles
