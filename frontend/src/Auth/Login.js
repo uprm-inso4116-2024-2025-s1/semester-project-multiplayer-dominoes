@@ -19,7 +19,7 @@ function Login() {
         : await authService.register(username, email, password);
 
       localStorage.setItem('token', data.token);
-      navigate('/gameMode');
+      navigate('/lobby');
     } catch (error) {
       console.warn('User not found. Please check your email and password.');
     }
