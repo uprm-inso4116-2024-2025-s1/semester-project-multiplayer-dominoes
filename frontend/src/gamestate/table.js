@@ -220,6 +220,7 @@ class Table{
             }
         }
         this.#dominoes_on_table++;
+        this.#played_dominoes.push(domino_to_place);
         return is_legal;
     }
 

@@ -22,6 +22,10 @@ class AdvancedBot extends DominoBot {
         ];
     }
 
+    updateTable(table){
+        this.table = table;
+    }
+
     getUnplayedTiles() {
         return this.unplayedTiles;
     }
@@ -66,6 +70,7 @@ class AdvancedBot extends DominoBot {
 
     guessOpponentsHand(counts){
         let totalUnplayed = this.unplayedTiles.length;
+        if(totalUnplayed > 15) return 0; //Starts guessing midway through the game. 
         let estimatedOpponentScore = 0;
 
         this.unplayedTiles.forEach(tile => {
@@ -96,8 +101,14 @@ class AdvancedBot extends DominoBot {
             let score = 0;
             // Check if there are more dominoes with the same numbers
             score += counts[domino[0]] + counts[domino[1]];
-            //Guess the opponent's hand and likelyness of playing a domino. 
-            score -= this.guessOpponentsHand(counts);
+
+            //Choose wether to go offensive or defensive
+            if(this.unplayedTiles.length > 8){
+                score += this.guessOpponentsHand(counts);
+            } else {
+                score -= this.guessOpponentsHand(counts);
+            }
+            
             //Play doubles and heavy tiles early.
             score += domino[0] + domino[1];
 
