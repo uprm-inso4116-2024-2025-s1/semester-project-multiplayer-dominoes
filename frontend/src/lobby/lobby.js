@@ -31,6 +31,9 @@ const Lobby = () => {
     setGameMode(event.target.value); 
     setRoomMode(event.target.value);
   };
+  const handleBotAmmount = (event) => {
+    setBotAmmount(event.target.value);
+  }
   const handleDisplay = (solo) => {
     setIsSoloPlay(solo); 
     setShowLobby(true); 
@@ -166,7 +169,7 @@ const Lobby = () => {
               onClick={() => {
                 handleCreateRoom();
                 playSound();
-                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty, botNum: "threeBots"} })
+                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty, botNum: botAmmount} })
               }}
               disabled={!gameMode || !botdifficulty}
               
@@ -256,6 +259,23 @@ const Lobby = () => {
                 <label>
                   <input onChange={handleGameMode} type="radio" name="gamemode" value="drawDominoes" />{" "}
                   Draw Dominoes
+                </label>
+              </form>
+              <h1 className="heading"> Choose Bot Ammount</h1>
+              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
+                <label>
+                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="single" />{" "}
+                  One Bot
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="twoBots" />{" "}
+                  Two Bots
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="threeBots" />{" "}
+                  Three Bot
                 </label>
               </form>
             </div>)}
