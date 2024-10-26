@@ -2,7 +2,7 @@ import { Table, Corner } from './table.js';
 import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
 import IntermediateBot from './intermediateBot.js';
-import AdvancedBot from './advancedBot.js';
+import AdvancedBot from './AdvancedBot.js';
 import RuleEngine from './RuleEngine.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PauseScreen from './Pause.js';

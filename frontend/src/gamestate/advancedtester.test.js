@@ -1,5 +1,5 @@
 import { Corner } from "./table.js";
-import AdvancedBot from "./advancedBot.js";
+import AdvancedBot from "./AdvancedBot.js";
 
 describe("AdvancedBot", () => {
 
