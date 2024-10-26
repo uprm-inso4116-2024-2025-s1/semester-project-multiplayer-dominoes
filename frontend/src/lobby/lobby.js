@@ -226,6 +226,23 @@ const Lobby = () => {
             {/* Options for solo players */}
             {isSoloPlay &&(
               <div className="bot-selector" >
+              <h1 className="heading"> Choose Game Mode</h1>
+              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
+                <label >
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
+                  Classic
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
+                  All fives
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="drawDominoes" />{" "}
+                  Draw Dominoes
+                </label>
+              </form>
               <h1 className="heading"> Choose Bot Difficulty</h1>
               <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
               <label >
@@ -244,23 +261,6 @@ const Lobby = () => {
                 </label>
               </form>
 
-              <h1 className="heading"> Choose Game Mode</h1>
-              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
-                <label >
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
-                  Classic
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
-                  All fives
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="drawDominoes" />{" "}
-                  Draw Dominoes
-                </label>
-              </form>
               <h1 className="heading"> Choose Bot Ammount</h1>
               <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
                 <label>
