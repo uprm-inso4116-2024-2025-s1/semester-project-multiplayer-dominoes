@@ -142,7 +142,7 @@ function MainGame() {
             case  "intermediate":
                 return new IntermediateBot(tempTableState, itshand);
             case "advanced":
-                return new AdvancedBot(tempTableState, itshand);
+                return new AdvancedBot(tempTableState, itshand, tempTableState.playedDominoes);
             case "default":
                 return new DominoBot(tempTableState, itshand);
         }
