@@ -22,6 +22,18 @@ class AdvancedBot extends DominoBot {
         ];
     }
 
+    getUnplayedTiles() {
+        return this.unplayedTiles;
+    }
+
+    getPlayedTiles(){
+        return this.playedTiles
+    }
+
+    getHand(){
+        return this.hand;
+    }
+
     /**
      * Updates the unplayedTiles array depending on the tiles that are on the table and the tiles
      * in the bot's hand. 
