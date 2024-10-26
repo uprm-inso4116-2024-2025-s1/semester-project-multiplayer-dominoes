@@ -133,7 +133,6 @@ function MainGame() {
     const gameMode = useLocation().state.gameMode;
     const botdifficulty = useLocation().state.bot;
     const botAmmount = useLocation().state.botNum;
-    console.log(gameMode, botdifficulty, botAmmount);
 
     function createBot(itshand) {
         switch (botdifficulty) {
@@ -258,7 +257,7 @@ function MainGame() {
      * @param {*} setTableData - Setter for the table data.
      */
     function botPlayTurn(botData, tableData, setbotData, setTableData) {
-        
+            botData.BotPlayer.updateTable(tableData.TableState);
             let botMoved = botData.BotPlayer.playTurn();
                 // Update bot data and table if a move was successfully made
                 setbotData(prevBotData => ({
