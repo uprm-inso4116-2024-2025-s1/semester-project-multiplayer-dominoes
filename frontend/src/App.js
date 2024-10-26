@@ -8,6 +8,8 @@ import Login from './Auth/Login.js';
 import MainGame from './gamestate/experimentalGame.js';
 import Home from './Home/Home.js';
 import GameMode from './gameMode.js';
+import ForgotPassword from './Auth/ForgotPassword.js';
+import ResetPassword from './Auth/ResetPassword.js';
 import ChatPopup from './gamestate/Chat.js';
 
 function App() {
@@ -36,6 +38,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/game" 
             element={
               <>
