@@ -275,7 +275,7 @@ const Lobby = () => {
                 <br />
                 <label>
                   <input onChange={handleBotAmmount} type="radio" name="ammount" value="threeBots" />{" "}
-                  Three Bot
+                  Three Bots
                 </label>
               </form>
             </div>)}
