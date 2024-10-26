@@ -103,7 +103,7 @@ const Lobby = () => {
       {showInstruction && (
         <p className="instruction-message">
           {" "}
-          Choose between a clever bot in solo play or
+          Choose between playing clever bots in solo play or
           <br />
           play with friends by creating a lobby!
         </p>
@@ -250,6 +250,11 @@ const Lobby = () => {
                 <label>
                   <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
                   All fives
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="drawDominoes" />{" "}
+                  Draw Dominoes
                 </label>
               </form>
             </div>)}
