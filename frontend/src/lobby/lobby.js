@@ -16,6 +16,7 @@ const Lobby = () => {
   const [isSoloPlay, setIsSoloPlay] = useState(true);
   const [botdifficulty, setBotlevel] = useState("");
   const [gameMode, setGameMode] = useState("");
+  const [botAmmount, setBotAmmount] = useState("");
 
   const playSound = () => {
     const audio = document.getElementById("lobbyClickSound");
@@ -165,7 +166,7 @@ const Lobby = () => {
               onClick={() => {
                 handleCreateRoom();
                 playSound();
-                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty} })
+                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty, botNum: "threeBots"} })
               }}
               disabled={!gameMode || !botdifficulty}
               
