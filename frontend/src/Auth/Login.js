@@ -18,11 +18,11 @@ function Login() {
       const data = isLogin
         ? await authService.login(email, password)
         : await authService.register(username, email, password);
-  
+      
       console.log(data); 
       localStorage.setItem('token', data.token);
       navigate('/gameMode');
-    } catch (error) {
+} catch (error) {
       console.warn('Failed to register or login:', error);
     }
   };

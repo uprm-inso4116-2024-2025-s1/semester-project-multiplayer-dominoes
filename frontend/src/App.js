@@ -65,7 +65,7 @@ function App() {
             } 
           />
             
-            <Route path="/game" element={<MainGame />} />
+            <Route path="/game/:roomId" element={<MainGame />} />
             <Route path="/lobby" element={<Lobby />} />
             <Route path="/gameMode" element={<GameMode />} />
           </Routes>

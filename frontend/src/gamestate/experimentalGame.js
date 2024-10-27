@@ -93,7 +93,7 @@ import { Table, Corner } from './table.js';
 import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
 import RuleEngine from './RuleEngine.js';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
 import { ToastContainer, toast } from 'react-toastify';  // Import ToastContainer
@@ -227,8 +227,12 @@ function MainGame() {
         DominoDirection: undefined,
     });
 
-    const gameMode = useLocation().state.gameMode;
+    const location = useLocation();
+    const gameMode = location?.state?.gameMode;
 
+    if (!gameMode) {
+        console.error("No gameMode provided in location state");
+    }
     const ruleEngine = new RuleEngine(gameMode);
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
@@ -247,7 +251,7 @@ function MainGame() {
         achievementManager.checkAllDoublesHand(initialPlayerHand);
         achievementManager.checkHasAnyDoubles(initialPlayerHand);
     }, []);    
-
+ //AAAAA
     const [botData, setbotData] = useState({
         BotHand: botHand,
         DbHand: drawBotChips(botHand.length),
@@ -792,10 +796,13 @@ function MainGame() {
         );
     }
 
+    const { roomId } = useParams(); // Get the roomId from the URL
+
     return (
         <div>
             {!isPaused ? (
                 <div className='table_game'>
+                    <p>Game Room Id: {roomId}</p>
                     {/*Button to switch between gamestate and lobby ui*/}
                     <button
                         style={{

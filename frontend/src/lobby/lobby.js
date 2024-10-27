@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./lobby.css";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 const Lobby = () => {
-  /*Variable added to navigate between gamestate and lobby */
+/*Variable added to navigate between gamestate and lobby */
   const navigate = useNavigate();
+  
   // State to manage the list of rooms and room creation
   const [rooms, setRooms] = useState([]);
   const [newRoomName, setNewRoomName] = useState("");
@@ -16,6 +18,12 @@ const Lobby = () => {
   const [isSoloPlay, setIsSoloPlay] = useState(true);
   const [botdifficulty, setBotlevel] = useState("");
   const [gameMode, setGameMode] = useState("");
+  const [isSocketOpen, setIsSocketOpen] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const [messageQueue, setMessageQueue] = useState([]);
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
+
+  const MAX_RECONNECT_ATTEMPTS = 5;
 
   const playSound = () => {
     const audio = document.getElementById("lobbyClickSound");
@@ -26,8 +34,8 @@ const Lobby = () => {
   const handleDifficultyChange = (event) => {
     setBotlevel(event.target.value); 
   };
-  const handleGameMode= (event) => {
-    setGameMode(event.target.value); 
+const handleGameMode= (event) => {
+    setGameMode(event.target.value);
     setRoomMode(event.target.value);
   };
   const handleDisplay = (solo) => {
@@ -41,19 +49,69 @@ const Lobby = () => {
 
   // Later Implement with the database to do a getAllRooms
   useEffect(() => {
-    fetchRooms();
-  }, []);
+    const connectWebSocket = () => {
+      try {
+        const ws = new WebSocket('ws://localhost:3000');
+
+        ws.onopen = () => {
+          console.log('WebSocket connection established.');
+          setIsSocketOpen(true);
+          setReconnectAttempts(0);
+          
+          messageQueue.forEach((message) => {
+            ws.send(message);
+          });
+          setMessageQueue([]);
+        };
+
+        ws.onmessage = (message) => {
+          console.log('Received message from server:', message.data);
+        };
+
+        ws.onclose = () => {
+          console.log('WebSocket connection closed.');
+          setIsSocketOpen(false);
+
+          if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+            setTimeout(() => {
+              console.log(`Reconnecting... Attempt ${reconnectAttempts + 1}`);
+              setReconnectAttempts(reconnectAttempts + 1);
+              connectWebSocket();
+            }, 1000 * (reconnectAttempts + 1));
+          } else {
+            console.error('Max reconnection attempts reached.');
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error: ', error);
+          setIsSocketOpen(false);
+        };
+
+        setSocket(ws);
+      } catch (error) {
+        console.error('Error initializing WebSocket:', error);
+      }
+    };
+
+    connectWebSocket();
+
+    return () => {
+      socket?.close();
+    };
+  }, [reconnectAttempts]);
+
 
   const fetchRooms = async () => {
-    //dummy daya for rooms
+//dummy daya for rooms
     //replace with API calls and decide which info the rooms have to show in the interface
     const fetchedRooms = [
-
+      
     ];
-    //Change this to a fetchedRooms with the GET response
+//Change this to a fetchedRooms with the GET response
     setRooms(fetchedRooms);
   };
-  //room creating. Missing backend post?
+//room creating. Missing backend post?
   const handleCreateRoom = async () => {
     if (newRoomName.trim() === "") {
       setErrorMessage("Room name cannot be empty.");
@@ -64,30 +122,47 @@ const Lobby = () => {
     } else {
       setErrorMessage("");
 
-      // Dummy post
-      //Replace with response, can use stringify on the json response
-      const newRoom = {
-        id: rooms.length + 1,
-        name: newRoomName,
-        gamemode: roomMode,
-        players: 1,
-        maxPlayers: 4,
-      };
-      setRooms([...rooms, newRoom]);
-      setNewRoomName(""); //Clear input if success
-      setRoomMode(''); 
-    }
-  };
+    const roomId = uuidv4();
+    const newRoom = {
+      id: roomId,
+      name: newRoomName,
+      gamemode: roomMode,
+      players: 1,
+      maxPlayers: 4,
+    };
+    setRooms([...rooms, newRoom]);
 
-  //handle joining
+    const message = JSON.stringify({ type: 'create_room', roomId, roomName: newRoomName });
+    if (isSocketOpen) {
+      socket.send(message);
+    } else {
+      setMessageQueue([...messageQueue, message]);
+    }
+
+    setNewRoomName('');
+    setErrorMessage('');
+  }
+};
+
+//handle joining
   const joinRooms = (roomId) => {
-    //handleling the update of the players count
+//handleling the update of the players count
     setRooms((prevRooms) => {
       const updatedRooms = prevRooms.map((room) => {
         if (room.id === roomId) {
-          // Check if the room is not full
+// Check if the room is not full
           if (room.players < room.maxPlayers) {
-            return { ...room, players: room.players + 1 }; // Increment player count
+            const updatedRoom = { ...room, players: room.players + 1 };
+            const message = JSON.stringify({ type: 'join_room', roomId });
+
+            if (isSocketOpen) {
+              socket.send(message);
+            } else {
+              setMessageQueue([...messageQueue, message]);
+            }
+
+            navigate(`/game/${room.id}`, { state: { gameMode: gameMode, bot: "multiplayer"} })
+            return updatedRoom;
           } else {
             alert("Room is full.");
             return room; // No change if room is full
@@ -102,7 +177,7 @@ const Lobby = () => {
     <div className="selection-box" style={{ display: "block", width: "100%" }}>
       {showInstruction && (
         <p className="instruction-message">
-          {" "}
+{" "}
           Choose between a clever bot in solo play or
           <br />
           play with friends by creating a lobby!
@@ -159,103 +234,103 @@ const Lobby = () => {
               Back
             </p>
             {isSoloPlay && (
-            <div className="solo_play">
-              <button
-              className="start_button" style={{height:"70px"}}
-              onClick={() => {
-                handleCreateRoom();
-                playSound();
-                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty} })
-              }}
-              disabled={!gameMode || !botdifficulty}
+              <div className="solo_play">
+                <button
+                  className="start_button" style={{height:"70px"}}
+                  onClick={() => {
+                    handleCreateRoom();
+                    playSound();
+                    navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty} })
+                  }}
+                  disabled={!gameMode || !botdifficulty}
+
+                >
+                  Start Game
+                </button>
               
-            >
-              Start Game
-            </button>
-            
             </div> )}
             {!isSoloPlay &&(
-            <div className="create_lobby" >
-            <h2 style={{fontSize: "20px"}} className="heading">Create Lobby</h2>
-            <input
-              type="text"
-              value={newRoomName}
-              onChange={(e) => setNewRoomName(e.target.value)}
-              placeholder="Enter Room Name"
-              className="text-box"
-            />
-            <div className="game-mode-selection" style={{ display: "flex", justifyContent: "space-around", marginTop: "10px" }}>
-      <label>
-        <input
-          type="radio"
-          name="gamemode"
-          value="classic"
-          onChange={handleGameMode}
-        />{" "}
+              <div className="create_lobby" >
+                <h2 style={{fontSize: "20px"}} className="heading">Create Lobby</h2>
+                <input
+                  type="text"
+                  value={newRoomName}
+                  onChange={(e) => setNewRoomName(e.target.value)}
+                  placeholder="Enter Room Name"
+                  className="text-box"
+                />
+                <div className="game-mode-selection" style={{ display: "flex", justifyContent: "space-around", marginTop: "10px" }}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="classic"
+                      onChange={handleGameMode}
+                    />{" "}
         Classic
-      </label>
-      <label>
-        <input
-          type="radio"
-          name="gamemode"
-          value="allFives"
-          onChange={handleGameMode}
-        />{" "}
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="allFives"
+                      onChange={handleGameMode}
+                    />{" "}
         All Fives
-      </label>
-    </div>
-            <button
+                  </label>
+                </div>
+                <button
               className="createRoom_button"
               onClick={() => {
                 handleCreateRoom();
                 playSound();
               }}
             >
-              Create Room
-            </button>
-            {errorMessage && <p className="error">{errorMessage}</p>} 
-            </div> )}
+                  Create Room
+                </button>
+                {errorMessage && <p className="error">{errorMessage}</p>}
+              </div> )}
 
           </div>
-            
+          
           <div className="right-column">
             {/* Options for solo players */}
             {isSoloPlay &&(
               <div className="bot-selector" >
-              <h1 className="heading"> Choose Bot Difficulty</h1>
-              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
-              <label >
-                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="basic" />{" "}
+                <h1 className="heading"> Choose Bot Difficulty</h1>
+                <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
+                  <label >
+                    <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="basic" />{" "}
                   Basic
-                </label>
-                <br />
+                  </label>
+                  <br />
                 <label >
-                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="intermediate" />{" "}
+                    <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="intermediate" />{" "}
                   Intermediate
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="advanced" />{" "}
+                  </label>
+<br />
+                  <label>
+                    <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="advanced" />{" "}
                   Advanced
-                </label>
-              </form>
-
+                  </label>
+                </form>
+                
               <h1 className="heading"> Choose Game Mode</h1>
-              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
-                <label >
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
+                <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
+                  <label >
+                    <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
                   Classic
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
+                  </label>
+<br />
+                  <label>
+                    <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
                   All fives
-                </label>
-              </form>
-            </div>)}
+                  </label>
+                </form>
+              </div>)}
             {!isSoloPlay &&(
               <div className="lobby'list" >
-              <h1 className="heading">Available Rooms</h1>
+                <h1 className="heading">Available Rooms</h1>
               {rooms.length > 0 ? (
                 <div className="rooms-table-container">
                   <table className="rooms-table">
@@ -268,37 +343,37 @@ const Lobby = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {rooms.map((room) => (
-                        <tr key={room.id}>
-                          <td>{room.name}</td>
-                          <td>
+                {rooms.map((room) => (
+                  <tr key={room.id}>
+                    <td>{room.name}</td>
+                    <td>
                             {room.players}/{room.maxPlayers}
                           </td>
                           <td>
                             {room.gamemode}
                           </td>
                           <td>
-                            <button
+                    <button
                               onClick={() => {
                                 joinRooms(room.id);
                                 playSound();
-                                navigate('/game', { state: { gameMode: gameMode, bot: "multiplayer"} })
+                                navigate(`/game/${room.id}`, { state: { gameMode: gameMode, bot: "multiplayer"} })
                               }}
                               className="join-button"
                               
                             >
-                              Join Room
-                            </button>
-                          </td>
+                      Join Room
+                    </button>
+                  </td>
                         </tr>
-                      ))}
-                    </tbody>
+                ))}
+</tbody>
                   </table>
-                </div>
-              ) : (
+              </div>
+) : (
                 <p>No rooms available. Create one to get started!</p>
-              )}
-            </div>)}
+            )}
+</div>)}
           </div>
 
           <audio
@@ -308,7 +383,7 @@ const Lobby = () => {
           ></audio>
         </div>
       )}
-    </div>
+          </div>
   );
 };
 
