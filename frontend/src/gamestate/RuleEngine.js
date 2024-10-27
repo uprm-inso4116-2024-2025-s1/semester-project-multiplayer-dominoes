@@ -17,7 +17,7 @@ class RuleEngine {
             case 'drawDominoes':
                 return this.getDrawDominoesRules();
             default:
-                throw new Error('Unknown game mode');
+                return this.getClassicRules();
         }
     }
 
