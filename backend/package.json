@@ -20,6 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.10.0",
     "mongoose": "^8.6.0",
+    "nodemailer": "^6.9.15",
     "react-router-dom": "^6.27.0",
     "react-scripts": "^5.0.1",
     "util": "^0.12.5",

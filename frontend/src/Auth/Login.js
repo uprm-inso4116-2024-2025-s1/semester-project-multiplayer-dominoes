@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from './services/AuthService.js';
 import './styles/Login.css';
+import { Link } from 'react-router-dom';
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,14 +18,14 @@ function Login() {
       const data = isLogin
         ? await authService.login(email, password)
         : await authService.register(username, email, password);
-
+  
+      console.log(data); 
       localStorage.setItem('token', data.token);
       navigate('/lobby');
     } catch (error) {
-      console.warn('User not found. Please check your email and password.');
+      console.warn('Failed to register or login:', error);
     }
   };
-
 
   return (
     <div className="login-container">
@@ -66,6 +67,12 @@ function Login() {
             {isLogin ? 'Sign Up' : 'Login'}
           </button>
         </p>
+        {isLogin && (
+  <Link to="/forgot-password" className="forgot-password-link">
+    Forgot password?
+  </Link>
+)}
+
       </div>
     </div>
   );

@@ -97,3 +97,16 @@ body {
     width: 800px;
     height: 200px;
 }
+
+.forgot-password-link {
+    color: #f7a517;
+    text-decoration: underline;
+    cursor: pointer;
+    display: block;
+    margin-top: 1rem;
+    font-size: 14px;
+}
+
+.forgot-password-link:hover {
+    color: #ffbf47;
+}
