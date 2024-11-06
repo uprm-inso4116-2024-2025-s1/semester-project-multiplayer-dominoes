@@ -3,7 +3,7 @@
 
 body {
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Press Start 2P', sans-serif;
     background-color: #282c34; /* Dark background */
     color: #FFF6F4; /* White text color */
     overflow-x: hidden; /* Prevent horizontal scrolling */
@@ -11,18 +11,18 @@ body {
 
 /* Use Press Start 2P for pixel-like headings */
 .instructions h2, .reviews h2 {
-    font-family: 'Press Start 2P', cursive; /* Pixel font for headings */
+    font-family: 'Press Start 2P', sans-serif; /* Pixel font for headings */
 }
 
 /* Use Orbitron for instructions and reviews text */
 .instructions p {
-    font-family: 'Orbitron', cursive; /* Orbitron font for paragraphs */
+    font-family: 'Press Start 2P', sans-serif;
 }
 
 /* Link styling in instructions */
 .instruction-link, .footer-links a {
-    font-family: 'Orbitron', cursive; /* Orbitron font for links */
-    color: #F86F03;
+    font-family: 'Press Start 2P', sans-serif;
+    color:  #F7E28C;
 }
 
 /* Header styling */
@@ -82,9 +82,9 @@ nav ul li a {
 
 /* Section header styling */
 .leaderboard h2, .instructions h2, .reviews h2 {
-    font-family: 'Press Start 2P', cursive; /* Use Press Start 2P for section headers */
+    font-family: 'Press Start 2P', sans-serif; /* Use Press Start 2P for section headers */
     font-size: 1.5em;
-    border-bottom: 2px solid #525FE1; /* Underline for headers */
+    border-bottom: 2px solid #F86F03; 
     padding-bottom: 10px;
 }
 
@@ -149,11 +149,12 @@ img {
 .leaderboard-row {
     display: flex;
     justify-content: space-between;
-    font-weight: bold;
+    padding: 10px 0; /* Adds vertical padding to each row */
+    align-items: center; /* Aligns items in the center vertically */
 }
 
 .leaderboard-column {
-    font-family: 'Orbitron', cursive;
+    font-family: 'Press Start 2P', sans-serif;
     color: white;
     text-align: center;
     font-size: 1.2vw; /* Responsive font size */
