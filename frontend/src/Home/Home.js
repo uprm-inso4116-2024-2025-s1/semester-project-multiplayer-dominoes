@@ -1,6 +1,13 @@
 import React from 'react';
 import './Home.css'; 
 
+const playSound = () => {
+    const audio = document.getElementById("clickSound");
+    if (audio) {
+        audio.play();
+    }
+};
+
 const Home = () => {
     return (
         <div>
@@ -13,14 +20,14 @@ const Home = () => {
             <nav>
             <div className="footer-links">
             <ul>
-                <a href="/">Home</a>
-                <a href="#">Instructions</a>
-                <a href="#">FAQs</a>
+                <a href="/" onClick={playSound}>Home</a>
+                <a href="#"onClick={playSound}>Instructions</a>
+                <a href="#"onClick={playSound}>FAQs</a>
             </ul>
             </div>
             </nav>
             <div className="footer-links">
-            <a href="/login">Sign Up / Log In</a>
+            <a href="/login"onClick={playSound}>Sign Up / Log In</a>
             </div>
         </header>
 
@@ -36,8 +43,9 @@ const Home = () => {
                 Players take turns placing tiles, connecting matching numbers at the ends of the chain of tiles on the table. 
                 If a player cannot make a move, they must skip their turn. 
                 The game continues until a player runs out of tiles or no more moves are possible. 
+
                 The winner scores points based on the tiles remaining in the opponents' hands, and the first player to reach a predetermined number of points wins the game.</p>
-            <a href="#" className="instruction-link">Click here for more in-depth instructions</a>
+            <a href="#" className="instruction-link"onClick={playSound}>Click here for more in-depth instructions</a>
         </section>
 
 
@@ -94,8 +102,12 @@ const Home = () => {
                 <br></br>
                 <br></br>
                 <a href="/privacy-policy">Privacy Policy</a>
+            <a href="#"onClick={playSound}>Contact Us</a>
+            <a href="#"onClick={playSound}>Frequently Asked Questions</a>
+            <a href="#"onClick={playSound}>Privacy Policy</a>
             </div>
         </footer>
+        <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>
         </div>
     );
     };
