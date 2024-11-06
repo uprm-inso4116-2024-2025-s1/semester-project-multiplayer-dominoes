@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken'; // Asegúrate de importar jsonwebtoken
 import bcrypt from 'bcrypt';
+import { JWT_SECRET } from '../index.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'my_super_secret_key'; // Define un valor predeterminado si está ausente
 
 
 export default class UsersController {
