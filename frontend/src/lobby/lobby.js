@@ -116,7 +116,6 @@ const Lobby = () => {
       {showOptions && (
         <div className="options-container">
           <button
-            style={{ height: "20%", width: "80%" }}
             className="createRoom_button"
             onClick={() => {
               handleDisplay(true);
@@ -126,7 +125,6 @@ const Lobby = () => {
             Solo Play
           </button>
           <button
-            style={{ height: "20%", width: "80%" }}
             className="createRoom_button"
             onClick={() => {
               playSound();

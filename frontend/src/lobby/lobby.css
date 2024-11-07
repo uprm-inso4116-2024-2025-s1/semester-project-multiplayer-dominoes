@@ -1,12 +1,11 @@
 .instruction-message {
-  color: rgb(244, 213, 75);  
+  color: rgb(255, 164, 27);
   font-size: 16px;
-  position: absolute;
   font-family: 'Press Start 2P', sans-serif;
-  top: 0; 
-  margin: 20px 25%; 
-  text-align: center; 
-  font-weight: bold; 
+  text-align: center;
+  font-weight: bold;
+  margin: 10px auto;
+  width: 90%;
 }
 
 .lobby-container {
@@ -23,17 +22,18 @@
 
   .options-container {
     display: flex;
-    gap: 30px;
     flex-direction: column;
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
-    width: 25%;
-    height: 300px;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 350px;
+    background-color: rgb(82, 95, 225);
     border-radius: 15px;
-    background-color: rgb(161, 167, 252); 
     box-shadow: 0 4px 8px rgb(0, 0, 0);
-    margin: 20px auto;
-    overflow: hidden;
+    margin: 40px auto;
+    padding: 20px;
+    box-sizing: border-box; 
   }
   
   .left-column {
@@ -116,13 +116,17 @@
     background-color: #F7E28C;
   }
   .createRoom_button {
-    padding: 10px 20px;
-    background-color: rgb(244, 213, 75); 
-    color: black;
+    padding: 15px 25px;
+    background-color: rgb(255, 164, 27);
+    color: white;
     border: none;
     border-radius: 5px;
     font-family: 'Press Start 2P', sans-serif;
+    font-size: 16px;
     cursor: pointer;
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
   }
   
   .createRoom_button:hover {
@@ -175,3 +179,37 @@
      1px  1px 0 black; 
   }
   
+  /* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .instruction-message {
+    font-size: 14px;
+    width: 95%;
+  }
+
+  .options-container {
+    width: 90%;
+    max-width: none;
+    padding: 15px;
+  }
+
+  .createRoom_button {
+    font-size: 14px;
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .instruction-message {
+    font-size: 12px;
+  }
+
+  .options-container {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .createRoom_button {
+    font-size: 12px;
+    padding: 10px 15px;
+  }
+}
