@@ -32,11 +32,11 @@ const Home = () => {
 
         <section className="instructions">
             <h2>INSTRUCTIONS</h2>
-            <p>Dominoes is a tile game where the objective is to be the first to get rid of all your tiles or have 
-                the lowest score at the end. Players take turns placing tiles, connecting matching numbers at the 
-                ends of the chain of tiles on the table. If you can't play, you must skip your turn. 
+            <p>Dominoes is a tile game where the objective is to be the first to get rid of all your tiles or have the lowest score at the end. 
+                Players take turns placing tiles, connecting matching numbers at the ends of the chain of tiles on the table. 
+                If a player cannot make a move, they must skip their turn. 
                 The game continues until a player runs out of tiles or no more moves are possible. 
-                The winner scores points based on the opponents remaining tiles, and the first player to reach a predetermined number of points wins the game.</p>
+                The winner scores points based on the tiles remaining in the opponents' hands, and the first player to reach a predetermined number of points wins the game.</p>
             <a href="#" className="instruction-link">Click here for more in-depth instructions</a>
         </section>
 
