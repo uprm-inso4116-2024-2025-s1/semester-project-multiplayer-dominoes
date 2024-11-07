@@ -1,104 +1,14 @@
-//     const ruleEngine = new RuleEngine(gameMode);
-//     let tempTableState = new Table(default_path);
-//     let initialPlayerHand = tempTableState.playerChips();
-//     let botHand = tempTableState.playerChips();
-//     let bot = new IntermediateBot(tempTableState, botHand);
-//     let botHand2 = null;
-//     let bot2 = null;
-//     let botHand3 = null;
-//     let bot3 = null;
-//     const player_hand = localStorage.getItem("PlayerHand");
-//     const player_input = localStorage.getItem("PlayerInput");
-//     const current_turn = localStorage.getItem("currentTurn");
-//     const draw_matrix = localStorage.getItem("DrawMatrix");
-//     const bot_hand = localStorage.getItem("BotHand");
-//     const player_hand_value = player_hand ? fromJSON(JSON.parse(player_hand)) : initialPlayerHand;
-//     const player_input_value = player_input ? fromJSON(JSON.parse(player_input)) : false;
-//     const draw_matrix_value = draw_matrix ? fromJSON(JSON.parse(draw_matrix)) : tempTableState.drawTable().split("\n");
-//     const current_turn_value = current_turn ? fromJSON(JSON.parse(current_turn)) : "Player";
-//     const bot_hand_value = bot_hand ? fromJSON(JSON.parse(bot_hand)) : tempTableState.playerChips();
-
-//     const [currentTurn, setCurrentTurn] = useState(current_turn_value);
-
-//     const achievementManager = new AchievementManager();
-
-//     useEffect(() => {
-//         achievementManager.checkStartWithDoubleSix(player_hand_value);
-//         achievementManager.checkAllDoublesHand(player_hand_value);
-//         achievementManager.checkHasAnyDoubles(player_hand_value);
-//     }, []);
-
-
-//     const [botData, setbotData] = useState({
-//         BotHand: bot_hand_value,
-//         DbHand: drawBotChips(bot_hand_value.length),
-//         BotPlayer: bot,
-//         TileCount:bot_hand_value.length,
-//     })
-
-//     const [botData2, setbotData2] = useState(null)
-//     const [botData3, setbotData3] = useState(null)
-
-//     if(gameMode === 'twoBots' || gameMode === 'threeBots'){
-//         botHand2 = tempTableState.playerChips();
-//         bot2 = new IntermediateBot(tempTableState, botHand2);
-//     }
-//     if(gameMode === 'threeBots'){
-//         botHand3 = tempTableState.playerChips();
-//         bot3 = new IntermediateBot(tempTableState, botHand3);
-//     }
-//     useEffect(()=>{
-//         if(gameMode === 'twoBots' || gameMode === 'threeBots'){
-//             setbotData2({
-//                 BotHand: botHand2,
-//                 DbHand: drawBotChips(botHand2.length),
-//                 BotPlayer: bot2,
-//                 TileCount: botHand2.length
-//             })
-//         }
-//         if(gameMode === 'threeBots'){
-//             setbotData3({
-//                 BotHand: botHand3,
-//                 DbHand: drawBotChips(botHand3.length),
-//                 BotPlayer: bot3,
-//                 TileCount: botHand3.length
-//             })
-//         }
-//     },[])
-
-
-//     const [tableData, setTableData] = useState({
-//         TableState: tempTableState,
-//         DrawMatrix: draw_matrix_value,
-//     });
-//     const [playerData, setPlayerData] = useState({
-//         PlayerHand: player_hand_value,
-//         DrawHand: drawChips(player_hand_value),
-//         PlayerInput: player_input_value,
-//     });
-
-//     const [isPaused, setPaused] = useState(false);
-
-//     useEffect(() => {
-//         console.log("game was saved...")
-//         localStorage.setItem("PlayerHand", JSON.stringify(toJSON(playerData.PlayerHand)));
-//         localStorage.setItem("PlayerInput", JSON.stringify(toJSON(playerData.PlayerInput)));
-//         localStorage.setItem("DrawMatrix", JSON.stringify(toJSON(tableData.DrawMatrix)));
-//         localStorage.setItem("currentTurn", JSON.stringify(toJSON(currentTurn)));
-//         localStorage.setItem("BotHand", JSON.stringify(toJSON(botData.BotHand)));
-//     }, [currentTurn])
-// Stuff for save game implementation commented out
-
 import { Table, Corner } from './table.js';
 import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
+import IntermediateBot from './intermediateBot.js';
+import AdvancedBot from './AdvancedBot.js';
 import RuleEngine from './RuleEngine.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
 import { ToastContainer, toast } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
-import IntermediateBot from './intermediateBot.js';
 
 const tileWidth = 3840 / 28; // Width of each tile (~137.14 pixels)
 const tileHeight = 91; // Height of each tile (91 pixels)
@@ -156,9 +66,7 @@ function MainGame() {
     tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
     function initTiles() {
         return new Promise((resolve) => {
-            console.log("Starting to load image...");
             tileImage.onload = () => {
-                console.log("Image loaded successfully");
                 const newTileMap = new Map();
                 const dominoes = [
                     "00", "01", "02", "03", "04", "05", "06",
@@ -176,19 +84,15 @@ function MainGame() {
                         height: tileHeight,
                     });
                 }
-                console.log("TileMap created with size:", newTileMap.size);
                 resolve(newTileMap);
             };
             tileImage.onerror = () => {
-                console.error("Failed to load image");
                 resolve(new Map());
             };
         });
     }
     useEffect(() => {
-        console.log("Starting initTiles...");
         initTiles().then((newTileMap) => {
-            console.log("Tiles initialized, updating state");
             setTileMap(newTileMap);
             setTilesInitialized(true);
         });
@@ -196,7 +100,6 @@ function MainGame() {
 
     useEffect(() => {
         if (tilesInitialized) {
-            console.log("Tiles initialized, updating player data");
             setPlayerData(prevData => ({
                 ...prevData,
                 DrawHand: drawChips(prevData.PlayerHand)
@@ -228,18 +131,33 @@ function MainGame() {
     });
 
     const gameMode = useLocation().state.gameMode;
+    const botdifficulty = useLocation().state.bot;
+    const botAmmount = useLocation().state.botNum;
+
+    function createBot(itshand) {
+        switch (botdifficulty) {
+            case "basic":
+                return new DominoBot(tempTableState, itshand);
+            case  "intermediate":
+                return new IntermediateBot(tempTableState, itshand);
+            case "advanced":
+                return new AdvancedBot(tempTableState, itshand, tempTableState.playedDominoes);
+            default:
+                return new DominoBot(tempTableState, itshand);
+        }
+    }
 
     const ruleEngine = new RuleEngine(gameMode);
     let tempTableState = new Table(default_path);
     let initialPlayerHand = tempTableState.playerChips();
     let botHand = tempTableState.playerChips();
     let initialBotHand = botHand;
-    let bot = new IntermediateBot(tempTableState, botHand);
+    let bot1 = createBot(initialBotHand);
     let botHand2 = null;
     let bot2 = null;
     let botHand3 = null;
     let bot3 = null;
-
+    
     const achievementManager = new AchievementManager();
 
     useEffect(() => {
@@ -251,23 +169,23 @@ function MainGame() {
     const [botData, setbotData] = useState({
         BotHand: botHand,
         DbHand: drawBotChips(botHand.length),
-        BotPlayer: bot,
+        BotPlayer: bot1,
         TileCount: botHand.length
     })
 
     const [botData2, setbotData2] = useState(null)
     const [botData3, setbotData3] = useState(null)
 
-    if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+    if(botAmmount === 'twoBots' || botAmmount === 'threeBots'){
         botHand2 = tempTableState.playerChips();
-        bot2 = new IntermediateBot(tempTableState, botHand2);
+        bot2 = createBot(botHand2);
     }
-    if(gameMode === 'threeBots'){
+    if(botAmmount === 'threeBots'){
         botHand3 = tempTableState.playerChips();
-        bot3 = new IntermediateBot(tempTableState, botHand3);
+        bot3 = createBot(botHand3);
     }
     useEffect(()=>{
-        if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+        if(botAmmount === 'twoBots' || botAmmount === 'threeBots'){
             setbotData2({
                 BotHand: botHand2,
                 DbHand: drawBotChips(botHand2.length),
@@ -275,7 +193,7 @@ function MainGame() {
                 TileCount: botHand2.length
             })
         }
-        if(gameMode === 'threeBots'){
+        if(botAmmount === 'threeBots'){
             setbotData3({
                 BotHand: botHand3,
                 DbHand: drawBotChips(botHand3.length),
@@ -339,7 +257,7 @@ function MainGame() {
      * @param {*} setTableData - Setter for the table data.
      */
     function botPlayTurn(botData, tableData, setbotData, setTableData) {
-        
+            botData.BotPlayer.updateTable(tableData.TableState);
             let botMoved = botData.BotPlayer.playTurn();
                 // Update bot data and table if a move was successfully made
                 setbotData(prevBotData => ({
@@ -478,7 +396,6 @@ function MainGame() {
                         }
                     } else if (gameMode === "drawDominoes") {
                         if (botHand.length <= 0 && playerData.PlayerHand.length > 0) {
-                            console.log("Bot won! Setting score now... ");
                             setBotScore(prevScore => prevScore + ruleEngine.getDrawDominoesRules().domino_win_score(playerData.PlayerHand));
                             if (ruleEngine.getDrawDominoesRules().has_won_game_set(botScore)) {
                                 // Player has won draw dominoes and game can end.
@@ -490,7 +407,7 @@ function MainGame() {
                                 setbotData({
                                     BotHand: initialBotHand,
                                     DbHand: drawBotChips(initialBotHand.length),
-                                    BotPlayer: bot,
+                                    BotPlayer: bot1,
                                     TileCount: botHand.length
                                 });                           
                                 setTableData({
@@ -516,7 +433,7 @@ function MainGame() {
                                 setbotData({
                                     BotHand: initialBotHand,
                                     DbHand: drawBotChips(initialBotHand.length),
-                                    BotPlayer: bot,
+                                    BotPlayer: bot1,
                                     TileCount: botHand.length
                                 });                           
                                 setTableData({
@@ -543,12 +460,12 @@ function MainGame() {
                 setTimeout(()=>{
                     botPlayTurn(botData, tableData, setbotData, setTableData);
                 },1000)
-                if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+                if(botAmmount === 'twoBots' || botAmmount === 'threeBots'){
                     setTimeout(()=>{
                         botPlayTurn(botData2, tableData, setbotData2, setTableData);
                     },2000)
                 }
-                if(gameMode === 'threeBots'){
+                if(botAmmount === 'threeBots'){
                     setTimeout(()=>{
                         botPlayTurn(botData3, tableData, setbotData3, setTableData);
                     },3000)
@@ -595,12 +512,12 @@ function MainGame() {
             setTimeout(()=>{
                 botPlayTurn(botData, tableData, setbotData, setTableData);
             },1000)
-            if(gameMode === 'twoBots' || gameMode === 'threeBots'){
+            if(botAmmount === 'twoBots' || botAmmount === 'threeBots'){
                 setTimeout(()=>{
                     botPlayTurn(botData2, tableData, setbotData2, setTableData);
                 },2000)
             }
-            if(gameMode === 'threeBots'){
+            if(botAmmount === 'threeBots'){
                 setTimeout(()=>{
                     botPlayTurn(botData3, tableData, setbotData3, setTableData);
                 },3000)
@@ -615,9 +532,7 @@ function MainGame() {
 
     // Convert a matrix into a string to visualize the player's hand.
     function drawChips(chips) {
-        console.log("drawChips called, tilesInitialized:", tilesInitialized, "tileMap size:", tileMap.size);
         if (!tilesInitialized || tileMap.size === 0) {
-            console.log("Tiles not initialized or empty tileMap");
             return <div>Loading...</div>;
         }
 
@@ -660,13 +575,11 @@ function MainGame() {
                     <div key={rowIndex} style={rowStyle}>
                         {row.map((chip, index) => {
                             if (!chip) {
-                                console.log(`Undefined chip at index ${rowIndex * 7 + index}`);
                                 return null; // Just return null without setting the popup
                             }
                             const tileKey = chip[0].toString() + chip[1].toString();
                             const tile = tileMap.get(tileKey);
                             const globalIndex = rowIndex * 7 + index;
-                            console.log(`Chip ${globalIndex}:`, tileKey, "Tile:", tile);
                             if (tile && tile.image) {
                                 return (
                                     <div key={globalIndex} style={itemStyle}>
@@ -755,7 +668,6 @@ function MainGame() {
     }
 
     function renderGameBoard() {
-        console.log(tableData.TableState.dominoesMatrix)
         let matrix = tableData.TableState.dominoesMatrix;
         let html = [];
         for (let i = 0; i < matrix.length; i++){

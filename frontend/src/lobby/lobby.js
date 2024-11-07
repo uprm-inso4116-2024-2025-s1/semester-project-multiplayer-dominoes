@@ -16,6 +16,7 @@ const Lobby = () => {
   const [isSoloPlay, setIsSoloPlay] = useState(true);
   const [botdifficulty, setBotlevel] = useState("");
   const [gameMode, setGameMode] = useState("");
+  const [botAmmount, setBotAmmount] = useState("");
 
   const playSound = () => {
     const audio = document.getElementById("lobbyClickSound");
@@ -30,6 +31,9 @@ const Lobby = () => {
     setGameMode(event.target.value); 
     setRoomMode(event.target.value);
   };
+  const handleBotAmmount = (event) => {
+    setBotAmmount(event.target.value);
+  }
   const handleDisplay = (solo) => {
     setIsSoloPlay(solo); 
     setShowLobby(true); 
@@ -103,7 +107,7 @@ const Lobby = () => {
       {showInstruction && (
         <p className="instruction-message">
           {" "}
-          Choose between a clever bot in solo play or
+          Choose between playing clever bots in solo play or
           <br />
           play with friends by creating a lobby!
         </p>
@@ -165,7 +169,7 @@ const Lobby = () => {
               onClick={() => {
                 handleCreateRoom();
                 playSound();
-                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty} })
+                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty, botNum: botAmmount} })
               }}
               disabled={!gameMode || !botdifficulty}
               
@@ -222,6 +226,23 @@ const Lobby = () => {
             {/* Options for solo players */}
             {isSoloPlay &&(
               <div className="bot-selector" >
+              <h1 className="heading"> Choose Game Mode</h1>
+              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
+                <label >
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
+                  Classic
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
+                  All fives
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleGameMode} type="radio" name="gamemode" value="drawDominoes" />{" "}
+                  Draw Dominoes
+                </label>
+              </form>
               <h1 className="heading"> Choose Bot Difficulty</h1>
               <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
               <label >
@@ -240,16 +261,21 @@ const Lobby = () => {
                 </label>
               </form>
 
-              <h1 className="heading"> Choose Game Mode</h1>
+              <h1 className="heading"> Choose Bot Ammount</h1>
               <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
-                <label >
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
-                  Classic
+                <label>
+                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="single" />{" "}
+                  One Bot
                 </label>
                 <br />
                 <label>
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
-                  All fives
+                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="twoBots" />{" "}
+                  Two Bots
+                </label>
+                <br />
+                <label>
+                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="threeBots" />{" "}
+                  Three Bots
                 </label>
               </form>
             </div>)}

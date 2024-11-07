@@ -21,7 +21,7 @@ function Login() {
   
       console.log(data); 
       localStorage.setItem('token', data.token);
-      navigate('/gameMode');
+      navigate('/lobby');
     } catch (error) {
       console.warn('Failed to register or login:', error);
     }

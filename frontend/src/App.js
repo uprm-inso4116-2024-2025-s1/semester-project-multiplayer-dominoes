@@ -7,7 +7,6 @@ import Lobby from './lobby/lobby.js';
 import Login from './Auth/Login.js';
 import MainGame from './gamestate/experimentalGame.js';
 import Home from './Home/Home.js';
-import GameMode from './gameMode.js';
 import ForgotPassword from './Auth/ForgotPassword.js';
 import ResetPassword from './Auth/ResetPassword.js';
 import ChatPopup from './gamestate/Chat.js';
@@ -67,7 +66,6 @@ function App() {
             
             <Route path="/game" element={<MainGame />} />
             <Route path="/lobby" element={<Lobby />} />
-            <Route path="/gameMode" element={<GameMode />} />
           </Routes>
           <audio id="howToPlaySound" src="/DominoesClick.wav" preload="auto"></audio>
         </header>
