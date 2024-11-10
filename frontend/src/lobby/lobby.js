@@ -25,23 +25,22 @@ const Lobby = () => {
     }
   };
   const handleDifficultyChange = (event) => {
-    setBotlevel(event.target.value); 
+    setBotlevel(event.target.value);
   };
-  const handleGameMode= (event) => {
-    setGameMode(event.target.value); 
+  const handleGameMode = (event) => {
+    setGameMode(event.target.value);
     setRoomMode(event.target.value);
   };
   const handleBotAmmount = (event) => {
     setBotAmmount(event.target.value);
-  }
+  };
   const handleDisplay = (solo) => {
-    setIsSoloPlay(solo); 
-    setShowLobby(true); 
-    setShowOptions(false); 
+    setIsSoloPlay(solo);
+    setShowLobby(true);
+    setShowOptions(false);
     setErrorMessage("");
     setInstruction(false);
   };
-
 
   // Later Implement with the database to do a getAllRooms
   useEffect(() => {
@@ -51,9 +50,7 @@ const Lobby = () => {
   const fetchRooms = async () => {
     //dummy daya for rooms
     //replace with API calls and decide which info the rooms have to show in the interface
-    const fetchedRooms = [
-
-    ];
+    const fetchedRooms = [];
     //Change this to a fetchedRooms with the GET response
     setRooms(fetchedRooms);
   };
@@ -79,7 +76,7 @@ const Lobby = () => {
       };
       setRooms([...rooms, newRoom]);
       setNewRoomName(""); //Clear input if success
-      setRoomMode(''); 
+      setRoomMode("");
     }
   };
 
@@ -116,7 +113,6 @@ const Lobby = () => {
       {showOptions && (
         <div className="options-container">
           <button
-            style={{ height: "20%", width: "80%" }}
             className="createRoom_button"
             onClick={() => {
               handleDisplay(true);
@@ -126,7 +122,6 @@ const Lobby = () => {
             Solo Play
           </button>
           <button
-            style={{ height: "20%", width: "80%" }}
             className="createRoom_button"
             onClick={() => {
               playSound();
@@ -139,21 +134,10 @@ const Lobby = () => {
       )}
 
       {showLobby && (
-        <div
-          className="lobby-container"
-          style={{ display: showLobby ? "flex" : "none" }}>
-
+        <div className="lobby-container">
           <div className="left-column">
             <p
-              style={{
-                cursor: "pointer",
-                color: "blue",
-                fontSize: "10px",
-                margin: "0",
-                position: "absolute",
-                top: "10px",
-                left: "10px",
-              }}
+              className="back-button"
               onClick={() => {
                 setShowLobby(false);
                 setShowOptions(true);
@@ -163,168 +147,248 @@ const Lobby = () => {
               Back
             </p>
             {isSoloPlay && (
-            <div className="solo_play">
-              <button
-              className="start_button" style={{height:"70px"}}
-              onClick={() => {
-                handleCreateRoom();
-                playSound();
-                navigate('/game', { state: { gameMode: gameMode, bot: botdifficulty, botNum: botAmmount} })
-              }}
-              disabled={!gameMode || !botdifficulty}
-              
-            >
-              Start Game
-            </button>
-            
-            </div> )}
-            {!isSoloPlay &&(
-            <div className="create_lobby" >
-            <h2 style={{fontSize: "20px"}} className="heading">Create Lobby</h2>
-            <input
-              type="text"
-              value={newRoomName}
-              onChange={(e) => setNewRoomName(e.target.value)}
-              placeholder="Enter Room Name"
-              className="text-box"
-            />
-            <div className="game-mode-selection" style={{ display: "flex", justifyContent: "space-around", marginTop: "10px" }}>
-      <label>
-        <input
-          type="radio"
-          name="gamemode"
-          value="classic"
-          onChange={handleGameMode}
-        />{" "}
-        Classic
-      </label>
-      <label>
-        <input
-          type="radio"
-          name="gamemode"
-          value="allFives"
-          onChange={handleGameMode}
-        />{" "}
-        All Fives
-      </label>
-    </div>
-            <button
-              className="createRoom_button"
-              onClick={() => {
-                handleCreateRoom();
-                playSound();
-              }}
-            >
-              Create Room
-            </button>
-            {errorMessage && <p className="error">{errorMessage}</p>} 
-            </div> )}
-
+              <div className="solo_play">
+                <button
+                  className="start_button"
+                  style={{ height: "70px" }}
+                  onClick={() => {
+                    handleCreateRoom();
+                    playSound();
+                    navigate("/game", {
+                      state: {
+                        gameMode: gameMode,
+                        bot: botdifficulty,
+                        botNum: botAmmount,
+                      },
+                    });
+                  }}
+                  disabled={!gameMode || !botdifficulty}
+                >
+                  Start Game
+                </button>
+              </div>
+            )}
+            {!isSoloPlay && (
+              <div className="create_lobby">
+                <h2 className="multiplayer-heading">Create Lobby</h2>
+                <input
+                  type="text"
+                  value={newRoomName}
+                  onChange={(e) => setNewRoomName(e.target.value)}
+                  placeholder="Enter Room Name"
+                  className="text-box"
+                />
+                <div
+                  className="game-mode-selection"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-around",
+                    marginTop: "10px",
+                  }}
+                >
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="classic"
+                      onChange={handleGameMode}
+                    />{" "}
+                    Classic
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="allFives"
+                      onChange={handleGameMode}
+                    />{" "}
+                    All Fives
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="drawDominoes"
+                      onChange={handleGameMode}
+                    />{" "}
+                    Draw Dominoes
+                  </label>
+                </div>
+                <button
+                  className="createRoom_button"
+                  onClick={() => {
+                    handleCreateRoom();
+                    playSound();
+                  }}
+                >
+                  Create Room
+                </button>
+                {errorMessage && <p className="error">{errorMessage}</p>}
+              </div>
+            )}
           </div>
-            
+
           <div className="right-column">
             {/* Options for solo players */}
-            {isSoloPlay &&(
-              <div className="bot-selector" >
-              <h1 className="heading"> Choose Game Mode</h1>
-              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
-                <label >
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="classic" />{" "}
-                  Classic
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="allFives" />{" "}
-                  All fives
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleGameMode} type="radio" name="gamemode" value="drawDominoes" />{" "}
-                  Draw Dominoes
-                </label>
-              </form>
-              <h1 className="heading"> Choose Bot Difficulty</h1>
-              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
-              <label >
-                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="basic" />{" "}
-                  Basic
-                </label>
-                <br />
-                <label >
-                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="intermediate" />{" "}
-                  Intermediate
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleDifficultyChange} type="radio" name="difficulty" value="advanced" />{" "}
-                  Advanced
-                </label>
-              </form>
+            {isSoloPlay && (
+              <div className="bot-selector">
+                <h1 className="heading"> Choose Game Mode</h1>
+                <form
+                  className="bot-difficulty-form"
+                  style={{ fontSize: "16px" }}
+                >
+                  <label>
+                    <input
+                      onChange={handleGameMode}
+                      type="radio"
+                      name="gamemode"
+                      value="classic"
+                    />{" "}
+                    Classic
+                  </label>
+                  <br />
+                  <label>
+                    <input
+                      onChange={handleGameMode}
+                      type="radio"
+                      name="gamemode"
+                      value="allFives"
+                    />{" "}
+                    All fives
+                  </label>
+                  <br />
+                  <label>
+                    <input
+                      onChange={handleGameMode}
+                      type="radio"
+                      name="gamemode"
+                      value="drawDominoes"
+                    />{" "}
+                    Draw Dominoes
+                  </label>
+                </form>
+                <h1 className="heading"> Choose Bot Difficulty</h1>
+                <form
+                  className="bot-difficulty-form"
+                  style={{ fontSize: "16px" }}
+                >
+                  <label>
+                    <input
+                      onChange={handleDifficultyChange}
+                      type="radio"
+                      name="difficulty"
+                      value="basic"
+                    />{" "}
+                    Basic
+                  </label>
+                  <br />
+                  <label>
+                    <input
+                      onChange={handleDifficultyChange}
+                      type="radio"
+                      name="difficulty"
+                      value="intermediate"
+                    />{" "}
+                    Intermediate
+                  </label>
+                  <br />
+                  <label>
+                    <input
+                      onChange={handleDifficultyChange}
+                      type="radio"
+                      name="difficulty"
+                      value="advanced"
+                    />{" "}
+                    Advanced
+                  </label>
+                </form>
 
-              <h1 className="heading"> Choose Bot Ammount</h1>
-              <form className="bot-difficulty-form" style={{fontSize: "16px"}}>
-                <label>
-                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="single" />{" "}
-                  One Bot
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="twoBots" />{" "}
-                  Two Bots
-                </label>
-                <br />
-                <label>
-                  <input onChange={handleBotAmmount} type="radio" name="ammount" value="threeBots" />{" "}
-                  Three Bots
-                </label>
-              </form>
-            </div>)}
-            {!isSoloPlay &&(
-              <div className="lobby'list" >
-              <h1 className="heading">Available Rooms</h1>
-              {rooms.length > 0 ? (
-                <div className="rooms-table-container">
-                  <table className="rooms-table">
-                    <thead>
-                      <tr>
-                        <th>Room Name</th>
-                        <th>Players</th>
-                        <th>GameMode</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rooms.map((room) => (
-                        <tr key={room.id}>
-                          <td>{room.name}</td>
-                          <td>
-                            {room.players}/{room.maxPlayers}
-                          </td>
-                          <td>
-                            {room.gamemode}
-                          </td>
-                          <td>
-                            <button
-                              onClick={() => {
-                                joinRooms(room.id);
-                                playSound();
-                                navigate('/game', { state: { gameMode: gameMode, bot: "multiplayer"} })
-                              }}
-                              className="join-button"
-                              
-                            >
-                              Join Room
-                            </button>
-                          </td>
+                <h1 className="heading"> Choose Bot Ammount</h1>
+                <form
+                  className="bot-difficulty-form"
+                  style={{ fontSize: "16px" }}
+                >
+                  <label>
+                    <input
+                      onChange={handleBotAmmount}
+                      type="radio"
+                      name="ammount"
+                      value="single"
+                    />{" "}
+                    One Bot
+                  </label>
+                  <br />
+                  <label>
+                    <input
+                      onChange={handleBotAmmount}
+                      type="radio"
+                      name="ammount"
+                      value="twoBots"
+                    />{" "}
+                    Two Bots
+                  </label>
+                  <br />
+                  <label>
+                    <input
+                      onChange={handleBotAmmount}
+                      type="radio"
+                      name="ammount"
+                      value="threeBots"
+                    />{" "}
+                    Three Bots
+                  </label>
+                </form>
+              </div>
+            )}
+            {!isSoloPlay && (
+              <div className="lobby'list">
+                <h1 className="multiplayer-heading">Available Rooms</h1>
+                {rooms.length > 0 ? (
+                  <div className="rooms-table-container">
+                    <table className="rooms-table">
+                      <thead>
+                        <tr>
+                          <th>Room Name</th>
+                          <th>Players</th>
+                          <th>GameMode</th>
+                          <th>Action</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p>No rooms available. Create one to get started!</p>
-              )}
-            </div>)}
+                      </thead>
+                      <tbody>
+                        {rooms.map((room) => (
+                          <tr key={room.id}>
+                            <td>{room.name}</td>
+                            <td>
+                              {room.players}/{room.maxPlayers}
+                            </td>
+                            <td>{room.gamemode}</td>
+                            <td>
+                              <button
+                                onClick={() => {
+                                  joinRooms(room.id);
+                                  playSound();
+                                  navigate("/game", {
+                                    state: {
+                                      gameMode: gameMode,
+                                      bot: "multiplayer",
+                                    },
+                                  });
+                                }}
+                                className="join-button"
+                              >
+                                Join Room
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p>No rooms available. Create one to get started!</p>
+                )}
+              </div>
+            )}
           </div>
 
           <audio
