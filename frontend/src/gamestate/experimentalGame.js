@@ -727,7 +727,7 @@ function MainGame() {
 
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
-                    <div style={{
+                    <div className= 'main-text' style={{
                         position: 'absolute',
                         top: '50px',
                         left: '20px',
@@ -753,7 +753,7 @@ function MainGame() {
                     )}
 
                     {playingDraw && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div className='main-text' style={{ display: 'flex', justifyContent: 'space-between'}}>
                             <ScoreTracker temp_score={playerScore} message={"Player score is: "} />
                             <ScoreTracker temp_score={botScore} message={"Bot score is: "} />
                         </div>
@@ -792,10 +792,10 @@ function MainGame() {
                         <div className='Player1'>
                             <p>{playerData.DrawHand}</p>
 
-                            <input className='game-button' type='number'
+                            <input className='domino-input' type='number'
                                 value={playerDominoIndex}
                                 onChange={(e) => setPlayerDominoIndex(e.target.value)}
-                                placeholder='Enter the position of a domino' />
+                                placeholder='Enter domino position' />
 
                             <button className='game-button' onClick={() => {
                                 if (playerDominoIndex) {
