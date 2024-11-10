@@ -204,6 +204,15 @@ const Lobby = () => {
                     />{" "}
                     All Fives
                   </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="drawDominoes"
+                      onChange={handleGameMode}
+                    />{" "}
+                    Draw Dominoes
+                  </label>
                 </div>
                 <button
                   className="createRoom_button"
