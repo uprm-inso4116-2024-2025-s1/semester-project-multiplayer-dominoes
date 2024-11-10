@@ -10,8 +10,8 @@ import AchievementManager from './AchievementManager.js';
 import { ToastContainer, toast } from 'react-toastify';  // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css';   // Import Toastify CSS
 
-const tileWidth = 3840 / 28; // Width of each tile (~137.14 pixels)
-const tileHeight = 91; // Height of each tile (91 pixels)
+const tileWidth = 3584 / 28; // Width of each tile (~137.14 pixels)
+const tileHeight = 64; // Height of each tile (91 pixels)
 const totalTiles = 28; // Total number of tiles (excluding the back tile)
 const tileMap = new Map();
 
@@ -63,7 +63,7 @@ function MainGame() {
       
 
     const tileImage = new Image();
-    tileImage.src = '/Dominos-28-Horrizontally.png'; // Adjust this path as needed
+    tileImage.src = '/New-Dominos-28-Horrizontally.png'; // Adjust this path as needed
     function initTiles() {
         return new Promise((resolve) => {
             tileImage.onload = () => {
@@ -608,7 +608,7 @@ function MainGame() {
 
     // Convert a matrix into a string to visualize the bots hand. The numbers are not shown.
     function drawBotChips(tileCount) {
-        const backtileImage = '/backtile.png'; // Adjust this path as needed
+        const backtileImage = '/new-backtile.png'; // Adjust this path as needed
         // Use the same scale as in renderDominoImage
         const displayWidth = tileWidth
         const displayHeight = tileHeight
