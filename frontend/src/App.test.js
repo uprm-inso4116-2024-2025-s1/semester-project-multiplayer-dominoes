@@ -180,4 +180,31 @@ describe('Rule engine logic', () => {
         expect(score).toBe(0);  // Score should be 0 since the open ends sum is 0.
     });
 });
+
+describe('Rule engine - drawDominoes', () => {
+  test('updates score correctly', () => {
+    let user_score = 0;
+
+    const table = new Table(getDefaultTable());
+    const ruleEngine = new RuleEngine('drawDominoes');
+
+    table.placeDomino([3, 6], Corner.LEFT);
+
+    let dominoBot = new DominoBot(table, [[6, 5], [2, 3], [5, 4], [6, 4], [6, 6]]);
+    user_score += ruleEngine.getDrawDominoesRules().domino_win_score(dominoBot.getHand());
+    expect(user_score).toBe(47);
+
+    dominoBot.playTurn(); // Chooses [6,6]
+    user_score += ruleEngine.getDrawDominoesRules().domino_win_score(dominoBot.getHand());
+    expect(user_score).toBe(83);
+
+    dominoBot.playTurn(); // Chooses [6,5]
+    user_score += ruleEngine.getDrawDominoesRules().domino_win_score(dominoBot.getHand());
+    expect(user_score).toBe(114);
+
+    expect(ruleEngine.getDrawDominoesRules().has_won_game_set(user_score)).toBe(true);
+  });
+
+});
+
 });
