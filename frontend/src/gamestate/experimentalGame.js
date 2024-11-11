@@ -43,10 +43,11 @@ function MainGame() {
       
         return (
           <div>
-            <button onClick={togglePlay}>
+            <button className='game-button' onClick={togglePlay}>
               {isPlaying ? 'Pause background music...' : 'Press for background music!'}
             </button>
-            <label>
+            <div>
+            <label className='volume'>
               Volume:
               <input
                 type="range"
@@ -57,6 +58,7 @@ function MainGame() {
                 onChange={handleVolumeChange}
               />
             </label>
+            </div>
           </div>
         );
       };
@@ -725,7 +727,7 @@ function MainGame() {
 
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
-                    <div style={{
+                    <div className= 'main-text' style={{
                         position: 'absolute',
                         top: '50px',
                         left: '20px',
@@ -751,7 +753,7 @@ function MainGame() {
                     )}
 
                     {playingDraw && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div className='main-text' style={{ display: 'flex', justifyContent: 'space-between'}}>
                             <ScoreTracker temp_score={playerScore} message={"Player score is: "} />
                             <ScoreTracker temp_score={botScore} message={"Bot score is: "} />
                         </div>
@@ -790,12 +792,12 @@ function MainGame() {
                         <div className='Player1'>
                             <p>{playerData.DrawHand}</p>
 
-                            <input type='number'
+                            <input className='domino-input' type='number'
                                 value={playerDominoIndex}
                                 onChange={(e) => setPlayerDominoIndex(e.target.value)}
-                                placeholder='Enter the position of a domino' />
+                                placeholder='Enter domino position' />
 
-                            <button onClick={() => {
+                            <button className='game-button' onClick={() => {
                                 if (playerDominoIndex) {
                                     setData({
                                         Domino: playerData.PlayerHand[playerDominoIndex],
@@ -803,7 +805,7 @@ function MainGame() {
                                     });
                                 }
                             }}>Left Tail</button>
-                            <button onClick={() => {
+                            <button className='game-button' onClick={() => {
                                 if (playerDominoIndex) {
                                     setData({
                                         Domino: playerData.PlayerHand[playerDominoIndex],
@@ -811,7 +813,7 @@ function MainGame() {
                                     });
                                 }
                             }}>Right Tail</button>
-                            <button onClick={() => {
+                            <button className='game-button' onClick={() => {
                                 if (tableData.TableState.availableDominos <= 0) {
                                     setShowPopup(true);
                                     setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
@@ -823,12 +825,12 @@ function MainGame() {
                                     });
                                 }
                             }}>Grab a Random Chip</button>
-                            <button onClick={() => {
+                            <button className='game-button' onClick={() => {
                                 if(tableData.TableState.dominoesOnTable > 0){
                                     setPassButton(true);
                                 }
                             }}>Pass Turn</button>
-                            <button onClick={pauseGame}>Pause Game</button>
+                            <button className='game-button' onClick={pauseGame}>Pause Game</button>
                             <BackgroundMusic src={"/BackgroundMusic.mp3"}/> 
                         </div>
                     </div>

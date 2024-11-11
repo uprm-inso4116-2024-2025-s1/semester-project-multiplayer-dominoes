@@ -158,3 +158,37 @@
 .chat-button:hover {
   background-color: rgb(244, 213, 75); 
 }
+
+.game-button {
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 10px;
+  background-color: #FFFEC9; 
+  border: none;
+  margin: 1px;
+  border-radius: 5px;
+  color: #582400; 
+  cursor: pointer;
+}
+
+.domino-input {
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 10px;
+  background-color: #FFFEC9; 
+  border: none;
+  margin: 1px;
+  border-radius: 5px;
+  color: #582400; 
+  cursor: pointer;
+  width: 220px;
+}
+
+.turnInfo, .main-text {
+  font-family: 'Press Start 2P', sans-serif;
+}
+
+.volume {
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 20px;
+}
