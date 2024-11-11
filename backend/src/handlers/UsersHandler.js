@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'; // Import the UUID package
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'my_super_secret_key';
+import { JWT_SECRET } from '../index.js';
 
 export default class UsersHandler {
     #userRepository;
@@ -35,7 +34,7 @@ export default class UsersHandler {
     }
 
     async findUserById(id) {
-        return await UserModel.findById(id); 
+        return await this.#userRepository.findUserById(id); 
     }
 
     async validatePassword(inputPassword, storedPassword) {
@@ -45,8 +44,8 @@ export default class UsersHandler {
     generateToken(user) {
         return jwt.sign(
             { id: user._id, email: user.email, tokenVersion: user.tokenVersion },  // Payload
-            JWT_SECRET,  // Secret key
-            { expiresIn: '1h' }  // Token expiration
+            JWT_SECRET, 
+            { expiresIn: '1h' } 
         );
     }
     async verifyToken(token) {
@@ -70,9 +69,9 @@ export default class UsersHandler {
 
     generateResetToken(user) {
         return jwt.sign(
-            { id: user._id, email: user.email },  // Payload
-            JWT_SECRET,  // Secret key
-            { expiresIn: '1h' }  // Token válido por 1 hora
+            { id: user._id, email: user.email },  
+            JWT_SECRET, 
+            { expiresIn: '15m' }
         );
     }
     
