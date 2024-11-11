@@ -1,5 +1,5 @@
 import React from 'react';
-import './Home.css'; // Assuming you have a CSS file for the styles
+import './Home.css'; 
 
 const Home = () => {
     return (
@@ -89,9 +89,11 @@ const Home = () => {
         {/* Footer */}
         <footer>
             <div className="footer-links">
-            <a href="#">Contact Us</a>
-            <a href="#">Frequently Asked Questions</a>
-            <a href="#">Privacy Policy</a>
+                <a href="/contact-us">Contact Us</a>
+                <a href="/faqs">Frequently Asked Questions</a>
+                <br></br>
+                <br></br>
+                <a href="/privacy-policy">Privacy Policy</a>
             </div>
         </footer>
         </div>
