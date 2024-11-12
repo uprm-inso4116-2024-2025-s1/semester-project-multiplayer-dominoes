@@ -8,7 +8,7 @@ Simply open the game in your browser and start playing with friends!
 ## Features
 
 - **Multiplayer mode**: Real-time play with bots in 1v1, 1v2 and 1v3 game modes.
-- **Game Lobby**: Players can join or create a game room.
+- **Game Lobby**: Players can create a game room.
 - **Game Mechanics**: Traditional dominoes rules.
 - **Dominoes Game Modes**: The dominoes game features the draw dominoes, all fives and classic dominoes.
 - **User Interface**: Responsive and mobile-friendly design.
