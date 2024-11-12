@@ -15,7 +15,7 @@ Simply open the game in your browser and start playing with friends!
 - **Turn-based play**: Players take turns placing dominoes.
 - **Score Tracking**: The game automatically tracks scores in draw dominoes to see who wins or loses.
 - **Achievements**: Achievement notifications for certain player accomplishments.
-- **Chat**: Multiplayer dominoes includes a chat bot for the game!
+- **Chat**: Multiplayer dominoes includes a chat for the game!
 
 ---
 
