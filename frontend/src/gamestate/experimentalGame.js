@@ -15,6 +15,15 @@ const tileHeight = 64; // Height of each tile (91 pixels)
 const totalTiles = 28; // Total number of tiles (excluding the back tile)
 const tileMap = new Map();
 
+const avatarImage = new Image();
+avatarImage.src = '/Red-Avatar.png';  // Assuming this is the player's avatar
+const blueAvatarImage = new Image();
+blueAvatarImage.src = '/Blue-Avatar.png';
+const yellowAvatarImage = new Image();
+yellowAvatarImage.src = '/Yellow-Avatar.png';
+const greenAvatarImage = new Image();
+greenAvatarImage.src = '/Green-Avatar.png';
+
 function MainGame() {
     const [tileMap, setTileMap] = useState(new Map());
     const [tilesInitialized, setTilesInitialized] = useState(false);
@@ -772,21 +781,74 @@ function MainGame() {
                             <img src={'loser.png'} alt="Loser" />
                         </div>
                     )}
-                    <p style={{  display:'flex', flexDirection:'horizontal', justifyContent:'center'}} >{ botData3 ? botData2.DbHand : botData.DbHand}</p>
-                    <div style={{display:'flex'}}>
-                        <p style={{display:'flex', flexDirection:'column', justifyContent:'center'}} >{ botData2 ? (botData3 ? botData3.DbHand : botData2.DbHand) : null}</p>
-                        <div style={{display:'flex',justifyContent:'center'}}>
-                            <div className='table' style={{ /* Start with 4x4 */
-                                                            display: 'grid',
-                                                            gridTemplateColumns: 'repeat(11,4.4rem)',
-                                                            gridTemplateRows: 'repeat(11,4.4rem)',
-                                                            gap: '1rem',
-                                                            height: '48rem',
-                                                        }}>
-                                {renderGameBoard()}
-                            </div>
+                    {/* Top blue avatar and backtiles */}
+                    <div style={{textAlign: 'center', marginBottom: '20px'}}>
+                        <img 
+                            src={blueAvatarImage.src}
+                            alt="Main Bot Avatar"
+                            style={{
+                                width: '64px',
+                                height: '64px',
+                                borderRadius: '50%',
+                                border: '3px solid #1A3636',
+                                marginBottom: '10px'
+                            }}
+                        />
+                        <div style={{display: 'flex', justifyContent: 'center'}}>
+                            {botData.DbHand}
                         </div>
-                        <p style={{display:'flex', flexDirection:'column', justifyContent:'center'}} >{ botData3 ? botData.DbHand: null}</p>
+                    </div>
+
+                    {/* Main game area with side avatars */}
+                    <div style={{display: 'flex', alignItems: 'center', gap: '20px'}}>
+                        {/* Left side (Green) bot */}
+                        {(botAmmount === 'twoBots' || botAmmount === 'threeBots') && (
+                            <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                                <img 
+                                    src={greenAvatarImage.src}
+                                    alt="Second Bot Avatar"
+                                    style={{
+                                        width: '64px',
+                                        height: '64px',
+                                        borderRadius: '50%',
+                                        border: '3px solid #1A3636'
+                                    }}
+                                />
+                                <div style={{display: 'flex', flexDirection: 'column'}}>
+                                    {botData2 && botData2.DbHand}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Game board */}
+                        <div className='table' style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(11,4.4rem)',
+                            gridTemplateRows: 'repeat(11,4.4rem)',
+                            gap: '1rem',
+                            height: '48rem',
+                        }}>
+                            {renderGameBoard()}
+                        </div>
+
+                        {/* Right side (Yellow) bot */}
+                        {botAmmount === 'threeBots' && (
+                            <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                                <div style={{display: 'flex', flexDirection: 'column'}}>
+                                    {botData3 && botData3.DbHand}
+                                </div>
+                                <img 
+                                    src={yellowAvatarImage.src}
+                                    alt="Third Bot Avatar"
+                                    style={{
+                                        width: '64px',
+                                        height: '64px',
+                                        borderRadius: '50%',
+                                        border: '3px solid #1A3636'
+                                    }}
+                                />
+                            </div>
+                        )}
                     </div>
                     <div style={{display:'inline-block'}} className='input_chips'>
                         <div className='Player1'>
@@ -849,9 +911,20 @@ function MainGame() {
                     />
                     <audio id="dominoPlaceSound" src="/DominoPlacement.wav" preload="auto"></audio>
 
-                    {/* Button and UI for navigating and game controls */}
+                    {/* Add the avatar image with simpler centering */}
+                    <img 
+                        src={avatarImage.src}
+                        alt="Player Avatar"
+                        style={{
+                            display: 'block',
+                            margin: '10px auto',  // Centers horizontally
+                            width: '64px',
+                            height: '64px',
+                            borderRadius: '50%',
+                            border: '3px solid #1A3636'
+                        }}
+                    />
                 </div>
-                //Continues the popup message for when the player has no more tiles to pick up after the game has been paused. 
             ) : (<PauseScreen onResume={resumeGame} />)}
             {showPopup && <Popup message="There are no more tiles to pick up!" />} 
         </div>
