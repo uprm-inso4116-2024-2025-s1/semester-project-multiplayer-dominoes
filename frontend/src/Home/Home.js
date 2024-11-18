@@ -65,7 +65,8 @@ const Home = () => {
             <div className="footer-links">
             {isAuthenticated ? (
                         <>
-                            <button onClick={() => navigate('/lobby')}>Play</button>
+                            <button className="play-button" onClick={() => navigate('/lobby')}>Play</button>
+
                         </>
                     ) : (
                         <a href="/login">Sign Up / Log In</a>

@@ -227,3 +227,36 @@ img {
         padding: 50px; /* Adjust padding */
     }
 }
+
+
+button.play-button {
+    font-family: 'Press Start 2P', sans-serif; 
+    background-color: #F86F03; 
+    color: #FFF6F4;
+    border: 3px solid #FFF6F4;
+    border-radius: 10px;
+    padding: 15px 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+button.play-button:hover {
+    background-color: #FFF6F4; 
+    color: #F86F03;
+    transform: scale(1.1);
+}
+
+
+button.play-button:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    button.play-button {
+        font-size: 0.8rem;
+        padding: 10px 20px; 
+    }
+}
+
