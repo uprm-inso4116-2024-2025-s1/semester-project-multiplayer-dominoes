@@ -21,7 +21,8 @@ function Login() {
   
       console.log(data); 
       localStorage.setItem('token', data.token);
-      navigate('/lobby');
+navigate('/', { state: { authenticated: true } });
+
     } catch (error) {
       console.warn('Failed to register or login:', error);
     }

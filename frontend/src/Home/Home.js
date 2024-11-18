@@ -1,7 +1,50 @@
-import React from 'react';
-import './Home.css'; 
+import React, { useEffect, useState } from 'react';
+import './Home.css';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Home = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const validateToken = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/validate-token`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    if (response.ok) {
+                        setIsAuthenticated(true);
+                    } else {
+                        localStorage.removeItem('token');
+                        setIsAuthenticated(false);
+                    }
+                } catch (error) {
+                    console.error('Error validating token:', error);
+                    setIsAuthenticated(false);
+                }
+            }
+        };
+
+        if (location.state?.authenticated) {
+            setIsAuthenticated(true);
+        } else {
+            validateToken();
+        }
+    }, [location.state]);
+    
+    
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        navigate('/'); // Regresa al Home después de logout
+    };
+
     return (
         <div>
         {/* Header */}
@@ -20,7 +63,13 @@ const Home = () => {
             </div>
             </nav>
             <div className="footer-links">
-            <a href="/login">Sign Up / Log In</a>
+            {isAuthenticated ? (
+                        <>
+                            <button onClick={() => navigate('/lobby')}>Play</button>
+                        </>
+                    ) : (
+                        <a href="/login">Sign Up / Log In</a>
+                    )}
             </div>
         </header>
 
