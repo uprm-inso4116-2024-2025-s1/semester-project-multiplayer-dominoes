@@ -716,9 +716,15 @@ function MainGame() {
     }
 
     return (
-        <div>
+        <div style={{
+            overflowX: 'auto',     // Enables horizontal scrolling
+            maxWidth: '100vw',     // Takes full viewport width
+        }}>
             {!isPaused ? (
-                <div className='table_game'>
+                <div className='table_game' style={{
+                    width: 'fit-content',    // Container will be as wide as its content
+                    minWidth: '1200px',      // Minimum width before scrolling starts
+                }}>
                     {/*Button to switch between gamestate and lobby ui*/}
                     <button
                         style={{
@@ -803,7 +809,13 @@ function MainGame() {
                     <div style={{display: 'flex', alignItems: 'center', gap: '20px'}}>
                         {/* Left side (Green) bot */}
                         {(botAmmount === 'twoBots' || botAmmount === 'threeBots') && (
-                            <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                            <div style={{
+                                display: 'flex', 
+                                gap: '10px', 
+                                alignItems: 'center',
+                                flexShrink: 0,  // Prevent shrinking
+                                minWidth: 'max-content'  // Maintain minimum width based on content
+                            }}>
                                 <img 
                                     src={greenAvatarImage.src}
                                     alt="Second Bot Avatar"
@@ -811,10 +823,16 @@ function MainGame() {
                                         width: '64px',
                                         height: '64px',
                                         borderRadius: '50%',
-                                        border: '3px solid #1A3636'
+                                        border: '3px solid #1A3636',
+                                        flexShrink: 0  // Prevent avatar from shrinking
                                     }}
                                 />
-                                <div style={{display: 'flex', flexDirection: 'column'}}>
+                                <div style={{
+                                    display: 'flex', 
+                                    flexDirection: 'column',
+                                    flexShrink: 0,  // Prevent backtiles from shrinking
+                                    minWidth: 'max-content'  // Maintain minimum width based on content
+                                }}>
                                     {botData2 && botData2.DbHand}
                                 </div>
                             </div>
@@ -827,14 +845,26 @@ function MainGame() {
                             gridTemplateRows: 'repeat(11,4.4rem)',
                             gap: '1rem',
                             height: '48rem',
+                            flexShrink: 0  // Prevent board from shrinking
                         }}>
                             {renderGameBoard()}
                         </div>
 
                         {/* Right side (Yellow) bot */}
                         {botAmmount === 'threeBots' && (
-                            <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
-                                <div style={{display: 'flex', flexDirection: 'column'}}>
+                            <div style={{
+                                display: 'flex', 
+                                gap: '10px', 
+                                alignItems: 'center',
+                                flexShrink: 0,  // Prevent shrinking
+                                minWidth: 'max-content'  // Maintain minimum width based on content
+                            }}>
+                                <div style={{
+                                    display: 'flex', 
+                                    flexDirection: 'column',
+                                    flexShrink: 0,  // Prevent backtiles from shrinking
+                                    minWidth: 'max-content'  // Maintain minimum width based on content
+                                }}>
                                     {botData3 && botData3.DbHand}
                                 </div>
                                 <img 
@@ -844,7 +874,8 @@ function MainGame() {
                                         width: '64px',
                                         height: '64px',
                                         borderRadius: '50%',
-                                        border: '3px solid #1A3636'
+                                        border: '3px solid #1A3636',
+                                        flexShrink: 0  // Prevent avatar from shrinking
                                     }}
                                 />
                             </div>
