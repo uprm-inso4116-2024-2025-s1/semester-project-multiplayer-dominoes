@@ -1,57 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './Home.css';
 import { useNavigate, useLocation } from 'react-router-dom';
+import useUserData from '../Auth/hooks/useUserData.js'; // Import the custom hook
 
 const Home = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
-    const [profilePicture, setProfilePicture] = useState('/default-profile.png');
-
-
-    useEffect(() => {
-        const validateToken = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                try {
-                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/validate-token`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-                    if (response.ok) {
-                        const userData = await response.json();
-                        setIsAuthenticated(true);
-                        setProfilePicture(userData.profilePicture || '/public/images/default-profile.png');
-                    } else {
-                        localStorage.removeItem('token');
-                        setIsAuthenticated(false);
-                    }
-                } catch (error) {
-                    console.error('Error validating token:', error);
-                    setIsAuthenticated(false);
-                }
-            }
-        };
-
-        if (location.state?.authenticated) {
-            setIsAuthenticated(true);
-        } else {
-            validateToken();
-        }
-    }, [location.state]);
-
-
+    const user = useUserData(); // Fetch user data using the custom hook
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        navigate('/'); // Regresa al Home después de logout
+        navigate('/'); // Navigate back to home after logout
     };
 
     const handleProfileClick = () => {
-        // Navigate to a profile page or perform another action
-        navigate('/profile');
+        navigate('/profile'); // Navigate to profile page
     };
 
     return (
@@ -72,12 +35,12 @@ const Home = () => {
                     </div>
                 </nav>
                 <div className="footer-links">
-                    {isAuthenticated ? (
+                    {user.username ? (
                         <>
                             {/* Profile Picture Button */}
                             <button className="profile-button" onClick={handleProfileClick}>
                                 <img
-                                    src={profilePicture}
+                                    src={user.profilePicture}
                                     alt="User Profile"
                                     className="profile-picture"
                                 />
@@ -98,7 +61,6 @@ const Home = () => {
                 <img src={"images/logo_with_name.png"} alt="logo" className="logo" />
             </div>
 
-
             <section className="instructions">
                 <h2>INSTRUCTIONS</h2>
                 <p>Dominoes is a tile game where the objective is to be the first to get rid of all your tiles or have the lowest score at the end.
@@ -109,38 +71,37 @@ const Home = () => {
                 <a href="#" className="instruction-link">Click here for more in-depth instructions</a>
             </section>
 
-
             {/* Leaderboard and Reviews Section */}
             <section className="content">
                 {/* Leaderboard Section */}
                 <div className="leaderboard">
                     <h2>WORLDWIDE LEADERBOARD</h2>
-                    <div class="leaderboard-container">
-                        <img src="images/leaderboard.png" class="leaderboard-img" alt="Leaderboard background"></img>
-                        <div class="leaderboard-rows">
-                            <div class="leaderboard-row">
-                                <div class="leaderboard-column column-rank">1</div>
-                                <div class="leaderboard-column column-player" title='TheTileWhisperer'>TheTileWhisperer</div>
-                                <div class="leaderboard-column column-wins">24</div>
-                                <div class="leaderboard-column column-losses">50</div>
+                    <div className="leaderboard-container">
+                        <img src="images/leaderboard.png" className="leaderboard-img" alt="Leaderboard background"></img>
+                        <div className="leaderboard-rows">
+                            <div className="leaderboard-row">
+                                <div className="leaderboard-column column-rank">1</div>
+                                <div className="leaderboard-column column-player" title='TheTileWhisperer'>TheTileWhisperer</div>
+                                <div className="leaderboard-column column-wins">24</div>
+                                <div className="leaderboard-column column-losses">50</div>
                             </div>
-                            <div class="leaderboard-row">
-                                <div class="leaderboard-column column-rank">2</div>
-                                <div class="leaderboard-column column-player" title='WittyWorm19'>WittyWorm19</div>
-                                <div class="leaderboard-column column-wins">22</div>
-                                <div class="leaderboard-column column-losses">80</div>
+                            <div className="leaderboard-row">
+                                <div className="leaderboard-column column-rank">2</div>
+                                <div className="leaderboard-column column-player" title='WittyWorm19'>WittyWorm19</div>
+                                <div className="leaderboard-column column-wins">22</div>
+                                <div className="leaderboard-column column-losses">80</div>
                             </div>
-                            <div class="leaderboard-row">
-                                <div class="leaderboard-column column-rank">3</div>
-                                <div class="leaderboard-column column-player" title='BlockBuster'>BlockBuster</div>
-                                <div class="leaderboard-column column-wins">22</div>
-                                <div class="leaderboard-column column-losses">60</div>
+                            <div className="leaderboard-row">
+                                <div className="leaderboard-column column-rank">3</div>
+                                <div className="leaderboard-column column-player" title='BlockBuster'>BlockBuster</div>
+                                <div className="leaderboard-column column-wins">22</div>
+                                <div className="leaderboard-column column-losses">60</div>
                             </div>
-                            <div class="leaderboard-row">
-                                <div class="leaderboard-column column-rank">4</div>
-                                <div class="leaderboard-column column-player" title='NarutoBoy64'>NarutoBoy64</div>
-                                <div class="leaderboard-column column-wins">21</div>
-                                <div class="leaderboard-column column-losses">90</div>
+                            <div className="leaderboard-row">
+                                <div className="leaderboard-column column-rank">4</div>
+                                <div className="leaderboard-column column-player" title='NarutoBoy64'>NarutoBoy64</div>
+                                <div className="leaderboard-column column-wins">21</div>
+                                <div className="leaderboard-column column-losses">90</div>
                             </div>
                         </div>
                     </div>

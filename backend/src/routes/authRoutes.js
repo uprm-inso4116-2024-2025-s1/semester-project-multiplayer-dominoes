@@ -29,6 +29,21 @@ export default (container) => {
             res.status(500).json({ message: 'Unable to fetch achievements' });
         }
     });
+
+    router.post('/update-profile-picture', authenticateJWT, async (req, res) => {
+        const { profilePicture } = req.body;
+        const username = req.user.username;
+    
+        try {
+            const updatedUser = await container.UserRepository.updateUserProfilePicture(username, { profilePicture });
+            res.json({ success: true, updatedUser });
+        } catch (error) {
+            console.error('Error updating profile picture:', error);
+            res.status(500).json({ success: false, message: 'Unable to update profile picture' });
+        }
+    });
+    
+    
     
 
     return router;
