@@ -260,3 +260,66 @@ button.play-button:active {
     }
 }
 
+/* Wrapper for buttons */
+.footer-links {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+    align-items: center; /* Align items vertically */
+    padding: 0 20px; /* Add some horizontal padding */
+}
+
+/* Play button styling (already exists, just for reference) */
+button.play-button {
+    margin-left: auto; /* Push the button to the left */
+    font-family: 'Press Start 2P', sans-serif; 
+    background-color: #F86F03; 
+    color: #FFF6F4;
+    border: 3px solid #FFF6F4;
+    border-radius: 10px;
+    padding: 15px 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+/* Profile button */
+button.profile-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 20px; /* Add spacing to the right */
+}
+
+/* Profile picture styling */
+.profile-picture {
+    width: 50px; /* Adjust the size of the profile picture */
+    height: 50px;
+    border-radius: 50%; /* Make it circular */
+    object-fit: cover; /* Ensure the image is cropped properly */
+    border: 2px solid #FFF6F4; /* Add a subtle border */
+    transition: transform 0.2s ease;
+}
+
+.profile-picture:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .footer-links {
+        flex-direction: column; /* Stack buttons vertically on smaller screens */
+        align-items: center;
+    }
+
+    .play-button {
+        margin-left: 0;
+        margin-top: 10px; /* Add spacing between buttons */
+    }
+
+    .profile-picture {
+        width: 40px; /* Smaller size for small screens */
+        height: 40px;
+    }
+}

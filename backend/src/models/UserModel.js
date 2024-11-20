@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    profilePicture: {
+        type: String,
+        default: '/public/images/default-profile.png', 
+    },
 });
 
 export default mongoose.model('User', userSchema);
