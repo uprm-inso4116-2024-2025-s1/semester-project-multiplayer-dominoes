@@ -6,52 +6,72 @@ const ProfilePage = () => {
         username: '',
         profilePicture: '/default-profile.png',
     });
+    const [achievements, setAchievements] = useState([]);
 
     useEffect(() => {
         const fetchUserData = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        console.error('No token found');
-        return;
-    }
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
 
-    try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+            try {
+                const userResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/profile`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-        if (response.ok) {
-            const userData = await response.json();
-            console.log('Fetched user data:', userData); // Log data
-            setUser({
-                username: userData.username || 'Guest',
-                profilePicture: userData.profilePicture || '/default-profile.png',
-            });
-        } else {
-            const errorText = await response.text();
-            console.error('Error fetching user data:', errorText);
-        }
-    } catch (error) {
-        console.error('Fetch error:', error);
-    }
-};
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    setUser({
+                        username: userData.username || 'Guest',
+                        profilePicture: userData.profilePicture || '/default-profile.png',
+                    });
+                }
 
-        
-        
+                const achievementResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/achievements`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (achievementResponse.ok) {
+                    const achievementsData = await achievementResponse.json();
+                    setAchievements(achievementsData);
+                } else {
+                    console.error('Failed to fetch achievements');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        };
 
         fetchUserData();
     }, []);
 
     return (
         <div className="profile-page">
-            <h1>Welcome, {user.username}</h1> {/* Fallback to 'Guest' if username is undefined */}
+            <h1>Welcome, {user.username}</h1>
             <div className="profile-container">
                 <img
                     src={user.profilePicture}
                     alt={`${user.username}'s Profile`}
                     className="profile-image"
                 />
-                <h2>{user.username}</h2> {/* Display username below the profile picture */}
+                <h2>{user.username}</h2>
+            </div>
+            <div className="achievements-section">
+                <h3>Your Achievements</h3>
+                <ul>
+                    {achievements.length > 0 ? (
+                        achievements.map((achievement, index) => (
+                            <li key={index}>
+                                <span>{achievement.status}: </span>
+                                <strong>{achievement.username}</strong>
+                            </li>
+                        ))
+                    ) : (
+                        <p>No achievements found.</p>
+                    )}
+                </ul>
             </div>
         </div>
     );

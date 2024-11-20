@@ -18,6 +18,18 @@ export default (container) => {
             profilePicture: profilePicture || '/public/default-profile.png', // Default picture if none is set
         });
     });
+    router.get('/achievements', authenticateJWT, async (req, res) => {
+        const username = req.user.username; // Assuming `username` is part of `req.user`
+        try {
+            const achievements = await container.AchievementRepository.getAllAchievements();
+            const userAchievements = achievements.filter(a => a.username === username);
+            res.json(userAchievements);
+        } catch (error) {
+            console.error('Error fetching achievements:', error.message);
+            res.status(500).json({ message: 'Unable to fetch achievements' });
+        }
+    });
+    
 
     return router;
 };
