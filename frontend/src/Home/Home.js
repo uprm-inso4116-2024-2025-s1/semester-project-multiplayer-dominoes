@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< HEAD
 import './Home.css';
 
 const playSound = () => {
@@ -7,6 +8,9 @@ const playSound = () => {
         audio.play();
     }
 };
+=======
+import './Home.css'; 
+>>>>>>> origin/main
 
 const Home = () => {
     return (
@@ -39,12 +43,17 @@ const Home = () => {
 
         <section className="instructions">
             <h2>INSTRUCTIONS</h2>
-            <p>Dominoes is a tile game where the objective is to be the first to get rid of all your tiles or have 
-                the lowest score at the end. Players take turns placing tiles, connecting matching numbers at the 
-                ends of the chain of tiles on the table. If you can't play, you must skip your turn. 
+            <p>Dominoes is a tile game where the objective is to be the first to get rid of all your tiles or have the lowest score at the end. 
+                Players take turns placing tiles, connecting matching numbers at the ends of the chain of tiles on the table. 
+                If a player cannot make a move, they must skip their turn. 
                 The game continues until a player runs out of tiles or no more moves are possible. 
+<<<<<<< HEAD
                 The winner scores points based on the opponents remaining tiles, and the first player to reach a predetermined number of points wins the game.</p>
             <a href="#" className="instruction-link"onClick={playSound}>Click here for more in-depth instructions</a>
+=======
+                The winner scores points based on the tiles remaining in the opponents' hands, and the first player to reach a predetermined number of points wins the game.</p>
+            <a href="#" className="instruction-link">Click here for more in-depth instructions</a>
+>>>>>>> origin/main
         </section>
 
 
@@ -96,9 +105,17 @@ const Home = () => {
         {/* Footer */}
         <footer>
             <div className="footer-links">
+<<<<<<< HEAD
             <a href="#"onClick={playSound}>Contact Us</a>
             <a href="#"onClick={playSound}>Frequently Asked Questions</a>
             <a href="#"onClick={playSound}>Privacy Policy</a>
+=======
+                <a href="/contact-us">Contact Us</a>
+                <a href="/faqs">Frequently Asked Questions</a>
+                <br></br>
+                <br></br>
+                <a href="/privacy-policy">Privacy Policy</a>
+>>>>>>> origin/main
             </div>
         </footer>
         <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>

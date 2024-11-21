@@ -15,6 +15,9 @@ class DominoBot {
         this.hand = hand; 
     }
 
+    updateTable(table){this.table = table;}
+    getHand(){return this.hand;}
+
     chooseDomino(){
         if (this.hand.length === 0) return null;
         // Iterates through the hand until it finds the first tile it can play

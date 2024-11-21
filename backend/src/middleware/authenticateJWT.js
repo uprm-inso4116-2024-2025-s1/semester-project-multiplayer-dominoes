@@ -5,9 +5,7 @@ import crypto from 'crypto';
 
 // Middleware to authenticate and verify JWT token
 const authenticateJWT = (req, res, next) => {
-    if (!process.env.JWT_SECRET) {
-        console.warn('Warning: JWT_SECRET environment variable not found. Using default secret key.');
-    }
+
     const authHeader = req.headers.authorization; // Get token from Authorization header
 
     if (authHeader) {
@@ -30,8 +28,8 @@ const authenticateJWT = (req, res, next) => {
                 }
             }
 
-            req.user = user; // Attach the decoded user data to req.user
-            next(); // Continue to the next middleware or route handler
+            req.user = user;
+            next(); 
         });
     } else {
         console.error('Error: No token provided');

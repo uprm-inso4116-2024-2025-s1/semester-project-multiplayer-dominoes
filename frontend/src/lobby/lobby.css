@@ -1,177 +1,279 @@
+/* General Styles*/
 .instruction-message {
-  color: rgb(244, 213, 75);  
-  font-size: 16px;
-  position: absolute;
+  color: rgb(255, 164, 27);
+  font-size: 24px;
   font-family: 'Press Start 2P', sans-serif;
-  top: 0; 
-  margin: 20px 25%; 
-  text-align: center; 
-  font-weight: bold; 
+  text-align: center;
+  font-weight: bold;
+  margin: 10px auto;
+  width: 90%;
 }
 
+/* Container Styles*/
 .lobby-container {
-    display: flex;
-    flex-direction: row;
-    width: 80%;
-    height: 300px;
-    border-radius: 15px;
-    background-color: rgb(161, 167, 252); 
-    box-shadow: 0 4px 8px rgb(0, 0, 0);
-    margin: 20px auto;
-    overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  max-width: none;
+  margin: 20px auto;
+  border-radius: 15px;
+  background-color: rgb(117, 127, 231);
+  box-shadow: 0 4px 8px rgb(0, 0, 0);
+  overflow: hidden;
+  padding: 20px;
+  gap: 20px;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+  background-color: rgb(82, 95, 225);
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgb(0, 0, 0);
+  margin: 40px auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Column Styles*/
+.left-column {
+  flex: 1;
+  background-color: rgb(82, 95, 225);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  position: relative;
+}
+
+.right-column {
+  flex: 2;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px;
+  font-family: 'Press Start 2P', sans-serif;
+}
+
+/* Button Styles*/
+.start_button {
+  padding: 15px 30px;
+  background-color: rgb(255, 164, 27);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Press Start 2P', sans-serif;
+  cursor: pointer;
+  margin-top: 20px;
+  align-self: center;
+}
+
+.start_button:hover {
+  background-color: #e69418;
+}
+
+.createRoom_button {
+  padding: 15px 25px;
+  background-color: rgb(255, 164, 27);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 250px;
+  text-align: center;
+}
+
+.createRoom_button:hover {
+  background-color: #e69418;
+}
+
+.join-button {
+  background-color: rgb(255, 133, 51);
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Press Start 2P', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.join-button:hover {
+  background-color: rgb(230, 115, 45);
+}
+
+.back-button {
+  cursor: pointer;
+  color: rgb(255, 255, 255);
+  font-size: 12px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  text-decoration: underline;
+}
+
+/* Form Styles*/
+.bot-difficulty-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.bot-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.game-mode-selection {
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.game-mode-selection label {
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Table Styles*/
+.rooms-table-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-top: 10px;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  background-color: rgb(82, 95, 225);
+}
+
+.rooms-table {
+  width: 100%;
+  table-layout: auto;
+  min-width: 500px; /* Minimum width to ensure readability */
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.rooms-table th {
+  background-color: rgb(58, 68, 180);
+  color: #ffffff;
+  padding: 8px;
+  text-align: left;
+  border-right: 2px solid rgb(99, 112, 224);
+  /* Accent border in container color */
+}
+
+.rooms-table td {
+  background-color: rgba(117, 127, 231, 0.3);
+  color: #ffffff;
+  padding: 8px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.rooms-table tr:nth-child(even) td {
+  background-color: rgba(99, 112, 224, 0.4);
+}
+
+.rooms-table th:last-child {
+  border-right: none;
+}
+
+/* Miscellaneous Styles*/
+.text-box {
+  width: 75%;
+  padding: 10px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 16px;
+  border-radius: 5px;
+  background-color: #FFFEC9;
+  border: 1px solid #ccc;
+}
+
+.heading {
+  color: #FFA500;
+  font-size: 24px;
+  margin-bottom: 15px;
+  text-align: left;
+  /* Align headings to the left */
+}
+
+.multiplayer-heading {
+  color: #FFA500;
+  font-size: 24px;
+  margin-bottom: 15px;
+  text-align: center;
+  /* Center this specific heading */
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+  text-shadow:
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    1px 1px 0 black;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .instruction-message {
+    font-size: 14px;
+    width: 95%;
   }
 
   .options-container {
-    display: flex;
-    gap: 30px;
-    flex-direction: column;
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
-    width: 25%;
-    height: 300px;
-    border-radius: 15px;
-    background-color: rgb(161, 167, 252); 
-    box-shadow: 0 4px 8px rgb(0, 0, 0);
-    margin: 20px auto;
-    overflow: hidden;
-  }
-  
-  .left-column {
-    flex: 1;
-    background-color: rgb(97, 108, 251);
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    font-family: 'Press Start 2P', sans-serif;
-  }
-  
-  .right-column {
-    flex: 2;
-    margin: 0px 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    font-family: 'Press Start 2P', sans-serif;
-  }
-  
-  .text-box {
-    width: 75%;
-    padding: 10px;
-    font-family: 'Press Start 2P', sans-serif;
-    font-size: 16px;
-    border-radius: 5px;
-    background-color: #FFFEC9; 
-    border: 1px solid #ccc;
-  }
-  
-  .heading {
-    color: #282c34; 
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-  
-  .rooms-table-container {
-    width: 100%;
-    height: 200px; /* Adjusted height for table scroll */
-    overflow-y: auto; /* Enable scrolling */
-    margin-top: 10px;
-  }
-  
-  .rooms-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .rooms-table th, .rooms-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .rooms-table th {
-    background-color: rgb(244, 213, 75); 
-    color: #282c34; 
-  }
-  
-  .rooms-table td {
-    background-color: #FFFEC9; 
-    color: #282c34; 
-  }
-  
-  /**/
-  .start_button {
-    padding: 10px 20px;
-    background-color: rgb(244, 213, 75); 
-    color: black;
-    border: none;
-    border-radius: 5px;
-    font-family: 'Press Start 2P', sans-serif;
-    cursor: pointer;
-  }
-  .start_button:hover{
-    background-color: #F7E28C;
-  }
-  .createRoom_button {
-    padding: 10px 20px;
-    background-color: rgb(244, 213, 75); 
-    color: black;
-    border: none;
-    border-radius: 5px;
-    font-family: 'Press Start 2P', sans-serif;
-    cursor: pointer;
-  }
-  
-  .createRoom_button:hover {
-    background-color: #F7E28C;
-  }
-  
-  .join-button {
-    background-color: rgb(244, 213, 75); 
-    color: black;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 3px;
-    font-family: 'Press Start 2P', sans-serif;
-    cursor: pointer;
-  }
-  
-  .join-button:hover {
-    background-color: #F7E28C;
+    width: 90%;
+    max-width: none;
+    padding: 15px;
   }
 
-  .bot-difficulty-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px; /* Add even spacing between labels */
-    align-items: flex-start;
+  .createRoom_button {
+    font-size: 14px;
+    padding: 12px 20px;
   }
-  
-  .bot-difficulty-form label {
-    margin-bottom: 0; /* No need for margin-bottom if using gap */
+}
+
+@media (max-width: 480px) {
+  .instruction-message {
+    font-size: 12px;
   }
-  
-  .game-mode-selection {
-    font-size: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+
+  .options-container {
+    width: 100%;
+    padding: 10px;
   }
-  
-  .game-mode-selection label {
-    font-size: 10px;
-    margin-bottom: 10px; /* Spacing between radio buttons */
+
+  .createRoom_button {
+    font-size: 12px;
+    padding: 10px 15px;
   }
-  .error {
-    color: red;
-    margin-top: 10px;
-    text-shadow: 
-    -1px -1px 0 black,  
-     1px -1px 0 black,
-    -1px  1px 0 black,
-     1px  1px 0 black; 
-  }
-  
+}

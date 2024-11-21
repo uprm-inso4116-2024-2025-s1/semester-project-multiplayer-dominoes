@@ -58,6 +58,7 @@ class Table{
         [2,3],[2,4],[2,5],[2,6],[3,3],[3,4],[3,5],
         [3,6],[4,4],[4,5],[4,6],[5,5],[5,6],[6,6]
     ];
+    #played_dominoes = [];
     #dominoes_on_table = 0;
     #data_matrix = [];
     #path_matrix = [];
@@ -77,6 +78,7 @@ class Table{
     // Returns the dominoes that are at each corner.
     get leftTail(){return this.#left_domino}
     get rightTail(){return this.#right_domino}
+    get playedDominoes(){return this.#played_dominoes}
     get availableDominos(){return this.#dominoes_available}
     get dominoesMatrix(){return this.#data_matrix}
     get dominoesOnTable(){return this.#dominoes_on_table}
@@ -218,6 +220,7 @@ class Table{
             }
         }
         this.#dominoes_on_table++;
+        this.#played_dominoes.push(domino_to_place);
         return is_legal;
     }
 
