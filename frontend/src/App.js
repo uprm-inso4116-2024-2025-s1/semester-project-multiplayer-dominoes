@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 
 import Lobby from './lobby/lobby.js';
 import Login from './Auth/Login.js';
+import MultiplayerGame from './gamestate/Multiplayer.js';
 import MainGame from './gamestate/experimentalGame.js';
 import Home from './Home/Home.js';
 import ForgotPassword from './Auth/ForgotPassword.js';
@@ -68,6 +69,7 @@ function App() {
           />
             
             <Route path="/game" element={<MainGame />} />
+            <Route path="/multiplayer/:roomId" element={<MultiplayerGame />} />
             <Route path="/lobby" element={<Lobby />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
