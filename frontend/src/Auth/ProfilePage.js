@@ -14,6 +14,11 @@ const ProfilePage = () => {
         '/default-profile.png',
         '/BlueProfile.png',
         '/OrangeProfile.png',
+        '/BlueAvatar.png',
+        '/YellowAvatar.png',
+        '/RedAvatar.png',
+        '/GreenAvatar.png',
+
     ];
 
     useEffect(() => {
