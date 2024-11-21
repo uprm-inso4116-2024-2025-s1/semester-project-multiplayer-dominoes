@@ -171,6 +171,10 @@
   cursor: pointer;
 }
 
+.game-button:hover {
+  background-color: rgb(244, 213, 75); 
+}
+
 .domino-input {
   padding: 10px 20px;
   font-family: 'Press Start 2P', sans-serif;
@@ -182,6 +186,25 @@
   color: #582400; 
   cursor: pointer;
   width: 220px;
+}
+
+.lobby-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 10px;
+  background-color: #FFFEC9; 
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  color: #582400; 
+
+}
+
+.lobby-button:hover {
+  background-color: rgb(244, 213, 75); 
 }
 
 .turnInfo, .main-text {

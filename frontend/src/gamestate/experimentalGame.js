@@ -712,18 +712,7 @@ function MainGame() {
                 <div className='table_game'>
                     {/*Button to switch between gamestate and lobby ui*/}
                     <button
-                        style={{
-                            position: 'absolute',
-                            top: '10px',
-                            right: '10px',
-                            padding: '10px',
-                            backgroundColor: '#1A3636',
-                            color: '#FFFFFF',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer'
-                        }}
-                        onClick={handleLobbyButton}>Lobby</button>
+                        onClick={handleLobbyButton}className="lobby-button">Lobby</button>
 
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
