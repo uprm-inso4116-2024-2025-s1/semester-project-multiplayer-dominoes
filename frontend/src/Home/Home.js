@@ -99,11 +99,6 @@ const Home = () => {
             <a href="#"onClick={playSound}>Contact Us</a>
             <a href="#"onClick={playSound}>Frequently Asked Questions</a>
             <a href="#"onClick={playSound}>Privacy Policy</a>
-                <a href="/contact-us">Contact Us</a>
-                <a href="/faqs">Frequently Asked Questions</a>
-                <br></br>
-                <br></br>
-                <a href="/privacy-policy">Privacy Policy</a>
             </div>
         </footer>
         <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>
