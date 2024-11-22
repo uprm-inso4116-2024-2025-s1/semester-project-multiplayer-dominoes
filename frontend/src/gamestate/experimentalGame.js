@@ -721,7 +721,7 @@ function MainGame() {
     }
 
     return (
-
+        <>
         <div>
             {!isPaused ? (
                 <div className='table_game'>
