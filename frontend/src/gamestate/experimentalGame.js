@@ -1,4 +1,4 @@
-import { Table, Corner } from './table.js';
+import { Table, Corner, DisplayDirection } from './table.js';
 import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
 import IntermediateBot from './intermediateBot.js';
@@ -642,9 +642,10 @@ function MainGame() {
         );
     }
 
-    function renderDominoImage(domino) {
+    function renderDominoImage(domino, domino_was_flipped, domino_direction) {
         if (!domino || domino.length !== 2) return null;
-        const tileKey = domino[0].toString() + domino[1].toString();
+        const tempTileKey = domino[0].toString() + domino[1].toString();
+        const tileKey = Array.from(tempTileKey).sort().join('');
         const tile = tileMap.get(tileKey);
         if (tile && tile.image) {
             return (
@@ -662,7 +663,7 @@ function MainGame() {
                             height: `${tile.height}px`,
                             objectFit: 'none',
                             objectPosition: `-${tile.sx}px 0px`,
-                            transform: 'scale(0.6)',  // Increased from 0.5
+                            transform: `scale(${domino_was_flipped ? -0.6 : 0.6 }) rotate(${domino_direction === DisplayDirection.HORIZONTAL ? 0 : 90}deg)`,  // Increased from 0.5
                             transformOrigin: 'center center',
                         }}
                         alt={`Domino ${domino[0]}-${domino[1]}`}
@@ -691,7 +692,7 @@ function MainGame() {
                 let domino = matrix[i][j]
                 if(domino != null){
                     const [val1, val2] = [domino.values[0],domino.values[1]]
-                    html.push(<div key = {[i,j]} style={{display:'grid',placeItems: 'center'}}>{renderDominoImage([val1, val2])}</div>)
+                    html.push(<div key = {[i,j]} style={{display:'grid',placeItems: 'center'}}>{renderDominoImage([val1, val2],domino.flipped,domino.displayDirection)}</div>)
                 }else{
                     html.push(<div key = {[i,j]} className="gridSquare" style={{display:'grid',placeItems: 'center'}}></div>)
                 }
