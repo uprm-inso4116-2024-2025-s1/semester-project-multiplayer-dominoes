@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '/default-profile.png', 
     },
+    role: {
+        type: String,
+        default: 'user',
+        enum: ['user', 'admin'],
+    },
 });
 
 export default mongoose.model('User', userSchema);
