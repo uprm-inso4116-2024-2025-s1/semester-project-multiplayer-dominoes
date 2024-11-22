@@ -632,7 +632,7 @@ function MainGame() {
                             style={{
                                 width: `${displayWidth}px`,
                                 height: `${displayHeight}px`,
-                                transform: 'scale(.6)',
+                                transform: 'scale(.8)',
 
                             }}
                             alt={`Bot's domino ${index + 1}`}
@@ -647,9 +647,14 @@ function MainGame() {
         const tileKey = domino[0].toString() + domino[1].toString();
         const tile = tileMap.get(tileKey);
         if (tile && tile.image) {
-            const scale = 0.5; // Adjust this value to change the size of the domino
             return (
-                <div style={{width:`${tile.width}px`,height:`${tile.height}px`}}>
+                <div style={{
+                    width: `${tile.width}px`,
+                    height: `${tile.height}px`,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
                     <img
                         src={tile.image.src}
                         style={{
@@ -657,15 +662,15 @@ function MainGame() {
                             height: `${tile.height}px`,
                             objectFit: 'none',
                             objectPosition: `-${tile.sx}px 0px`,
-                            transform: 'scale(0.6)',
-                            transformOrigin: 'top left',
+                            transform: 'scale(0.6)',  // Increased from 0.5
+                            transformOrigin: 'center center',
                         }}
                         alt={`Domino ${domino[0]}-${domino[1]}`}
                     />
                 </div>
             );
         }
-        return `[${domino[0]},${domino[1]}]`; // Fallback to text if image not found
+        return `[${domino[0]},${domino[1]}]`;
     }
 
     const handleLobbyButton = () => {
@@ -716,249 +721,300 @@ function MainGame() {
     }
 
     return (
-        <div style={{
-            overflowX: 'auto',     // Enables horizontal scrolling
-            maxWidth: '100vw',     // Takes full viewport width
-        }}>
-            {!isPaused ? (
-                <div className='table_game' style={{
-                    width: 'fit-content',    // Container will be as wide as its content
-                    minWidth: '1200px',      // Minimum width before scrolling starts
-                }}>
-                    {/*Button to switch between gamestate and lobby ui*/}
-                    <button
-                        style={{
-                            position: 'absolute',
-                            top: '10px',
-                            right: '10px',
-                            padding: '10px',
-                            backgroundColor: '#1A3636',
-                            color: '#FFFFFF',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer'
-                        }}
-                        onClick={handleLobbyButton}>Lobby</button>
-
-                    {/* Display the scores with inline styling */}
-                    {gameMode === 'allFives' && (
-                    <div className= 'main-text' style={{
-                        position: 'absolute',
-                        top: '50px',
-                        left: '20px',
-                        padding: '10px',
-                        borderRadius: '5px',
-                        color: 'white',
-                        fontSize: '16px'
+        <>  {/* Add a fragment to hold both containers */}
+            <div style={{
+                overflowX: 'auto',
+                maxWidth: '100vw',
+                padding: '10px'
+            }}>
+                {!isPaused ? (
+                    <div className='table_game' style={{
+                        width: 'fit-content',
+                        minWidth: '800px',
+                        transform: 'scale(0.8)',
+                        transformOrigin: 'top center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0px',
+                        
                     }}>
-                        <p>Player Score: {playerScore}</p>
-                        <p>Bot Score: {botScore}</p>
-                    </div>
-                    )}
-
-                    {/*Displays who's turn it is.*/}
-                    <div className='turnInfo'>
-                        <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
-                    </div>
-                    {/* Turn notification overlay */}
-                    {showTurnNotification && (
-                        <div className="overlay">
-                            <img src={'yourTurn.png'} alt="Your Turn" />
-                        </div>
-                    )}
-
-                    {playingDraw && (
-                        <div className='main-text' style={{ display: 'flex', justifyContent: 'space-between'}}>
-                            <ScoreTracker temp_score={playerScore} message={"Player score is: "} />
-                            <ScoreTracker temp_score={botScore} message={"Bot score is: "} />
-                        </div>
-                    )}
-
-                    {/* Winner overlay */}
-                    {showWinnerOverlay && (
-                        <div className="overlay">
-                            <img src={'winner.png'} alt="Winner" />
-                        </div>
-                    )}
-
-                    {/* Loser overlay */}
-                    {showLoserOverlay && (
-                        <div className="overlay">
-                            <img src={'loser.png'} alt="Loser" />
-                        </div>
-                    )}
-                    {/* Top blue avatar and backtiles */}
-                    <div style={{textAlign: 'center', marginBottom: '20px'}}>
-                        <img 
-                            src={blueAvatarImage.src}
-                            alt="Main Bot Avatar"
+                        {/*Button to switch between gamestate and lobby ui*/}
+                        <button
+                            className='floating-button game-button'  // Added floating-button class
                             style={{
-                                width: '64px',
-                                height: '64px',
-                                borderRadius: '50%',
-                                border: '3px solid #1A3636',
-                                marginBottom: '10px'
+                                position: 'absolute',
+                                top: '10px',
+                                right: '10px',
+                                padding: '10px',
+                                backgroundColor: '#1A3636',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer'
                             }}
-                        />
-                        <div style={{display: 'flex', justifyContent: 'center'}}>
-                            {botData.DbHand}
-                        </div>
-                    </div>
+                            onClick={handleLobbyButton}
+                        >
+                            Lobby
+                        </button>
 
-                    {/* Main game area with side avatars */}
-                    <div style={{display: 'flex', alignItems: 'center', gap: '20px'}}>
-                        {/* Left side (Green) bot */}
-                        {(botAmmount === 'twoBots' || botAmmount === 'threeBots') && (
-                            <div style={{
-                                display: 'flex', 
-                                gap: '10px', 
-                                alignItems: 'center',
-                                flexShrink: 0,  // Prevent shrinking
-                                minWidth: 'max-content'  // Maintain minimum width based on content
-                            }}>
-                                <img 
-                                    src={greenAvatarImage.src}
-                                    alt="Second Bot Avatar"
-                                    style={{
-                                        width: '64px',
-                                        height: '64px',
-                                        borderRadius: '50%',
-                                        border: '3px solid #1A3636',
-                                        flexShrink: 0  // Prevent avatar from shrinking
-                                    }}
-                                />
-                                <div style={{
-                                    display: 'flex', 
-                                    flexDirection: 'column',
-                                    flexShrink: 0,  // Prevent backtiles from shrinking
-                                    minWidth: 'max-content'  // Maintain minimum width based on content
-                                }}>
-                                    {botData2 && botData2.DbHand}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Game board */}
-                        <div className='table' style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(11,4.4rem)',
-                            gridTemplateRows: 'repeat(11,4.4rem)',
-                            gap: '1rem',
-                            height: '48rem',
-                            flexShrink: 0  // Prevent board from shrinking
+                        {/* Display the scores with inline styling */}
+                        {gameMode === 'allFives' && (
+                        <div className= 'main-text' style={{
+                            position: 'absolute',
+                            top: '50px',
+                            left: '20px',
+                            padding: '10px',
+                            borderRadius: '5px',
+                            color: 'white',
+                            fontSize: '16px'
                         }}>
-                            {renderGameBoard()}
+                            <p>Player Score: {playerScore}</p>
+                            <p>Bot Score: {botScore}</p>
                         </div>
+                        )}
 
-                        {/* Right side (Yellow) bot */}
-                        {botAmmount === 'threeBots' && (
-                            <div style={{
-                                display: 'flex', 
-                                gap: '10px', 
-                                alignItems: 'center',
-                                flexShrink: 0,  // Prevent shrinking
-                                minWidth: 'max-content'  // Maintain minimum width based on content
-                            }}>
-                                <div style={{
-                                    display: 'flex', 
-                                    flexDirection: 'column',
-                                    flexShrink: 0,  // Prevent backtiles from shrinking
-                                    minWidth: 'max-content'  // Maintain minimum width based on content
-                                }}>
-                                    {botData3 && botData3.DbHand}
-                                </div>
-                                <img 
-                                    src={yellowAvatarImage.src}
-                                    alt="Third Bot Avatar"
-                                    style={{
-                                        width: '64px',
-                                        height: '64px',
-                                        borderRadius: '50%',
-                                        border: '3px solid #1A3636',
-                                        flexShrink: 0  // Prevent avatar from shrinking
-                                    }}
-                                />
+                        {/*Displays who's turn it is.*/}
+                        <div className='turnInfo'>
+                            <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
+                        </div>
+                        {/* Turn notification overlay */}
+                        {showTurnNotification && (
+                            <div className="overlay">
+                                <img src={'yourTurn.png'} alt="Your Turn" />
                             </div>
                         )}
-                    </div>
-                    <div style={{display:'inline-block'}} className='input_chips'>
-                        <div className='Player1'>
-                            <p>{playerData.DrawHand}</p>
 
-                            <input className='domino-input' type='number'
-                                value={playerDominoIndex}
-                                onChange={(e) => setPlayerDominoIndex(e.target.value)}
-                                placeholder='Enter domino position' />
+                        {playingDraw && (
+                            <div className='main-text' style={{ display: 'flex', justifyContent: 'space-between'}}>
+                                <ScoreTracker temp_score={playerScore} message={"Player score is: "} />
+                                <ScoreTracker temp_score={botScore} message={"Bot score is: "} />
+                            </div>
+                        )}
 
-                            <button className='game-button' onClick={() => {
-                                if (playerDominoIndex) {
-                                    setData({
-                                        Domino: playerData.PlayerHand[playerDominoIndex],
-                                        DominoDirection: Corner.LEFT
-                                    });
-                                }
-                            }}>Left Tail</button>
-                            <button className='game-button' onClick={() => {
-                                if (playerDominoIndex) {
-                                    setData({
-                                        Domino: playerData.PlayerHand[playerDominoIndex],
-                                        DominoDirection: Corner.RIGHT
-                                    });
-                                }
-                            }}>Right Tail</button>
-                            <button className='game-button' onClick={() => {
-                                if (tableData.TableState.availableDominos <= 0) {
-                                    setShowPopup(true);
-                                    setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
-                                } else {
-                                    setPlayerData({
-                                        PlayerHand: playerData.PlayerHand,
-                                        DrawHand: playerData.DrawHand,
-                                        PlayerInput: true,
-                                    });
-                                }
-                            }}>Grab a Random Chip</button>
-                            <button className='game-button' onClick={() => {
-                                if(tableData.TableState.dominoesOnTable > 0){
-                                    setPassButton(true);
-                                }
-                            }}>Pass Turn</button>
-                            <button className='game-button' onClick={pauseGame}>Pause Game</button>
-                            <BackgroundMusic src={"/BackgroundMusic.mp3"}/> 
+                        {/* Winner overlay */}
+                        {showWinnerOverlay && (
+                            <div className="overlay">
+                                <img src={'winner.png'} alt="Winner" />
+                            </div>
+                        )}
+
+                        {/* Loser overlay */}
+                        {showLoserOverlay && (
+                            <div className="overlay">
+                                <img src={'loser.png'} alt="Loser" />
+                            </div>
+                        )}
+                        {/* Top blue avatar and backtiles */}
+                        <div style={{
+                            textAlign: 'center', 
+                            marginBottom: '10px'    // Changed from -110px to positive margin to create space
+                        }}>
+                            <img 
+                                src={blueAvatarImage.src}
+                                alt="Main Bot Avatar"
+                                style={{
+                                    width: '64px',
+                                    height: '64px',
+                                    borderRadius: '50%',
+                                    border: '3px solid #1A3636',
+                                    marginBottom: '10px'
+                                }}
+                            />
+                            <div style={{
+                                display: 'flex', 
+                                justifyContent: 'center',
+                                transform: 'scale(.9)',
+                                transformOrigin: 'top center'
+                            }}>
+                                {botData.DbHand}
+                            </div>
                         </div>
-                    </div>
-                    {/* Add ToastContainer to display toast notifications */}
-                    <ToastContainer
-                        position="top-right"
-                        autoClose={3000}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                        theme="colored"  // Add theme for better visual presentation
-                    />
-                    <audio id="dominoPlaceSound" src="/DominoPlacement.wav" preload="auto"></audio>
 
-                    {/* Add the avatar image with simpler centering */}
-                    <img 
-                        src={avatarImage.src}
-                        alt="Player Avatar"
-                        style={{
-                            display: 'block',
-                            margin: '10px auto',  // Centers horizontally
-                            width: '64px',
-                            height: '64px',
-                            borderRadius: '50%',
-                            border: '3px solid #1A3636'
-                        }}
-                    />
-                </div>
-            ) : (<PauseScreen onResume={resumeGame} />)}
-            {showPopup && <Popup message="There are no more tiles to pick up!" />} 
-        </div>
+                        {/* Main game area with side avatars */}
+                        <div style={{
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '20px',    // Set consistent gap for both sides
+                            justifyContent: 'center',
+                            marginBottom: '-100px'
+                        }}>
+                            {/* Left side (Green) bot */}
+                            {(botAmmount === 'twoBots' || botAmmount === 'threeBots') && (
+                                <div style={{
+                                    display: 'flex', 
+                                    gap: '5px', 
+                                    alignItems: 'center',
+                                    flexShrink: 0,
+                                    transform: 'scale(0.8)',
+                                    marginRight: '-50px'  // Changed from '10px' to '-20px' to reduce space
+                                }}>
+                                    <img 
+                                        src={greenAvatarImage.src}
+                                        alt="Second Bot Avatar"
+                                        style={{
+                                            width: '64px',
+                                            height: '64px',
+                                            borderRadius: '50%',
+                                            border: '3px solid #1A3636',
+                                            flexShrink: 0
+                                        }}
+                                    />
+                                    <div style={{
+                                        display: 'flex', 
+                                        flexDirection: 'column',
+                                        flexShrink: 0,
+                                        minWidth: 'max-content'
+                                    }}>
+                                        {botData2 && botData2.DbHand}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Game board */}
+                            <div className='table' style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(11, 5rem)',
+                                gridTemplateRows: 'repeat(11, 5rem)',
+                                gap: '0.25rem',
+                                height: '55rem',
+                                flexShrink: 0
+                            }}>
+                                {renderGameBoard()}
+                            </div>
+
+                            {/* Right side (Yellow) bot */}
+                            {botAmmount === 'threeBots' && (
+                                <div style={{
+                                    display: 'flex', 
+                                    gap: '5px', 
+                                    alignItems: 'center',
+                                    flexShrink: 0,  // Prevent shrinking
+                                    transform: 'scale(0.8)'  // Scale down side bots
+                                }}>
+                                    <div style={{
+                                        display: 'flex', 
+                                        flexDirection: 'column',
+                                        flexShrink: 0,  // Prevent backtiles from shrinking
+                                        minWidth: 'max-content'  // Maintain minimum width based on content
+                                    }}>
+                                        {botData3 && botData3.DbHand}
+                                    </div>
+                                    <img 
+                                        src={yellowAvatarImage.src}
+                                        alt="Third Bot Avatar"
+                                        style={{
+                                            width: '64px',
+                                            height: '64px',
+                                            borderRadius: '50%',
+                                            border: '3px solid #1A3636',
+                                            flexShrink: 0  // Prevent avatar from shrinking
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Player hand and controls */}
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '5px',
+                            marginTop: '-60px'
+                        }}>
+                            <div className='Player1'>
+                                <p>{playerData.DrawHand}</p>
+
+                                <input className='domino-input' type='number'
+                                    value={playerDominoIndex}
+                                    onChange={(e) => setPlayerDominoIndex(e.target.value)}
+                                    placeholder='Enter domino position' />
+
+                                <button className='game-button' onClick={() => {
+                                    if (playerDominoIndex) {
+                                        setData({
+                                            Domino: playerData.PlayerHand[playerDominoIndex],
+                                            DominoDirection: Corner.LEFT
+                                        });
+                                    }
+                                }}>Left Tail</button>
+                                <button className='game-button' onClick={() => {
+                                    if (playerDominoIndex) {
+                                        setData({
+                                            Domino: playerData.PlayerHand[playerDominoIndex],
+                                            DominoDirection: Corner.RIGHT
+                                        });
+                                    }
+                                }}>Right Tail</button>
+                                <button className='game-button' onClick={() => {
+                                    if (tableData.TableState.availableDominos <= 0) {
+                                        setShowPopup(true);
+                                        setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
+                                    } else {
+                                        setPlayerData({
+                                            PlayerHand: playerData.PlayerHand,
+                                            DrawHand: playerData.DrawHand,
+                                            PlayerInput: true,
+                                        });
+                                    }
+                                }}>Grab a Random Chip</button>
+                                <button className='game-button' onClick={() => {
+                                    if(tableData.TableState.dominoesOnTable > 0){
+                                        setPassButton(true);
+                                    }
+                                }}>Pass Turn</button>
+                                <button className='game-button' onClick={pauseGame}>Pause Game</button>
+                                <BackgroundMusic src={"/BackgroundMusic.mp3"}/> 
+                            </div>
+
+                            {/* Avatar image */}
+                            <img 
+                                src={avatarImage.src}
+                                alt="Player Avatar"
+                                style={{
+                                    display: 'block',
+                                    margin: '5px auto',
+                                    width: '64px',
+                                    height: '64px',
+                                    borderRadius: '50%',
+                                    border: '3px solid #1A3636'
+                                }}
+                            />
+                        </div>
+
+                        {/* Add ToastContainer to display toast notifications */}
+                        <audio id="dominoPlaceSound" src="/DominoPlacement.wav" preload="auto"></audio>
+                    </div>
+                ) : (<PauseScreen onResume={resumeGame} />)}
+                {showPopup && <Popup message="There are no more tiles to pick up!" />} 
+            </div>
+
+            {/* Move ToastContainer outside the main game container */}
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                style={{
+                    top: '20px',
+                    right: '20px',
+                    width: 'auto',
+                    maxWidth: '400px'
+                }}
+                toastStyle={{
+                    fontSize: '16px',
+                    padding: '15px',
+                    backgroundColor: '#1A3636',
+                    color: 'white'
+                }}
+            />
+        </>
     );
 
 }
