@@ -20,49 +20,52 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
+    const [stalemate, setStalemate] = useState(false);
+    const [botWon, setBotWon] = useState(false);
+    const [playerWon, setPlayerWon] = useState(false);
 
     const BackgroundMusic = ({ src }) => {
         const audioRef = useRef(new Audio(src));
         const [isPlaying, setIsPlaying] = useState(false);
         const [volume, setVolume] = useState(0.5);
-      
+
         const togglePlay = () => {
-          if (isPlaying) {
-            audioRef.current.pause();
-          } else {
-            audioRef.current.play();
-          }
-          setIsPlaying(prevIsPlaying => !isPlaying);
+            if (isPlaying) {
+                audioRef.current.pause();
+            } else {
+                audioRef.current.play();
+            }
+            setIsPlaying(prevIsPlaying => !isPlaying);
         };
-      
+
         const handleVolumeChange = (event) => {
-          const newVolume = event.target.value;
-          setVolume(newVolume);
-          audioRef.current.volume = newVolume;
+            const newVolume = event.target.value;
+            setVolume(newVolume);
+            audioRef.current.volume = newVolume;
         };
-      
+
         return (
-          <div>
-            <button className='game-button' onClick={togglePlay}>
-              {isPlaying ? 'Pause background music...' : 'Press for background music!'}
-            </button>
             <div>
-            <label className='volume'>
-              Volume:
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={handleVolumeChange}
-              />
-            </label>
+                <button className='game-button' onClick={togglePlay}>
+                    {isPlaying ? 'Pause background music...' : 'Press for background music!'}
+                </button>
+                <div>
+                    <label className='volume'>
+                        Volume:
+                        <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={volume}
+                            onChange={handleVolumeChange}
+                        />
+                    </label>
+                </div>
             </div>
-          </div>
         );
-      };
-      
+    };
+
 
     const tileImage = new Image();
     tileImage.src = '/New-Dominos-28-Horrizontally.png'; // Adjust this path as needed
@@ -140,7 +143,7 @@ function MainGame() {
         switch (botdifficulty) {
             case "basic":
                 return new DominoBot(tempTableState, itshand);
-            case  "intermediate":
+            case "intermediate":
                 return new IntermediateBot(tempTableState, itshand);
             case "advanced":
                 return new AdvancedBot(tempTableState, itshand, tempTableState.playedDominoes);
@@ -159,14 +162,14 @@ function MainGame() {
     let bot2 = null;
     let botHand3 = null;
     let bot3 = null;
-    
+
     const achievementManager = new AchievementManager();
 
     useEffect(() => {
         achievementManager.checkStartWithDoubleSix(initialPlayerHand);
         achievementManager.checkAllDoublesHand(initialPlayerHand);
         achievementManager.checkHasAnyDoubles(initialPlayerHand);
-    }, []);    
+    }, []);
 
     const [botData, setbotData] = useState({
         BotHand: botHand,
@@ -178,16 +181,16 @@ function MainGame() {
     const [botData2, setbotData2] = useState(null)
     const [botData3, setbotData3] = useState(null)
 
-    if(botAmmount === 'twoBots' || botAmmount === 'threeBots'){
+    if (botAmmount === 'twoBots' || botAmmount === 'threeBots') {
         botHand2 = tempTableState.playerChips();
         bot2 = createBot(botHand2);
     }
-    if(botAmmount === 'threeBots'){
+    if (botAmmount === 'threeBots') {
         botHand3 = tempTableState.playerChips();
         bot3 = createBot(botHand3);
     }
-    useEffect(()=>{
-        if(botAmmount === 'twoBots' || botAmmount === 'threeBots'){
+    useEffect(() => {
+        if (botAmmount === 'twoBots' || botAmmount === 'threeBots') {
             setbotData2({
                 BotHand: botHand2,
                 DbHand: drawBotChips(botHand2.length),
@@ -195,7 +198,7 @@ function MainGame() {
                 TileCount: botHand2.length
             })
         }
-        if(botAmmount === 'threeBots'){
+        if (botAmmount === 'threeBots') {
             setbotData3({
                 BotHand: botHand3,
                 DbHand: drawBotChips(botHand3.length),
@@ -203,7 +206,7 @@ function MainGame() {
                 TileCount: botHand3.length
             })
         }
-    },[])
+    }, [])
 
 
     const [tableData, setTableData] = useState({
@@ -259,75 +262,109 @@ function MainGame() {
      * @param {*} setTableData - Setter for the table data.
      */
     function botPlayTurn(botData, tableData, setbotData, setTableData) {
-            botData.BotPlayer.updateTable(tableData.TableState);
-            let botMoved = botData.BotPlayer.playTurn();
-                // Update bot data and table if a move was successfully made
-                setbotData(prevBotData => ({
-                    ...prevBotData,
-                    BotHand: botData.BotPlayer.hand,
-                    TileCount: botData.BotPlayer.hand.length,
-                    DbHand: drawBotChips(botData.BotPlayer.hand.length)
-                }));
-                setTableData({
-                    TableState: tableData.TableState,
-                    DrawMatrix: tableData.TableState.drawTable().split('\n')
-                });
-                if (botMoved) {
-                    if (gameMode === 'allFives') {
-                        let openEndsSum = tableData.TableState.calculateOpenEnds();
-                        if (openEndsSum % 5 === 0) {
-                            toast.success(`Bot scored ${openEndsSum} points!`);
-                            setBotScore(prevScore => prevScore + openEndsSum);
-                        }
-                    }
-
-                if (botData.BotPlayer.hand.length === 0) {
-                    if(gameMode === 'allFives'){   
-                        //add here bot vs player score comparison
-                        if(playerScore > botScore){
-                            toast.success(`Final Score: ${playerScore} points!`);
-                            setShowWinnerOverlay(true);
-                            setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
-                            return;
-                        }
-                        else if (playerScore < botScore){
-                            toast.success(`Final Score: ${botScore} points!`);
-                            setShowLoserOverlay(true);
-                            setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
-                            return;
-                        }
-                        else{
-                            toast.success(`Final Score: TIE`);
-                            setShowWinnerOverlay(true);
-                            setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
-                            return;
-                        }
-                    } else{
-                    setShowLoserOverlay(true);
-                    setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
-                    return;
-                    }
+        botData.BotPlayer.updateTable(tableData.TableState);
+        let botMoved = botData.BotPlayer.playTurn();
+        // Update bot data and table if a move was successfully made
+        setbotData(prevBotData => ({
+            ...prevBotData,
+            BotHand: botData.BotPlayer.hand,
+            TileCount: botData.BotPlayer.hand.length,
+            DbHand: drawBotChips(botData.BotPlayer.hand.length)
+        }));
+        setTableData({
+            TableState: tableData.TableState,
+            DrawMatrix: tableData.TableState.drawTable().split('\n')
+        });
+        if (botMoved) {
+            if (gameMode === 'allFives') {
+                let openEndsSum = tableData.TableState.calculateOpenEnds();
+                if (openEndsSum % 5 === 0) {
+                    toast.success(`Bot scored ${openEndsSum} points!`);
+                    setBotScore(prevScore => prevScore + openEndsSum);
                 }
-                playSound();
-            } else if (tableData.TableState.availableDominos > 0) {
-                // If the bot cannot play, and there are still dominos available to draw
-                botData.BotHand.push(tableData.TableState.grabRandomChip());
-
-                // Update the bot's hand
-                setbotData(prevBotData => ({
-                    ...prevBotData,
-                    BotHand: botData.BotHand,
-                    TileCount: botData.BotHand.length,
-                    DbHand: drawBotChips(botData.BotHand.length)
-                }));
-
-                // Retry playing after grabbing a new domino
-                botPlayTurn(botData, tableData, setbotData, setTableData);
             }
+
+            if (botData.BotPlayer.hand.length === 0 || (stalemate && botWon)) {
+                setStalemate(false);
+                setBotWon(false);
+                if (gameMode === 'allFives') {
+                    //add here bot vs player score comparison
+                    if (playerScore > botScore) {
+                        toast.success(`Final Score: ${playerScore} points!`);
+                        setShowWinnerOverlay(true);
+                        reloadWithDelay(() => setShowWinnerOverlay(false));
+                        return;
+                    }
+                    else if (playerScore < botScore) {
+                        toast.success(`Final Score: ${botScore} points!`);
+                        setShowLoserOverlay(true);
+                        reloadWithDelay(() => setShowWinnerOverlay(false));
+                        return;
+                    }
+                    else {
+                        toast.success(`Final Score: TIE`);
+                        setShowWinnerOverlay(true);
+                        reloadWithDelay(() => setShowWinnerOverlay(false));
+                        return;
+                    }
+                } else {
+                    setShowLoserOverlay(true);
+                    reloadWithDelay(() => setShowWinnerOverlay(false));
+                    return;
+                }
+            }
+            playSound();
+        } else if (tableData.TableState.availableDominos > 0) {
+            // If the bot cannot play, and there are still dominos available to draw
+            botData.BotHand.push(tableData.TableState.grabRandomChip());
+
+            // Update the bot's hand
+            setbotData(prevBotData => ({
+                ...prevBotData,
+                BotHand: botData.BotHand,
+                TileCount: botData.BotHand.length,
+                DbHand: drawBotChips(botData.BotHand.length)
+            }));
+
+            // Retry playing after grabbing a new domino
+            botPlayTurn(botData, tableData, setbotData, setTableData);
+        }
 
     }
 
+    function hasValidDomino(tableState, hand) {
+        for (let i = 0; i < hand.length; i++) {
+            if (ruleEngine.validateMove(hand[i], tableState) === true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function reloadWithDelay(hideOverlayCallback, delay = 3000) {
+        setTimeout(() => {
+            hideOverlayCallback();  // Call the function to hide the overlay
+            window.location.reload(); // Reload the page after the delay
+        }, delay);
+    }
+
     useEffect(() => {
+        if (playerData.PlayerHand.length > 0 && botData.BotHand.length > 0 && tableData.TableState.availableDominos === 0) {
+            if (!hasValidDomino(tableData.TableState, playerData.PlayerHand) && !hasValidDomino(tableData.TableState, botData.BotHand)) {
+                setStalemate(true);
+                let playerScore = ruleEngine.domino_win_score(playerData.PlayerHand);
+                let botScore = ruleEngine.domino_win_score(botHand);
+                if (playerScore < botScore) {
+                    //set player score
+                    setPlayerScore(prevScore => prevScore + playerScore + botScore);
+                    setPlayerWon(true);
+                } else {
+                    setBotScore(prevScore => prevScore + playerScore + botScore);
+                    setBotWon(true);
+                }
+            }
+        }
+
         // This runs when the player places a domino on the table.
         if (gameMode === "drawDominoes") {
             setPlayingDraw(true);
@@ -366,34 +403,36 @@ function MainGame() {
                     if (openEndsSum % 5 === 0) {
                         toast.success(`Scored ${openEndsSum} points!`);
                         setPlayerScore(prevScore => prevScore + openEndsSum);
-    
+
                         // **Trigger achievement checks**
                         achievementManager.check15Points(playerScore);
                         achievementManager.check10Exact(openEndsSum);
-                        
+
                     }
                 }
-                
 
-                if (playerData.PlayerHand.length === 0) {
-                    if(gameMode === 'allFives'){   
-                        if(playerScore > botScore){
+
+                if (playerData.PlayerHand.length === 0 || (stalemate && playerWon)) {
+                    setStalemate(false);
+                    setPlayerWon(false);
+                    if (gameMode === 'allFives') {
+                        if (playerScore > botScore) {
                             toast.success(`Final Score: ${playerScore} points!`);
                             achievementManager.checkWinWith5Points(playerScore);
                             setShowWinnerOverlay(true);
-                            setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
+                            reloadWithDelay(() => setShowWinnerOverlay(false));
                             return;
                         }
-                        else if (playerScore < botScore){
+                        else if (playerScore < botScore) {
                             toast.success(`Final Score: ${botScore} points!`);
                             setShowLoserOverlay(true);
-                            setTimeout(() => setShowLoserOverlay(false), 3000); // Display loser overlay for 3 seconds
+                            reloadWithDelay(() => setShowLoserOverlay(false));
                             return;
                         }
-                        else{
+                        else {
                             toast.success(`Final Score: TIE`);
                             setShowWinnerOverlay(true);
-                            setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
+                            reloadWithDelay(() => setShowWinnerOverlay(false));
                             return;
                         }
                     } else if (gameMode === "drawDominoes") {
@@ -402,8 +441,7 @@ function MainGame() {
                             if (ruleEngine.getDrawDominoesRules().has_won_game_set(botScore)) {
                                 // Player has won draw dominoes and game can end.
                                 setShowLoserOverlay(true);
-                                setTimeout(() => setShowWinnerOverlay(false), 3000);    
-                                
+                                reloadWithDelay(() => setShowWinnerOverlay(false));
                             } else {
                                 // Game repeats itself until player has won.
                                 setbotData({
@@ -411,7 +449,7 @@ function MainGame() {
                                     DbHand: drawBotChips(initialBotHand.length),
                                     BotPlayer: bot1,
                                     TileCount: botHand.length
-                                });                           
+                                });
                                 setTableData({
                                     TableState: tempTableState,
                                     DrawMatrix: tempTableState.drawTable().split('\n'),
@@ -428,8 +466,7 @@ function MainGame() {
                             if (ruleEngine.getDrawDominoesRules().has_won_game_set(playerScore)) {
                                 // Player has won draw dominoes and game can end.
                                 setShowWinnerOverlay(true);
-                                setTimeout(() => setShowWinnerOverlay(false), 3000);    
-                                
+                                reloadWithDelay(() => setShowWinnerOverlay(false));
                             } else {
                                 // Game repeats itself until player has won.
                                 setbotData({
@@ -437,7 +474,7 @@ function MainGame() {
                                     DbHand: drawBotChips(initialBotHand.length),
                                     BotPlayer: bot1,
                                     TileCount: botHand.length
-                                });                           
+                                });
                                 setTableData({
                                     TableState: tempTableState,
                                     DrawMatrix: tempTableState.drawTable().split('\n'),
@@ -452,30 +489,29 @@ function MainGame() {
                         }
                     } else {
                         setShowWinnerOverlay(true);
-                        setTimeout(() => setShowWinnerOverlay(false), 3000); // Display winner overlay for 3 seconds
+                        reloadWithDelay(() => setShowWinnerOverlay(false));
                         return;
                     }
                 }
                 // Bot's turn to play
                 setCurrentTurn('bot');
 
-                setTimeout(()=>{
+                setTimeout(() => {
                     botPlayTurn(botData, tableData, setbotData, setTableData);
-                },1000)
-                if(botAmmount === 'twoBots' || botAmmount === 'threeBots'){
-                    setTimeout(()=>{
-                        botPlayTurn(botData2, tableData, setbotData2, setTableData);
-                    },2000)
+                }, 1000)
+                if (botAmmount === 'twoBots' || botAmmount === 'threeBots') {
+                    setTimeout(() => {
+                    }, 2000)
                 }
-                if(botAmmount === 'threeBots'){
-                    setTimeout(()=>{
+                if (botAmmount === 'threeBots') {
+                    setTimeout(() => {
                         botPlayTurn(botData3, tableData, setbotData3, setTableData);
-                    },3000)
+                    }, 3000)
                 }
 
-                setTimeout(()=>{
+                setTimeout(() => {
                     setCurrentTurn('Player');
-                },4000)
+                }, 4000)
             }
         }
 
@@ -507,27 +543,27 @@ function MainGame() {
     }, [currentTurn]);
 
     // For activating the bots when you pass your turn.
-    useEffect(()=>{
-        if(passButton){
+    useEffect(() => {
+        if (passButton) {
             setCurrentTurn('bot');
-    
-            setTimeout(()=>{
+
+            setTimeout(() => {
                 botPlayTurn(botData, tableData, setbotData, setTableData);
-            },1000)
-            if(botAmmount === 'twoBots' || botAmmount === 'threeBots'){
-                setTimeout(()=>{
+            }, 1000)
+            if (botAmmount === 'twoBots' || botAmmount === 'threeBots') {
+                setTimeout(() => {
                     botPlayTurn(botData2, tableData, setbotData2, setTableData);
-                },2000)
+                }, 2000)
             }
-            if(botAmmount === 'threeBots'){
-                setTimeout(()=>{
+            if (botAmmount === 'threeBots') {
+                setTimeout(() => {
                     botPlayTurn(botData3, tableData, setbotData3, setTableData);
-                },3000)
+                }, 3000)
             }
-    
-            setTimeout(()=>{
+
+            setTimeout(() => {
                 setCurrentTurn('Player');
-            },4000)
+            }, 4000)
             setPassButton(false);
         }
     }, [passButton])
@@ -569,7 +605,7 @@ function MainGame() {
         for (let i = 0; i < chips.length; i += 7) {
             rows.push(chips.slice(i, i + 7));
         }
-        
+
 
         return (
             <div style={containerStyle}>
@@ -616,20 +652,20 @@ function MainGame() {
         const displayHeight = tileHeight
 
         return (
-                [...Array(tileCount)].map((_, index) => (
-                    <div key={index}>
-                        <img
-                            src={backtileImage}
-                            style={{
-                                width: `${displayWidth}px`,
-                                height: `${displayHeight}px`,
-                                transform: 'scale(.6)',
+            [...Array(tileCount)].map((_, index) => (
+                <div key={index}>
+                    <img
+                        src={backtileImage}
+                        style={{
+                            width: `${displayWidth}px`,
+                            height: `${displayHeight}px`,
+                            transform: 'scale(.6)',
 
-                            }}
-                            alt={`Bot's domino ${index + 1}`}
-                        />
-                    </div>
-                ))
+                        }}
+                        alt={`Bot's domino ${index + 1}`}
+                    />
+                </div>
+            ))
         );
     }
 
@@ -640,7 +676,7 @@ function MainGame() {
         if (tile && tile.image) {
             const scale = 0.5; // Adjust this value to change the size of the domino
             return (
-                <div style={{width:`${tile.width}px`,height:`${tile.height}px`}}>
+                <div style={{ width: `${tile.width}px`, height: `${tile.height}px` }}>
                     <img
                         src={tile.image.src}
                         style={{
@@ -672,14 +708,14 @@ function MainGame() {
     function renderGameBoard() {
         let matrix = tableData.TableState.dominoesMatrix;
         let html = [];
-        for (let i = 0; i < matrix.length; i++){
-            for(let j = 0; j < matrix[0].length; j++){
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < matrix[0].length; j++) {
                 let domino = matrix[i][j]
-                if(domino != null){
-                    const [val1, val2] = [domino.values[0],domino.values[1]]
-                    html.push(<div key = {[i,j]} style={{display:'grid',placeItems: 'center'}}>{renderDominoImage([val1, val2])}</div>)
-                }else{
-                    html.push(<div key = {[i,j]} className="gridSquare" style={{display:'grid',placeItems: 'center'}}></div>)
+                if (domino != null) {
+                    const [val1, val2] = [domino.values[0], domino.values[1]]
+                    html.push(<div key={[i, j]} style={{ display: 'grid', placeItems: 'center' }}>{renderDominoImage([val1, val2])}</div>)
+                } else {
+                    html.push(<div key={[i, j]} className="gridSquare" style={{ display: 'grid', placeItems: 'center' }}></div>)
                 }
             }
         }
@@ -727,18 +763,18 @@ function MainGame() {
 
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
-                    <div className= 'main-text' style={{
-                        position: 'absolute',
-                        top: '50px',
-                        left: '20px',
-                        padding: '10px',
-                        borderRadius: '5px',
-                        color: 'white',
-                        fontSize: '16px'
-                    }}>
-                        <p>Player Score: {playerScore}</p>
-                        <p>Bot Score: {botScore}</p>
-                    </div>
+                        <div className='main-text' style={{
+                            position: 'absolute',
+                            top: '50px',
+                            left: '20px',
+                            padding: '10px',
+                            borderRadius: '5px',
+                            color: 'white',
+                            fontSize: '16px'
+                        }}>
+                            <p>Player Score: {playerScore}</p>
+                            <p>Bot Score: {botScore}</p>
+                        </div>
                     )}
 
                     {/*Displays who's turn it is.*/}
@@ -753,7 +789,7 @@ function MainGame() {
                     )}
 
                     {playingDraw && (
-                        <div className='main-text' style={{ display: 'flex', justifyContent: 'space-between'}}>
+                        <div className='main-text' style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <ScoreTracker temp_score={playerScore} message={"Player score is: "} />
                             <ScoreTracker temp_score={botScore} message={"Bot score is: "} />
                         </div>
@@ -772,23 +808,23 @@ function MainGame() {
                             <img src={'loser.png'} alt="Loser" />
                         </div>
                     )}
-                    <p style={{  display:'flex', flexDirection:'horizontal', justifyContent:'center'}} >{ botData3 ? botData2.DbHand : botData.DbHand}</p>
-                    <div style={{display:'flex'}}>
-                        <p style={{display:'flex', flexDirection:'column', justifyContent:'center'}} >{ botData2 ? (botData3 ? botData3.DbHand : botData2.DbHand) : null}</p>
-                        <div style={{display:'flex',justifyContent:'center'}}>
+                    <p style={{ display: 'flex', flexDirection: 'horizontal', justifyContent: 'center' }} >{botData3 ? botData2.DbHand : botData.DbHand}</p>
+                    <div style={{ display: 'flex' }}>
+                        <p style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >{botData2 ? (botData3 ? botData3.DbHand : botData2.DbHand) : null}</p>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <div className='table' style={{ /* Start with 4x4 */
-                                                            display: 'grid',
-                                                            gridTemplateColumns: 'repeat(11,4.4rem)',
-                                                            gridTemplateRows: 'repeat(11,4.4rem)',
-                                                            gap: '1rem',
-                                                            height: '48rem',
-                                                        }}>
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(11,4.4rem)',
+                                gridTemplateRows: 'repeat(11,4.4rem)',
+                                gap: '1rem',
+                                height: '48rem',
+                            }}>
                                 {renderGameBoard()}
                             </div>
                         </div>
-                        <p style={{display:'flex', flexDirection:'column', justifyContent:'center'}} >{ botData3 ? botData.DbHand: null}</p>
+                        <p style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }} >{botData3 ? botData.DbHand : null}</p>
                     </div>
-                    <div style={{display:'inline-block'}} className='input_chips'>
+                    <div style={{ display: 'inline-block' }} className='input_chips'>
                         <div className='Player1'>
                             <p>{playerData.DrawHand}</p>
 
@@ -826,12 +862,12 @@ function MainGame() {
                                 }
                             }}>Grab a Random Chip</button>
                             <button className='game-button' onClick={() => {
-                                if(tableData.TableState.dominoesOnTable > 0){
+                                if (tableData.TableState.dominoesOnTable > 0) {
                                     setPassButton(true);
                                 }
                             }}>Pass Turn</button>
                             <button className='game-button' onClick={pauseGame}>Pause Game</button>
-                            <BackgroundMusic src={"/BackgroundMusic.mp3"}/> 
+                            <BackgroundMusic src={"/BackgroundMusic.mp3"} />
                         </div>
                     </div>
                     {/* Add ToastContainer to display toast notifications */}
@@ -853,7 +889,7 @@ function MainGame() {
                 </div>
                 //Continues the popup message for when the player has no more tiles to pick up after the game has been paused. 
             ) : (<PauseScreen onResume={resumeGame} />)}
-            {showPopup && <Popup message="There are no more tiles to pick up!" />} 
+            {showPopup && <Popup message="There are no more tiles to pick up!" />}
         </div>
     );
 
