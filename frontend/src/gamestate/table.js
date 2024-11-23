@@ -238,6 +238,7 @@ class Table{
 
                     if(current_domino.displayDirection === DisplayDirection.VERTICAL){
                         if(adjacent_domino.displayDirection === DisplayDirection.HORIZONTAL){
+                            console.log("DISPLAY HORIZONTAL")
                             if ((new_coords[0]-1 >= 0
                                 && this.#data_matrix[new_coords[0]-1][new_coords[1]] != null
                                 && adjacent_domino.values[0] !== current_domino.values[0]) 
@@ -256,22 +257,26 @@ class Table{
                                     current_domino.flipped = true;
                             }
                         }else if(adjacent_domino.displayDirection === DisplayDirection.VERTICAL){
+                            console.log("DISPLAY VERTICAL",adjacent_domino.values,adjacent_domino.freeCorners,current_domino.values)
                             if ((new_coords[0]-1 >= 0
                                 && this.#data_matrix[new_coords[0]-1][new_coords[1]] != null
-                                && adjacent_domino.values[0] === current_domino.values[1]) 
+                                && adjacent_domino.values[1] === current_domino.values[1]) 
                                 ){
                                     let temp = current_domino.values[0];
                                     current_domino.values[0] = current_domino.values[1];
                                     current_domino.values[1] = temp;
                                     current_domino.flipped = true;
+                                    console.log("AQUI  IZQUIERDA",adjacent_domino.values,adjacent_domino.freeCorners,current_domino.values)
                             }
                             else if ((new_coords[0]+1 < this.#data_matrix.length 
                                 && this.#data_matrix[new_coords[0]+1][new_coords[1]] != null
-                                && adjacent_domino.values[1] === current_domino.values[0])){
+                                && adjacent_domino.values[0] === current_domino.values[0])){
                                     let temp = current_domino.values[0];
                                     current_domino.values[0] = current_domino.values[1];
                                     current_domino.values[1] = temp;
                                     current_domino.flipped = true;
+                                    console.log("AQUI ESTOY BREGANDO DERECHA",adjacent_domino.values,adjacent_domino.freeCorners,current_domino.values)
+
                             }
                         }
 
