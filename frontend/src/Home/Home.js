@@ -28,8 +28,8 @@ const Home = () => {
             <div className="footer-links">
             <ul>
                 <a href="/">Home</a>
-                <a onClick={() => { toggleRules(); playSound(); }}>Instructions</a>
-                <a href="#">FAQs</a>
+                <a></a>
+                <a href="/faqs">FAQs</a>
             </ul>
             </div>
             </nav>
