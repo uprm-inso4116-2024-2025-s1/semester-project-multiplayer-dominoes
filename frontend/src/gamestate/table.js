@@ -235,8 +235,48 @@ class Table{
                     }else if (corner === Corner.RIGHT){
                         this.#right_domino = current_domino;
                     }
-                    
-                    if( (this.#data_matrix[new_coords[0]][new_coords[1] + 1] != null
+
+                    if(current_domino.displayDirection === DisplayDirection.VERTICAL){
+                        if(adjacent_domino.displayDirection === DisplayDirection.HORIZONTAL){
+                            if ((new_coords[0]-1 >= 0
+                                && this.#data_matrix[new_coords[0]-1][new_coords[1]] != null
+                                && adjacent_domino.values[0] !== current_domino.values[0]) 
+                                ){
+                                    let temp = current_domino.values[0];
+                                    current_domino.values[0] = current_domino.values[1];
+                                    current_domino.values[1] = temp;
+                                    current_domino.flipped = true;
+                            }
+                            else if ((new_coords[0]+1 < this.#data_matrix.length 
+                                && this.#data_matrix[new_coords[0]+1][new_coords[1]] != null
+                                && adjacent_domino.values[1] !== current_domino.values[1])){
+                                    let temp = current_domino.values[0];
+                                    current_domino.values[0] = current_domino.values[1];
+                                    current_domino.values[1] = temp;
+                                    current_domino.flipped = true;
+                            }
+                        }else if(adjacent_domino.displayDirection === DisplayDirection.VERTICAL){
+                            if ((new_coords[0]-1 >= 0
+                                && this.#data_matrix[new_coords[0]-1][new_coords[1]] != null
+                                && adjacent_domino.values[0] === current_domino.values[1]) 
+                                ){
+                                    let temp = current_domino.values[0];
+                                    current_domino.values[0] = current_domino.values[1];
+                                    current_domino.values[1] = temp;
+                                    current_domino.flipped = true;
+                            }
+                            else if ((new_coords[0]+1 < this.#data_matrix.length 
+                                && this.#data_matrix[new_coords[0]+1][new_coords[1]] != null
+                                && adjacent_domino.values[1] === current_domino.values[0])){
+                                    let temp = current_domino.values[0];
+                                    current_domino.values[0] = current_domino.values[1];
+                                    current_domino.values[1] = temp;
+                                    current_domino.flipped = true;
+                            }
+                        }
+
+                    }
+                    else if( (this.#data_matrix[new_coords[0]][new_coords[1] + 1] != null
                         && adjacent_domino.values[0] === current_domino.values[0]) 
                         || (this.#data_matrix[new_coords[0]][new_coords[1] - 1] != null
                         && adjacent_domino.values[1] === current_domino.values[1])){
@@ -244,7 +284,8 @@ class Table{
                             current_domino.values[0] = current_domino.values[1];
                             current_domino.values[1] = temp;
                             current_domino.flipped = true;
-                        }   
+                        }
+                            
                     this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino;
                 }
             }
