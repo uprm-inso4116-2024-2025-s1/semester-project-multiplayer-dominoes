@@ -721,55 +721,39 @@ function MainGame() {
     }
 
     return (
-        <>  {/* Add a fragment to hold both containers */}
-            <div style={{
-                overflowX: 'auto',
-                maxWidth: '100vw',
-                padding: '10px'
-            }}>
-                {!isPaused ? (
-                    <div className='table_game' style={{
-                        width: 'fit-content',
-                        minWidth: '800px',
-                        transform: 'scale(0.8)',
-                        transformOrigin: 'top center',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '0px',
-                        
-                    }}>
-                        {/*Button to switch between gamestate and lobby ui*/}
-                        <button
-                            className='floating-button game-button'  // Added floating-button class
-                            style={{
-                                position: 'absolute',
-                                top: '10px',
-                                right: '10px',
-                                padding: '10px',
-                                backgroundColor: '#1A3636',
-                                color: '#FFFFFF',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: 'pointer'
-                            }}
-                            onClick={handleLobbyButton}
-                        >
-                            Lobby
-                        </button>
+        <>
+        <div>
+            {!isPaused ? (
+                <div className='table_game'>
+                    {/*Button to switch between gamestate and lobby ui*/}
+                    <button
+                        onClick={handleLobbyButton}className="lobby-button">Lobby</button>
 
-                        {/* Display the scores with inline styling */}
-                        {gameMode === 'allFives' && (
-                        <div className= 'main-text' style={{
-                            position: 'absolute',
-                            top: '50px',
-                            left: '20px',
-                            padding: '10px',
-                            borderRadius: '5px',
-                            color: 'white',
-                            fontSize: '16px'
-                        }}>
-                            <p>Player Score: {playerScore}</p>
-                            <p>Bot Score: {botScore}</p>
+                    {/* Display the scores with inline styling */}
+                    {gameMode === 'allFives' && (
+                    <div className= 'main-text' style={{
+                        position: 'absolute',
+                        top: '50px',
+                        left: '20px',
+                        padding: '10px',
+                        borderRadius: '5px',
+                        color: 'white',
+                        fontSize: '16px'
+                    }}>
+                        <p>Player Score: {playerScore}</p>
+                        <p>Bot Score: {botScore}</p>
+                    </div>
+                    )}
+
+                    {/*Displays who's turn it is.*/}
+                    <div className='turnInfo'>
+                        <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
+                    </div>
+                    {/* Turn notification overlay */}
+                    {showTurnNotification && (
+                        <div className="overlay">
+                            <img src={'yourTurn.png'} alt="Your Turn" />
+
                         </div>
                         )}
 
