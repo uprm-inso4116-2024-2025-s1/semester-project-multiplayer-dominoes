@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+const playSound = () => {
+    const audio = document.getElementById("clickSound");
+    if (audio) {
+        audio.play();
+    }
+};
+
 function ResetPassword() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,6 +20,7 @@ function ResetPassword() {
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
+        playSound();
         if (password !== confirmPassword) {
             setMessage("Passwords do not match.");
             return;
@@ -61,9 +69,10 @@ function ResetPassword() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                 />
-                <button type="submit">Reset Password</button>
+                <button type="submit" onClick={playSound}>Reset Password</button>
             </form>
             {message && <p>{message}</p>}
+            <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>
         </div>
     );
 }

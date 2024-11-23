@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import './styles/Login.css';
 
+const playSound = () => {
+  const audio = document.getElementById("clickSound");
+  if (audio) {
+      audio.play();
+  }
+};
+
 function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
-
+    playSound();
     try {
         console.log('Sending password reset request for:', email);
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/forgot-password`, {
@@ -45,9 +52,10 @@ function ForgotPassword() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <button type="submit">Send Reset Link</button>
+          <button type="submit"onClick={playSound}>Send Reset Link</button>
         </form>
         {message && <p className="header">{message}</p>}
+        <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>
       </div>
     </div>
   );
