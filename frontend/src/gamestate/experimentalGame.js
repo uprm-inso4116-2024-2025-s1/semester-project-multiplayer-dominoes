@@ -510,6 +510,7 @@ function MainGame() {
                 }, 1000)
                 if (botAmmount === 'twoBots' || botAmmount === 'threeBots') {
                     setTimeout(() => {
+                        botPlayTurn(botData2, tableData, setbotData2, setTableData);
                     }, 2000)
                 }
                 if (botAmmount === 'threeBots') {
