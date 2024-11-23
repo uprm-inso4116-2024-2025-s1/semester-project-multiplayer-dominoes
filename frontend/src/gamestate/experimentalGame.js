@@ -29,9 +29,6 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
-    const [stalemate, setStalemate] = useState(false);
-    const [botWon, setBotWon] = useState(false);
-    const [playerWon, setPlayerWon] = useState(false);
 
     const BackgroundMusic = ({ src }) => {
         const audioRef = useRef(new Audio(src));
@@ -252,6 +249,7 @@ function MainGame() {
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
     const [showTurnNotification, setShowTurnNotification] = useState(false);
     const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(true);
+    const [showStalemateOverlay, setShowStalemateOverlay] = useState(false);
 
     const [passButton, setPassButton] = useState(false);
 
@@ -293,9 +291,7 @@ function MainGame() {
                 }
             }
 
-            if (botData.BotPlayer.hand.length === 0 || (stalemate && botWon)) {
-                setStalemate(false);
-                setBotWon(false);
+            if (botData.BotPlayer.hand.length === 0) {
                 if (gameMode === 'allFives') {
                     //add here bot vs player score comparison
                     if (playerScore > botScore) {
@@ -360,17 +356,22 @@ function MainGame() {
     useEffect(() => {
         if (playerData.PlayerHand.length > 0 && botData.BotHand.length > 0 && tableData.TableState.availableDominos === 0) {
             if (!hasValidDomino(tableData.TableState, playerData.PlayerHand) && !hasValidDomino(tableData.TableState, botData.BotHand)) {
-                setStalemate(true);
-                let playerScore = ruleEngine.domino_win_score(playerData.PlayerHand);
-                let botScore = ruleEngine.domino_win_score(botHand);
-                if (playerScore < botScore) {
-                    //set player score
-                    setPlayerScore(prevScore => prevScore + playerScore + botScore);
-                    setPlayerWon(true);
-                } else {
-                    setBotScore(prevScore => prevScore + playerScore + botScore);
-                    setBotWon(true);
-                }
+                setShowStalemateOverlay(true);
+                setTimeout(() => {
+                    setShowStalemateOverlay(false);
+                    let playerScore = ruleEngine.domino_win_score(playerData.PlayerHand);
+                    let botScore = ruleEngine.domino_win_score(botHand);
+                    if (playerScore < botScore) {
+                        //set player score
+                        setPlayerScore(prevScore => prevScore + playerScore + botScore);
+                        setShowWinnerOverlay(true);
+                        reloadWithDelay(() => setShowWinnerOverlay(false));
+                    } else {
+                        setBotScore(prevScore => prevScore + playerScore + botScore);
+                        setShowLoserOverlay(true);
+                        reloadWithDelay(() => setShowLoserOverlay(false));
+                    }
+                }, 3000);
             }
         }
 
@@ -420,10 +421,7 @@ function MainGame() {
                     }
                 }
 
-
-                if (playerData.PlayerHand.length === 0 || (stalemate && playerWon)) {
-                    setStalemate(false);
-                    setPlayerWon(false);
+                if (playerData.PlayerHand.length === 0) {
                     if (gameMode === 'allFives') {
                         if (playerScore > botScore) {
                             toast.success(`Final Score: ${playerScore} points!`);
@@ -825,6 +823,14 @@ function MainGame() {
                             <div className='main-text' style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <ScoreTracker temp_score={playerScore} message={"Player score is: "} />
                                 <ScoreTracker temp_score={botScore} message={"Bot score is: "} />
+                            </div>
+                        )}
+
+                        {showStalemateOverlay && (
+                            <div className="overlay">
+                                <p style={{ color: 'white', fontSize: '24px', textAlign: 'center' }}>
+                                    It's a stalemate!
+                                </p>
                             </div>
                         )}
 
