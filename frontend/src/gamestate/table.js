@@ -13,6 +13,7 @@ class Domino {
     #display_direction = null;
     #free_corners = [];
     #values = [];
+    #flip = false;
     constructor(values, coords, display_direction){
         this.#values = values;
         this.#free_corners = [...values];
@@ -25,10 +26,12 @@ class Domino {
     get displayDirection(){return this.#display_direction}
     get freeCorners(){return this.#free_corners}
     get values(){return this.#values}
+    get flipped(){return this.#flip}
 
     // Setters
     set coords(input){this.#coords = input}
     set displayDirection(input){this.#display_direction = input}
+    set flipped(input){this.#flip = true}
 
     // Methods
     removeCorner(number){
@@ -200,27 +203,98 @@ class Table{
 
                 if(new_coords.length > 0){
                     let display_direction  = DisplayDirection.HORIZONTAL;
-                    if(new_coords[0] - adjacent_domino[0] !== 0){
+                    if(new_coords[0] - adjacent_domino.coords[0] !== 0){
                         display_direction = DisplayDirection.VERTICAL;
                     }
                     let current_domino = new Domino(domino_to_place, 
                                         new_coords,
                                         display_direction);
+                
+                    
                     adjacent_domino.removeCorner(number_to_place);
                     current_domino.removeCorner(number_to_place);
+
+                    if(this.#dominoes_on_table === 1){
+                        if ((this.#data_matrix[new_coords[0]][new_coords[1] + 1] != null
+                            && adjacent_domino.values[1] === current_domino.values[1]) 
+                            || (this.#data_matrix[new_coords[0]][new_coords[1] - 1] != null
+                            && adjacent_domino.values[0] === current_domino.values[0])){
+                                let temp = adjacent_domino.values[0];
+                                adjacent_domino.values[0] = adjacent_domino.values[1];
+                                adjacent_domino.values[1] = temp;
+                                adjacent_domino.flipped = true;
+
+                                this.#data_matrix[adjacent_domino.coords[0]][adjacent_domino.coords[1]] = adjacent_domino
+                            }
+                        
+                        
+                    }
                         
                     if(corner === Corner.LEFT){
                         this.#left_domino = current_domino;
                     }else if (corner === Corner.RIGHT){
                         this.#right_domino = current_domino;
                     }
-                    this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino;
 
+                    if(current_domino.displayDirection === DisplayDirection.VERTICAL){
+                        if(adjacent_domino.displayDirection === DisplayDirection.HORIZONTAL){
+                            console.log("DISPLAY HORIZONTAL")
+                            if ((new_coords[0]-1 >= 0
+                                && this.#data_matrix[new_coords[0]-1][new_coords[1]] != null
+                                && adjacent_domino.values[0] !== current_domino.values[0]) 
+                                ){
+                                    let temp = current_domino.values[0];
+                                    current_domino.values[0] = current_domino.values[1];
+                                    current_domino.values[1] = temp;
+                                    current_domino.flipped = true;
+                            }
+                            else if ((new_coords[0]+1 < this.#data_matrix.length 
+                                && this.#data_matrix[new_coords[0]+1][new_coords[1]] != null
+                                && adjacent_domino.values[1] !== current_domino.values[1])){
+                                    let temp = current_domino.values[0];
+                                    current_domino.values[0] = current_domino.values[1];
+                                    current_domino.values[1] = temp;
+                                    current_domino.flipped = true;
+                            }
+                        }else if(adjacent_domino.displayDirection === DisplayDirection.VERTICAL){
+                            if ((new_coords[0]-1 >= 0
+                                && this.#data_matrix[new_coords[0]-1][new_coords[1]] != null
+                                && adjacent_domino.values[1] === current_domino.values[1]) 
+                                ){
+                                    let temp = current_domino.values[0];
+                                    current_domino.values[0] = current_domino.values[1];
+                                    current_domino.values[1] = temp;
+                                    current_domino.flipped = true;
+                            }
+                            else if ((new_coords[0]+1 < this.#data_matrix.length 
+                                && this.#data_matrix[new_coords[0]+1][new_coords[1]] != null
+                                && adjacent_domino.values[0] === current_domino.values[0])){
+                                    let temp = current_domino.values[0];
+                                    current_domino.values[0] = current_domino.values[1];
+                                    current_domino.values[1] = temp;
+                                    current_domino.flipped = true;
+                            }
+                        }
+
+                    }
+                    else if( (this.#data_matrix[new_coords[0]][new_coords[1] + 1] != null
+                        && adjacent_domino.values[0] === current_domino.values[0]) 
+                        || (this.#data_matrix[new_coords[0]][new_coords[1] - 1] != null
+                        && adjacent_domino.values[1] === current_domino.values[1])){
+                            let temp = current_domino.values[0];
+                            current_domino.values[0] = current_domino.values[1];
+                            current_domino.values[1] = temp;
+                            current_domino.flipped = true;
+                        }
+                            
+                    this.#data_matrix[new_coords[0]][new_coords[1]] = current_domino;
                 }
             }
         }
-        this.#dominoes_on_table++;
-        this.#played_dominoes.push(domino_to_place);
+        if(is_legal){
+            this.#dominoes_on_table++;
+            this.#played_dominoes.push(domino_to_place);
+        }
         return is_legal;
     }
 
@@ -244,4 +318,4 @@ class Table{
     }
 }
 
-export {Table, Domino, Corner}
+export {Table, Domino, Corner, DisplayDirection}

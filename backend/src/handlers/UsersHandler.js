@@ -28,7 +28,8 @@ export default class UsersHandler {
             username: data.username,
             email: data.email,
             password: hashedPassword,
-            uuid: uuidv4() // Generate a unique UUID for the user
+            uuid: uuidv4(), // Generate a unique UUID for the user
+            role: data.role || 'user',
         };
         return await this.#userRepository.createUser(userObject);
     }
@@ -42,27 +43,41 @@ export default class UsersHandler {
     }
 
     generateToken(user) {
+        const expiresIn = user.role === 'admin' ? '15m' : '1h';
+
         return jwt.sign(
-            { id: user._id, email: user.email, tokenVersion: user.tokenVersion },  // Payload
+            { id: user._id, email: user.email, role: user.role, tokenVersion: user.tokenVersion },  // Payload
             JWT_SECRET, 
-            { expiresIn: '1h' } 
+            { expiresIn } 
         );
     }
+
     async verifyToken(token) {
         try {
             const decoded = jwt.verify(token, JWT_SECRET);
             const user = await this.#userRepository.findUserById(decoded.id);
 
             // Check if the token version matches the user's current tokenVersion
-            if (decoded.tokenVersion !== user.tokenVersion) {
-                throw new Error('Token version mismatch');
+            if (!user || decoded.tokenVersion !== user.tokenVersion) {
+                console.error('Error: Token version mismatch or user not found');
+                throw new Error('Token version mismatch or user not found');
             }
 
             return user;
         } catch (error) {
-            throw new Error('Invalid token');
+            if (error instanceof jwt.TokenExpiredError) {
+                console.error('Error: Token has expired');
+                throw new Error('Token expired. Please login again.');
+            } else if (error instanceof jwt.JsonWebTokenError) {
+                console.error('Error: Invalid token');
+                throw new Error('Invalid token. Authorization denied.');
+            } else {
+                console.error('Error: Token verification failed', error.message);
+                throw new Error('Internal error during token verification.');
+            }
         }
     }
+
     async logoutUser(userId) {
         return await this.#userRepository.findByIdAndUpdate(userId, { $inc: { tokenVersion: 1 } });
     }
@@ -74,6 +89,4 @@ export default class UsersHandler {
             { expiresIn: '15m' }
         );
     }
-    
-    
 };
