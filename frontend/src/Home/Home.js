@@ -117,7 +117,6 @@ const Home = () => {
         <footer>
             <div className="footer-links">
                 <a href="/contact-us">Contact Us</a>
-                <a href="/faqs">Frequently Asked Questions</a>
                 <br></br>
                 <br></br>
                 <a href="/privacy-policy">Privacy Policy</a>
