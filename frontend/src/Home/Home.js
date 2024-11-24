@@ -8,14 +8,6 @@ const playSound = () => {
     }
 };
 
-
-const playSound = () => {
-    const audio = document.getElementById("clickSound");
-    if (audio) {
-        audio.play();
-    }
-};
-
 const Home = () => {
     return (
         <div>
