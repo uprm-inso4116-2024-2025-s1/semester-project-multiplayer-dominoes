@@ -1,5 +1,12 @@
 import React from 'react';
-import './Home.css'; 
+import './Home.css';
+
+const playSound = () => {
+    const audio = document.getElementById("clickSound");
+    if (audio) {
+        audio.play();
+    }
+};
 
 
 const playSound = () => {
