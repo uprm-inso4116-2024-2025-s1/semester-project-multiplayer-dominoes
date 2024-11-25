@@ -244,6 +244,23 @@ img {
     }
 }
 
+.back-to-home-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: #F86F03;
+    color: #FFF6F4;
+    text-decoration: none;
+    font-family: 'Press Start 2P', sans-serif;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.back-to-home-btn:hover {
+    background-color: #FFA500;
+}
+
 /* Media queries for smaller screens */
 @media (max-width: 768px) {
     .content {
