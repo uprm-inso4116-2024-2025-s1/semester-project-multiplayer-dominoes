@@ -171,6 +171,10 @@
   cursor: pointer;
 }
 
+.game-button:hover {
+  background-color: rgb(244, 213, 75); 
+}
+
 .domino-input {
   padding: 10px 20px;
   font-family: 'Press Start 2P', sans-serif;
@@ -184,6 +188,25 @@
   width: 220px;
 }
 
+.lobby-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 10px;
+  background-color: #FFFEC9; 
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  color: #582400; 
+
+}
+
+.lobby-button:hover {
+  background-color: rgb(244, 213, 75); 
+}
+
 .turnInfo, .main-text {
   font-family: 'Press Start 2P', sans-serif;
 }
@@ -191,4 +214,40 @@
 .volume {
   font-family: 'Press Start 2P', sans-serif;
   font-size: 20px;
+}
+
+.leave-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.leave-message {
+  background-color: #FFFEC9;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  color: #582400;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 18px;
+}
+
+.leave-button {
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 10px;
+  background-color: rgb(244, 213, 75);
+  border: none;
+  margin: 30px;
+  border-radius: 5px;
+  color: #582400;
+  cursor: pointer;
 }
