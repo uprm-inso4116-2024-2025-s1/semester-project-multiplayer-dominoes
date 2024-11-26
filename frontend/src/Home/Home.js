@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Home.css'; 
 
-const playSound = () => {
-    const audio = document.getElementById("clickSound");
-    if (audio) {
-        audio.play();
-    }
-};
-
 const Home = () => {
+
+    const [showRules, setShowRules] = useState(false);
+
+    const toggleRules = () => {
+      setShowRules(!showRules);
+    };
+  
+    const playSound = () => {
+      const audio = document.getElementById('howToPlaySound');
+      if (audio) {
+        audio.play();
+      }
+    };
+
     return (
         <div>
         {/* Header */}
@@ -44,7 +51,20 @@ const Home = () => {
                 If a player cannot make a move, they must skip their turn. 
                 The game continues until a player runs out of tiles or no more moves are possible. 
                 The winner scores points based on the tiles remaining in the opponents' hands, and the first player to reach a predetermined number of points wins the game.</p>
-                <a onClick={playSound} className="instruction-link" href="#">Click here for more in-depth instructions</a>
+            <a onClick={() => { toggleRules(); playSound();}} className="instruction-link">Click here for more in-depth instructions</a>
+            {showRules && (
+                  <div className="rules-overlay">
+                    <div className="rules">
+                      <h2>How to Play Dominoes</h2>
+                      <p><strong>Players:</strong> Two, three, or four may play. If four are playing, it may be played as a partnership (the two players sitting opposite one another are partners).</p>
+                      <p><strong>The Shuffle:</strong> The dominoes are shuffled. Players draw one domino. The player drawing the highest double, or if no double, the highest domino plays first. Re-shuffle and begin drawing the first hand.</p>
+                      <p><strong>Drawing:</strong> Each player draws seven dominoes for their hand. The remaining dominoes (the boneyard) are left face down to be drawn later if a player is unable to play.</p>
+                      <p><strong>Begin Play:</strong> The player who drew the highest domino plays first. The objective is to score points by laying dominoes end to end. If the dots on the exposed ends total a multiple of five, the player is awarded points.</p>
+                      <p><strong>Blocking the Game:</strong> If no player can play, the game is blocked. The player with the least spots in their hand scores the total spots of the opponents' hands.</p>
+                    </div>
+                    <button button onClick={() => { toggleRules(); playSound(); }} className="close-rules-button">Close Instructions</button>
+                  </div>
+                )}
         </section>
 
 
