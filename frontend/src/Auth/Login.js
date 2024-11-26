@@ -4,6 +4,13 @@ import AuthService from './services/AuthService.js';
 import './styles/Login.css';
 import { Link } from 'react-router-dom';
 
+const playSound = () => {
+  const audio = document.getElementById("clickSound");
+  if (audio) {
+      audio.play();
+  }
+};
+
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
@@ -59,11 +66,11 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
+          <button type="submit" onClick={playSound}>{isLogin ? 'Login' : 'Sign Up'}</button>
         </form>
         <p className="header">
           {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <button onClick={() => setIsLogin(!isLogin)}>
+          <button onClick={() => { playSound(); setIsLogin(!isLogin); }}>
             {isLogin ? 'Sign Up' : 'Login'}
           </button>
         </p>
@@ -74,6 +81,7 @@ function Login() {
 )}
 
       </div>
+      <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>
     </div>
   );
 }
