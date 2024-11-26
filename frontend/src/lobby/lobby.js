@@ -24,15 +24,29 @@ const Lobby = () => {
       audio.play();
     }
   };
+
+  const playButtonSound = () => {
+    const audio = document.getElementById("buttonSound");
+    if (audio) audio.play();
+  };
+
+  const playSelectionSound = () => {
+    const audio = document.getElementById("selectionSound");
+    if (audio) audio.play();
+  };
+
   const handleDifficultyChange = (event) => {
     setBotlevel(event.target.value);
+    playSelectionSound();
   };
   const handleGameMode = (event) => {
     setGameMode(event.target.value);
     setRoomMode(event.target.value);
+    playSelectionSound();
   };
   const handleBotAmmount = (event) => {
     setBotAmmount(event.target.value);
+    playSelectionSound();
   };
   const handleDisplay = (solo) => {
     setIsSoloPlay(solo);
@@ -40,6 +54,7 @@ const Lobby = () => {
     setShowOptions(false);
     setErrorMessage("");
     setInstruction(false);
+    playButtonSound();
   };
 
   // Later Implement with the database to do a getAllRooms
@@ -98,6 +113,7 @@ const Lobby = () => {
       });
       return updatedRooms;
     });
+    playButtonSound();
   };
   return (
     <div className="selection-box" style={{ display: "block", width: "100%" }}>
@@ -142,6 +158,7 @@ const Lobby = () => {
                 setShowLobby(false);
                 setShowOptions(true);
                 setInstruction(true);
+                playButtonSound();
               }}
             >
               Back
@@ -153,7 +170,7 @@ const Lobby = () => {
                   style={{ height: "70px" }}
                   onClick={() => {
                     handleCreateRoom();
-                    playSound();
+                    playButtonSound();
                     navigate("/game", {
                       state: {
                         gameMode: gameMode,
@@ -218,7 +235,7 @@ const Lobby = () => {
                   className="createRoom_button"
                   onClick={() => {
                     handleCreateRoom();
-                    playSound();
+                    playButtonSound();
                   }}
                 >
                   Create Room
@@ -398,6 +415,8 @@ const Lobby = () => {
           ></audio>
         </div>
       )}
+      <audio id="buttonSound" src="/DominoesClick.wav" preload="auto"></audio>
+      <audio id="selectionSound" src="/SelectionSound.wav" preload="auto"></audio>
     </div>
   );
 };
