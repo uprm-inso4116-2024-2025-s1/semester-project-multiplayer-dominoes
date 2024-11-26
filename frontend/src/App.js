@@ -73,7 +73,7 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/faqs" element={<FAQS />} />
           </Routes>
-          <audio id="howToPlaySound" src="/DominoesClick.wav" preload="auto"></audio>
+          <audio id="howToPlaySound" src="/GamestateSound.wav" preload="auto"></audio>
         </header>
       </div>
     </Router>
