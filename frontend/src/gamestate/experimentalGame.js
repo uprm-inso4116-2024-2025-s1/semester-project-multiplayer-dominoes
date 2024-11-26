@@ -248,7 +248,7 @@ function MainGame() {
     const [showWinnerOverlay, setShowWinnerOverlay] = useState(false);
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
     const [showTurnNotification, setShowTurnNotification] = useState(false);
-    const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(true);
+    const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(false);
 
     const [passButton, setPassButton] = useState(false);
 
@@ -675,14 +675,8 @@ function MainGame() {
     }
 
     const handleLobbyButton = () => {
-        if (showLoseProgressIfLobby) {
-            alert("Leaving game will cause you to lose progress.")
-            setShowLoseProgressIfLobby(false);
-        }
-        else {
-            navigate('/lobby')
-        }
-    }
+        setShowLoseProgressIfLobby(true);
+    };
 
     function renderGameBoard() {
         let matrix = tableData.TableState.dominoesMatrix;
@@ -729,7 +723,19 @@ function MainGame() {
                     {/*Button to switch between gamestate and lobby ui*/}
                     <button
                         onClick={handleLobbyButton}className="lobby-button">Lobby</button>
-
+                        {showLoseProgressIfLobby && (
+                            <div className='leave-overlay'>
+                                <div className='leave-message'>
+                                    <h2>Leaving game will cause you to lose progress</h2>
+                                    <button className='leave-button' onClick={() => setShowLoseProgressIfLobby(false)}>
+                                        Cancel
+                                    </button>
+                                    <button className='leave-button' onClick={() => navigate("/lobby")}>
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
                     <div className= 'main-text' style={{
