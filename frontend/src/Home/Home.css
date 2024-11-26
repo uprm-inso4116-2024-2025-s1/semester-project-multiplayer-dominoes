@@ -23,6 +23,7 @@ body {
 .instruction-link, .footer-links a {
     font-family: 'Press Start 2P', sans-serif;
     color:  #F7E28C;
+    cursor: pointer;
 }
 
 /* Header styling */
@@ -181,6 +182,46 @@ img {
     width: 9vw; /* Responsive width for wins and losses */
 }
 
+.close-rules-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 10px;
+    background-color: #FFFEC9; 
+    border: none;
+    border-radius: 5px;
+    color: #582400; 
+    cursor: pointer;
+    z-index: 1001; 
+  }
+  
+.rules-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #282c34;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+  
+.rules {
+    background-color: #FFFEC9; 
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    text-align: left;
+    color: #582400; 
+    font-family: 'Press Start 2P', sans-serif; 
+    font-size: 18px;
+}
+
 @media (max-width: 768px) {
     .leaderboard-rows {
         top: 15%;
@@ -201,6 +242,23 @@ img {
     .column-player {
         width: 40vw;
     }
+}
+
+.back-to-home-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: #F86F03;
+    color: #FFF6F4;
+    text-decoration: none;
+    font-family: 'Press Start 2P', sans-serif;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.back-to-home-btn:hover {
+    background-color: #FFA500;
 }
 
 /* Media queries for smaller screens */
