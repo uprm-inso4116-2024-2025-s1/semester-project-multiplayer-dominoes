@@ -1,6 +1,13 @@
 import React from 'react';
 import './Home.css'; 
 
+const playSound = () => {
+    const audio = document.getElementById("clickSound");
+    if (audio) {
+        audio.play();
+    }
+};
+
 const Home = () => {
     return (
         <div>
@@ -13,14 +20,14 @@ const Home = () => {
             <nav>
             <div className="footer-links">
             <ul>
-                <a href="/">Home</a>
-                <a href="#">Instructions</a>
-                <a href="#">FAQs</a>
+                <a onClick={playSound} className="instruction-link" href="/">Home</a>
+                <a onClick={playSound} className="instruction-link" href="#">Instructions</a>
+                <a onClick={playSound} className="instruction-link" href="#">FAQs</a>
             </ul>
             </div>
             </nav>
             <div className="footer-links">
-            <a href="/login">Sign Up / Log In</a>
+            <a onClick={playSound} className="instruction-link" href="/login">Sign Up / Log In</a>
             </div>
         </header>
 
@@ -37,7 +44,7 @@ const Home = () => {
                 If a player cannot make a move, they must skip their turn. 
                 The game continues until a player runs out of tiles or no more moves are possible. 
                 The winner scores points based on the tiles remaining in the opponents' hands, and the first player to reach a predetermined number of points wins the game.</p>
-            <a href="#" className="instruction-link">Click here for more in-depth instructions</a>
+                <a onClick={playSound} className="instruction-link" href="#">Click here for more in-depth instructions</a>
         </section>
 
 
@@ -89,13 +96,14 @@ const Home = () => {
         {/* Footer */}
         <footer>
             <div className="footer-links">
-                <a href="/contact-us">Contact Us</a>
-                <a href="/faqs">Frequently Asked Questions</a>
+                <a onClick={playSound} className="instruction-link" href="/contact-us">Contact Us</a>
+                <a onClick={playSound} className="instruction-link" href="/faqs">Frequently Asked Questions</a>
                 <br></br>
                 <br></br>
-                <a href="/privacy-policy">Privacy Policy</a>
+                <a onClick={playSound} className="instruction-link" href="/privacy-policy">Privacy Policy</a>
             </div>
         </footer>
+        <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>
         </div>
     );
     };
