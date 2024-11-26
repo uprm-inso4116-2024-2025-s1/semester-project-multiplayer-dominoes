@@ -79,7 +79,12 @@ function Login() {
     Forgot password?
   </Link>
 )}
-
+  <button
+          className="rules-button"
+          onClick={() => { playSound(); navigate('/'); }}
+        >
+          Return to Home
+        </button>
       </div>
       <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>
     </div>
