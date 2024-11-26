@@ -27,14 +27,14 @@ const Home = () => {
             <nav>
             <div className="footer-links">
             <ul>
-                <a href="/">Home</a>
-                <a></a>
-                <a href="/faqs">FAQs</a>
+                <a onClick={()=>playSound()} className="instruction-link" href="/">Home</a>
+                <a onClick={()=>playSound()} className="instruction-link" href="#">Instructions</a>
+                <a onClick={()=>playSound()} className="instruction-link" href="#">FAQs</a>
             </ul>
             </div>
             </nav>
             <div className="footer-links">
-            <a href="/login">Sign Up / Log In</a>
+            <a onClick={()=> playSound()} className="instruction-link" href="/login">Sign Up / Log In</a>
             </div>
         </header>
 
@@ -116,12 +116,14 @@ const Home = () => {
         {/* Footer */}
         <footer>
             <div className="footer-links">
-                <a href="/contact-us">Contact Us</a>
+                <a onClick={playSound()} className="instruction-link" href="/contact-us">Contact Us</a>
+                <a onClick={playSound()} className="instruction-link" href="/faqs">Frequently Asked Questions</a>
                 <br></br>
                 <br></br>
-                <a href="/privacy-policy">Privacy Policy</a>
+                <a onClick={playSound()} className="instruction-link" href="/privacy-policy">Privacy Policy</a>
             </div>
         </footer>
+        <audio id="clickSound" src="/DominoesClick.wav" preload="auto"></audio>
         </div>
     );
     };

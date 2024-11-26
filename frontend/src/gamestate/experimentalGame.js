@@ -30,6 +30,13 @@ function MainGame() {
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
 
+    const playButtonSound = () => {
+        const audio = document.getElementById('buttonSound');
+        if (audio) {
+            audio.play();
+        }
+    };
+
     const BackgroundMusic = ({ src }) => {
         const audioRef = useRef(new Audio(src));
         const [isPlaying, setIsPlaying] = useState(false);
@@ -722,17 +729,13 @@ function MainGame() {
                 <div className='table_game'>
                     {/*Button to switch between gamestate and lobby ui*/}
                     <button
-                        onClick={handleLobbyButton}className="lobby-button">Lobby</button>
+                        onClick={() => { playButtonSound(); handleLobbyButton();}}className="lobby-button"> Lobby </button>
                         {showLoseProgressIfLobby && (
                             <div className='leave-overlay'>
                                 <div className='leave-message'>
                                     <h2>Leaving game will cause you to lose progress</h2>
-                                    <button className='leave-button' onClick={() => setShowLoseProgressIfLobby(false)}>
-                                        Cancel
-                                    </button>
-                                    <button className='leave-button' onClick={() => navigate("/lobby")}>
-                                        Confirm
-                                    </button>
+                                    <button className='leave-button' onClick={() => {playButtonSound(); setShowLoseProgressIfLobby(false);}}> Cancel </button>
+                                    <button className='leave-button'onClick={() => {playButtonSound(); navigate("/lobby");}}> Confirm </button>
                                 </div>
                             </div>
                         )}
@@ -922,6 +925,7 @@ function MainGame() {
                                     placeholder='Enter domino position' />
 
                                 <button className='game-button' onClick={() => {
+                                    playButtonSound();
                                     if (playerDominoIndex) {
                                         setData({
                                             Domino: playerData.PlayerHand[playerDominoIndex],
@@ -930,6 +934,7 @@ function MainGame() {
                                     }
                                 }}>Left Tail</button>
                                 <button className='game-button' onClick={() => {
+                                    playButtonSound();
                                     if (playerDominoIndex) {
                                         setData({
                                             Domino: playerData.PlayerHand[playerDominoIndex],
@@ -938,6 +943,7 @@ function MainGame() {
                                     }
                                 }}>Right Tail</button>
                                 <button className='game-button' onClick={() => {
+                                    playButtonSound();
                                     if (tableData.TableState.availableDominos <= 0) {
                                         setShowPopup(true);
                                         setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
@@ -950,11 +956,12 @@ function MainGame() {
                                     }
                                 }}>Grab a Random Chip</button>
                                 <button className='game-button' onClick={() => {
+                                    playButtonSound();
                                     if(tableData.TableState.dominoesOnTable > 0){
                                         setPassButton(true);
                                     }
                                 }}>Pass Turn</button>
-                                <button className='game-button' onClick={pauseGame}>Pause Game</button>
+                                <button className='game-button' onClick={() => {playButtonSound();pauseGame();}}> Pause Game </button>
                                 <BackgroundMusic src={"/BackgroundMusic.mp3"}/> 
                             </div>
 
@@ -975,8 +982,9 @@ function MainGame() {
 
                         {/* Add ToastContainer to display toast notifications */}
                         <audio id="dominoPlaceSound" src="/DominoPlacement.wav" preload="auto"></audio>
+                        <audio id="buttonSound" src="/GamestateSound.wav" preload="auto"></audio>
                     </div>
-                ) : (<PauseScreen onResume={resumeGame} />)}
+                ) : (<PauseScreen onResume={() => { playButtonSound();resumeGame();}} />)}
                 {showPopup && <Popup message="There are no more tiles to pick up!" />} 
             </div>
 
