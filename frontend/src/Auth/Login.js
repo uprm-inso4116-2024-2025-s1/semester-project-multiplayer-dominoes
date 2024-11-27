@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthService from './services/AuthService.js';
 import './styles/Login.css';
 import { Link } from 'react-router-dom';
 
 const playSound = () => {
   const audio = document.getElementById("clickSound");
   if (audio) {
-      audio.play();
+    audio.play();
   }
 };
 
-function Login() {
+function Login({ authService }) {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const authService = new AuthService();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,11 +23,10 @@ function Login() {
       const data = isLogin
         ? await authService.login(email, password)
         : await authService.register(username, email, password);
-  
-      console.log(data); 
-      localStorage.setItem('token', data.token);
-navigate('/', { state: { authenticated: true } });
 
+      console.log(data);
+      localStorage.setItem('token', data.token);
+      navigate('/', { state: { authenticated: true } });
     } catch (error) {
       console.warn('Failed to register or login:', error);
     }
@@ -67,7 +64,9 @@ navigate('/', { state: { authenticated: true } });
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit" onClick={playSound}>{isLogin ? 'Login' : 'Sign Up'}</button>
+          <button type="submit" onClick={playSound}>
+            {isLogin ? 'Login' : 'Sign Up'}
+          </button>
         </form>
         <p className="header">
           {isLogin ? "Don't have an account? " : "Already have an account? "}
@@ -76,11 +75,11 @@ navigate('/', { state: { authenticated: true } });
           </button>
         </p>
         {isLogin && (
-  <Link to="/forgot-password" className="forgot-password-link">
-    Forgot password?
-  </Link>
-)}
-  <button
+          <Link to="/forgot-password" className="forgot-password-link">
+            Forgot password?
+          </Link>
+        )}
+        <button
           className="rules-button"
           onClick={() => { playSound(); navigate('/'); }}
         >
