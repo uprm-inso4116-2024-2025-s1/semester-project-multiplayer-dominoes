@@ -9,6 +9,10 @@ export default class UserAchievementRepository {
         return await this.#userAchievementModel.find({ userId: userId });
     }
 
+    async findUserAchievement(userId, achievementId) {
+        return await this.#userAchievementModel.findOne({ userId: userId, achievementId: achievementId });
+    }
+
     async createUserAchievement(data) {
         const achievement = new this.#userAchievementModel({
             userId: data.userId,
