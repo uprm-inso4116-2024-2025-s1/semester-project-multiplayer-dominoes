@@ -29,6 +29,21 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
+    const [backgroundImage, setBackgroundImage] = useState('/images/M3-board3.png'); // Initial background image set
+    const backgroundImages = [
+        '/images/M3-board3.png', // Images of background boards
+        '/images/M3-board2.png',
+        '/images/M3-board1.png',
+    ];
+
+    // Function to rotate the background
+    const changeBackground = () => {
+        setBackgroundImage((prevImage) => {
+            const currentIndex = backgroundImages.indexOf(prevImage);
+            const nextIndex = (currentIndex + 1) % backgroundImages.length; // Loop to the next image accordingly.
+            return backgroundImages[nextIndex];
+        });
+    };
 
     const playButtonSound = () => {
         const audio = document.getElementById('buttonSound');
@@ -726,19 +741,55 @@ function MainGame() {
         <>
         <div>
             {!isPaused ? (
-                <div className='table_game'>
-                    {/*Button to switch between gamestate and lobby ui*/}
-                    <button
-                        onClick={() => { playButtonSound(); handleLobbyButton();}}className="lobby-button"> Lobby </button>
-                        {showLoseProgressIfLobby && (
-                            <div className='leave-overlay'>
-                                <div className='leave-message'>
-                                    <h2>Leaving game will cause you to lose progress</h2>
-                                    <button className='leave-button' onClick={() => {playButtonSound(); setShowLoseProgressIfLobby(false);}}> Cancel </button>
-                                    <button className='leave-button'onClick={() => {playButtonSound(); navigate("/lobby");}}> Confirm </button>
-                                </div>
-                            </div>
-                        )}
+                <div
+    className="table_game"
+    style={{
+        backgroundImage: `url(${backgroundImage})`, // Use the current background image
+        backgroundSize: 'cover', // Ensure it fits the screen
+        backgroundPosition: 'center', // Center the image
+        backgroundRepeat: 'no-repeat', // Prevent tiling
+        width: '100vw', // Full viewport width
+        height: '100vh', // Full viewport height
+        position: 'relative', // Allow layering for other elements
+    }}
+>
+    {/* Button to switch between gamestate and lobby ui */}
+    <button
+        onClick={() => { playButtonSound(); handleLobbyButton(); }}
+        className="lobby-button"
+    >
+        Lobby
+    </button>
+    {showLoseProgressIfLobby && (
+        <div className="leave-overlay">
+            <div className="leave-message">
+                <h2>Leaving game will cause you to lose progress</h2>
+                <button
+                    className="leave-button"
+                    onClick={() => {
+                        playButtonSound();
+                        setShowLoseProgressIfLobby(false);
+                    }}
+                >
+                    Cancel
+                </button>
+                <button
+                    className="leave-button"
+                    onClick={() => {
+                        playButtonSound();
+                        navigate("/lobby");
+                    }}
+                >
+                    Confirm
+                </button>
+            </div>
+        </div>
+    )}
+
+    {/* Button to change background dynamically */}
+    <button onClick={changeBackground} className="game-button">
+        Next Background
+    </button>
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
                     <div className= 'main-text' style={{
