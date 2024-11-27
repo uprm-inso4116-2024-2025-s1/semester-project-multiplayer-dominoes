@@ -23,6 +23,6 @@ export default class MatchHistoryRepository {
     }
 
     async findMatchHistoryByIdAndUpdate(userId, matchId, data) {
-        return await this.#matchHistoryModel.findOneAndUpdate({userId: userId, matchId: matchId}, data);
+        return await this.#matchHistoryModel.findOneAndUpdate({userId: userId, matchId: matchId}, data, {returnDocument: 'after'});
     }
 };

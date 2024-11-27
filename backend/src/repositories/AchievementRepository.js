@@ -19,6 +19,6 @@ export default class AchievementRepository {
     }
 
     async updateAchievement(name, data) {
-        return await this.#achievementModel.findOneAndUpdate({ name: name }, data);
+        return await this.#achievementModel.findOneAndUpdate({ name: name }, data, {returnDocument: 'after'});
     }
 }

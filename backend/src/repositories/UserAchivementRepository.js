@@ -20,6 +20,6 @@ export default class UserAchievementRepository {
     }
 
     async updateUserAchievement(userId, achievementId, data) {
-        return await this.#userAchievementModel.findOneAndUpdate({ userId: userId, achievementId: achievementId }, data);
+        return await this.#userAchievementModel.findOneAndUpdate({ userId: userId, achievementId: achievementId }, data, {returnDocument: 'after'});
     }
 }

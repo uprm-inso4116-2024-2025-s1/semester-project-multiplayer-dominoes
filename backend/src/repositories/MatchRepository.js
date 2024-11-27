@@ -18,11 +18,11 @@ export default class MatchRepository {
         return await match.save();
     }
 
-    async findMatchById(roomId) {
-        return await this.#matchModel.findOne({ roomId: roomId});
+    async findMatchById(id) {
+        return await this.#matchModel.findById(id);
     }
 
-    async findMatchByIdAndUpdate(roomId, data) {
-        return await this.#matchModel.findOneAndUpdate({roomId: roomId}, data);
+    async findMatchByIdAndUpdate(id, data) {
+        return await this.#matchModel.findByIdAndUpdate(id, data, {returnDocument: 'after'});
     }
 };

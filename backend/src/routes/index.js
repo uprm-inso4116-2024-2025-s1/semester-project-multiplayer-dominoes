@@ -1,6 +1,8 @@
 import healthzRoutes from './healthzRoutes.js';
 import userRoutes from './userRoutes.js';
 import authRoutes from './authRoutes.js';
+import matchRoutes from './matchRoutes.js';
+import { joinRoom, createRoom, getAllRooms } from "../controllers/RoomsController.js";
 
 export default (app, container) => {
     app.get('/', (req, res) => res.send('Welcome to Multiplayer Dominoes backend!'));
@@ -13,4 +15,12 @@ export default (app, container) => {
 
     // Register auth routes
     app.use('/', authRoutes(container));
+
+    // Register match routes
+    app.use('/matches', matchRoutes(container));
+
+    // Register room routes
+    app.get('/rooms', getAllRooms);
+    app.post('/rooms', createRoom);
+    app.post('/rooms/:roomId/join', joinRoom);
 };
