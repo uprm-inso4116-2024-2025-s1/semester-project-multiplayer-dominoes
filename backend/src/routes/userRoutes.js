@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+
 export default (container) => {
     const router = Router();
     const usersController = container.UsersController;

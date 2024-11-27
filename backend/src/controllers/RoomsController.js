@@ -1,5 +1,9 @@
 const Room = require('../models/RoomsModel');
 const User = require('../models/UserModel');
+const {
+  RoomNameAvailableSpecification,
+  RoomCapacitySpecification,
+} = require('../specifications/RoomSpecification.js');
 
 
 
@@ -18,29 +22,32 @@ const getAllRooms = async (req, res) => {
 const createRoom = async (req, res) => {
   const { name, creatorUuid } = req.body;
 
-
   if (!name || !creatorUuid) {
-    return res.status(400).json({ error: 'Room name and creator UUID are required' });
+      return res.status(400).json({ error: 'Room name and creator UUID are required' });
   }
 
   try {
-    
-    const creator = await User.findOne({ uuid: creatorUuid });
-    if (!creator) {
-      return res.status(404).json({ error: 'Creator not found' });
-    }
+      const creator = await User.findOne({ uuid: creatorUuid });
+      if (!creator) {
+          return res.status(404).json({ error: 'Creator not found' });
+      }
 
-    const roomExists = await Room.findOne({ name });
-    if (roomExists) {
-      return res.status(400).json({ error: 'Room with that name already exists' });
-    }
+      const nameSpec = new RoomNameAvailableSpecification(Room);
+      const isNameAvailable = await nameSpec.isSatisfiedBy(name);
 
-    const newRoom = new Room({ name, creator: creator._id });
-    res.status(201).json(newRoom);  
+      if (!isNameAvailable) {
+          return res.status(400).json({ error: 'Room with that name already exists' });
+      }
+
+      const newRoom = new Room({ name, creator: creator._id });
+      await newRoom.save();
+      res.status(201).json(newRoom);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create room' });
+      res.status(500).json({ error: 'Failed to create room' });
   }
 };
+
+
 
 
 const joinRoom = async (req, res) => {
@@ -48,27 +55,27 @@ const joinRoom = async (req, res) => {
   const { userUuid } = req.body;
 
   try {
-    const user = await User.findOne({ uuid: userUuid });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+      const user = await User.findOne({ uuid: userUuid });
+      if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+      }
 
-    const room = await Room.findById(roomId);
+      const room = await Room.findById(roomId);
+      if (!room) {
+          return res.status(404).json({ error: 'Room not found' });
+      }
 
-    if (!room) {
-      return res.status(404).json({ error: 'Room not found' });
-    }
+      const capacitySpec = new RoomCapacitySpecification();
+      if (!capacitySpec.isSatisfiedBy(room)) {
+          return res.status(400).json({ error: 'Room is full' });
+      }
 
-    if (room.players >= room.maxPlayers) {
-      return res.status(400).json({ error: 'Room is full' });
-    }
-
-
-    room.players += 1;
-    room.currentPlayers.push(user._id);
-    res.status(200).json(room);  
+      room.players += 1;
+      room.currentPlayers.push(user._id);
+      await room.save();
+      res.status(200).json(room);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to join room' });
+      res.status(500).json({ error: 'Failed to join room' });
   }
 };
 

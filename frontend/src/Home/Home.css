@@ -285,3 +285,93 @@ img {
         padding: 50px; /* Adjust padding */
     }
 }
+
+/* General Styling for Play Button */
+.play-button {
+    font-family: 'Press Start 2P', sans-serif;
+    background-color: #F86F03;
+    color: #FFF6F4;
+    border: 3px solid #FFF6F4;
+    border-radius: 10px;
+    padding: 15px 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+    margin-left: auto; /* Push the button to the left */
+}
+
+/* Hover and Active States for Play Button */
+.play-button:hover {
+    background-color: #FFF6F4;
+    color: #F86F03;
+    transform: scale(1.1);
+}
+
+.play-button:active {
+    transform: scale(0.95);
+}
+
+/* Profile Button Styling */
+.profile-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 20px; /* Add spacing to the right */
+}
+
+/* Profile Picture Styling */
+.profile-picture {
+    width: 50px; /* Set the size of the profile picture */
+    height: 50px;
+    border-radius: 50%; /* Make it circular */
+    object-fit: cover; /* Ensure the image is cropped properly */
+    border: 2px solid #FFF6F4; /* Add a subtle border */
+    transition: transform 0.2s ease;
+}
+
+.profile-picture:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Profile Container Styling */
+.profile-container {
+    display: flex; /* Arrange profile picture and button in a row */
+    align-items: center; /* Align items vertically in the center */
+    gap: 10px; /* Add space between profile picture and button */
+}
+
+/* Footer Links Container */
+.footer-links {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+    align-items: center; /* Align items vertically */
+    padding: 0 20px; /* Add some horizontal padding */
+}
+
+/* Responsive Design for Small Screens */
+@media (max-width: 768px) {
+    .footer-links {
+        flex-direction: column; /* Stack buttons vertically on smaller screens */
+        align-items: center;
+    }
+
+    .profile-container {
+        flex-direction: column; /* Stack the profile picture and button vertically */
+        align-items: center; /* Center align them */
+        gap: 5px; /* Reduce the space between them */
+    }
+
+    .profile-picture {
+        width: 40px; /* Slightly smaller profile picture for small screens */
+        height: 40px;
+    }
+
+    .play-button {
+        font-size: 0.8rem; /* Adjust font size for smaller screens */
+        padding: 10px 20px; /* Adjust padding */
+        width: 100%; /* Make the button full-width */
+        text-align: center; /* Center the button text */
+    }
+}

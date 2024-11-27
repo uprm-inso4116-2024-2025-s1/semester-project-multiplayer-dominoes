@@ -886,6 +886,46 @@ const Lobby = () => {
   const [gameMode, setGameMode] = useState("");
   const [botAmount, setBotAmount] = useState("");
 
+  const playSound = () => {
+    const audio = document.getElementById("lobbyClickSound");
+    if (audio) {
+      audio.play();
+    }
+  };
+
+  const playButtonSound = () => {
+    const audio = document.getElementById("buttonSound");
+    if (audio) audio.play();
+  };
+
+  const playSelectionSound = () => {
+    const audio = document.getElementById("selectionSound");
+    if (audio) audio.play();
+  };
+
+  const handleDifficultyChange = (event) => {
+    setBotlevel(event.target.value);
+    playSelectionSound();
+  };
+  const handleGameMode = (event) => {
+    setGameMode(event.target.value);
+    setRoomMode(event.target.value);
+    playSelectionSound();
+  };
+  const handleBotAmmount = (event) => {
+    setBotAmmount(event.target.value);
+    playSelectionSound();
+  };
+  const handleDisplay = (solo) => {
+    setIsSoloPlay(solo);
+    setShowLobby(true);
+    setShowOptions(false);
+    setErrorMessage("");
+    setInstruction(false);
+    playButtonSound();
+  };
+
+  // Later Implement with the database to do a getAllRooms
   useEffect(() => {
     if (!socket) {
       socket = io("http://localhost:5000");
@@ -921,32 +961,24 @@ const Lobby = () => {
   };
 
   const joinRooms = (roomId) => {
-    socket.emit("joinRoom", roomId); // Notify server about joining the room
-    const room = rooms.find((r) => r.id === roomId);
-    if (room) {
-      navigate("/multiplayer", {
-        state: {
-          roomId: room.id,
-          roomName: room.name,
-          gameMode: room.gamemode,
-        },
-      });
-    }
-  };
+  });
+}
+};
 
-  const handleStartSoloGame = () => {
-    if (!gameMode || !botDifficulty || !botAmount) {
-      setErrorMessage("Please select all options before starting.");
-      return;
-    }
+const handleStartSoloGame = () => {
+if (!gameMode || !botDifficulty || !botAmount) {
+  setErrorMessage("Please select all options before starting.");
+  return;
+}
 
-    navigate("/game", {
-      state: {
-        gameMode,
-        botDifficulty,
-        botAmount,
-      },
-    });
+navigate("/game", {
+  state: {
+    gameMode,
+    botDifficulty,
+    botAmount,
+  },
+});
+    playButtonSound();
   };
 
   return (
@@ -995,10 +1027,33 @@ const Lobby = () => {
                 setShowLobby(false);
                 setShowOptions(true);
                 setShowInstruction(true);
+                playButtonSound();
               }}
             >
               Back
             </p>
+            {isSoloPlay && (
+              <div className="solo_play">
+                <button
+                  className="start_button"
+                  style={{ height: "70px" }}
+                  onClick={() => {
+                    handleCreateRoom();
+                    playButtonSound();
+                    navigate("/game", {
+                      state: {
+                        gameMode: gameMode,
+                        bot: botdifficulty,
+                        botNum: botAmmount,
+                      },
+                    });
+                  }}
+                  disabled={!gameMode || !botdifficulty}
+                >
+                  Start Game
+                </button>
+              </div>
+            )}
             {!isSoloPlay && (
               <div className="create-lobby">
                 <h2>Create Lobby</h2>
@@ -1008,7 +1063,49 @@ const Lobby = () => {
                   onChange={(e) => setNewRoomName(e.target.value)}
                   placeholder="Enter Room Name"
                 />
-                <button className="createRoom_button" onClick={handleCreateRoom}>
+                <div
+                  className="game-mode-selection"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-around",
+                    marginTop: "10px",
+                  }}
+                >
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="classic"
+                      onChange={handleGameMode}
+                    />{" "}
+                    Classic
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="allFives"
+                      onChange={handleGameMode}
+                    />{" "}
+                    All Fives
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gamemode"
+                      value="drawDominoes"
+                      onChange={handleGameMode}
+                    />{" "}
+                    Draw Dominoes
+                  </label>
+                </div>
+                <button
+                  className="createRoom_button"
+                  onClick={() => {
+                    handleCreateRoom();
+                    playButtonSound();
+                  }}
+                >
                   Create Room
                 </button>
                 {errorMessage && <p className="error">{errorMessage}</p>}
@@ -1085,6 +1182,8 @@ const Lobby = () => {
           </div>
         </div>
       )}
+      <audio id="buttonSound" src="/DominoesClick.wav" preload="auto"></audio>
+      <audio id="selectionSound" src="/SelectionSound.wav" preload="auto"></audio>
     </div>
   );
 };

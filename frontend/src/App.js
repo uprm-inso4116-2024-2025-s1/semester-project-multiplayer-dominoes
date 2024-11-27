@@ -14,6 +14,7 @@ import ChatPopup from './gamestate/Chat.js';
 import ContactUs from './Home/ContactUs.js';
 import FAQS from './Home/FAQS.js';
 import PrivacyPolicy from './Home/PrivacyPolicy.js';
+import ProfilePage from './Auth/ProfilePage.js';
 
 function App() {
   const [showRules, setShowRules] = useState(false);
@@ -43,6 +44,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route 
               path="/game" 
               element={
@@ -120,7 +122,7 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/faqs" element={<FAQS />} />
           </Routes>
-          <audio id="howToPlaySound" src="/DominoesClick.wav" preload="auto"></audio>
+          <audio id="howToPlaySound" src="/GamestateSound.wav" preload="auto"></audio>
         </header>
       </div>
     </Router>
