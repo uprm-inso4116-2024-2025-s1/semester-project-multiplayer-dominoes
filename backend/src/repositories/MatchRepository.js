@@ -11,17 +11,18 @@ export default class MatchRepository {
 
     async createMatch(data) {
         const match = new this.#matchModel({
-            players: data.players,
-            status: data.status
+            roomId: data.roomId,
+            winnerId: data.winnerId,
+            status: data.status,
         });
         return await match.save();
     }
 
-    async findMatchById(id) {
-        return await this.#matchModel.findById(id);
+    async findMatchById(roomId) {
+        return await this.#matchModel.findOne({ roomId: roomId});
     }
 
-    async findMatchByIdAndUpdate(id, data) {
-        return await this.#matchModel.findByIdAndUpdate(id, data);
+    async findMatchByIdAndUpdate(roomId, data) {
+        return await this.#matchModel.findOneAndUpdate({roomId: roomId}, data);
     }
 };

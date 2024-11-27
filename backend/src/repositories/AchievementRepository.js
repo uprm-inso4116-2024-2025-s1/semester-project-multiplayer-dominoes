@@ -11,13 +11,14 @@ export default class AchievementRepository {
 
     async createAchievement(data) {
         const achievement = new this.#achievementModel({
-            username: data.username,
-            status: data.status,
+            name: data.name,
+            description: data.description,
+            points: data.points,
         });
         return await achievement.save();
     }
 
-    async updateAchievement(username, data) {
-        return await this.#achievementModel.findOneAndUpdate({ username: username }, data);
+    async updateAchievement(name, data) {
+        return await this.#achievementModel.findOneAndUpdate({ name: name }, data);
     }
 }
