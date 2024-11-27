@@ -1,4 +1,4 @@
-import { Table, Corner } from './table.js';
+import { Table, Corner, DisplayDirection } from './table.js';
 import React, { useState, useEffect, useRef } from 'react';
 import DominoBot from './Bot.js';
 import IntermediateBot from './intermediateBot.js';
@@ -29,6 +29,13 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
+
+    const playButtonSound = () => {
+        const audio = document.getElementById('buttonSound');
+        if (audio) {
+            audio.play();
+        }
+    };
 
     const BackgroundMusic = ({ src }) => {
         const audioRef = useRef(new Audio(src));
@@ -248,7 +255,7 @@ function MainGame() {
     const [showWinnerOverlay, setShowWinnerOverlay] = useState(false);
     const [showLoserOverlay, setShowLoserOverlay] = useState(false);
     const [showTurnNotification, setShowTurnNotification] = useState(false);
-    const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(true);
+    const [showLoseProgressIfLobby, setShowLoseProgressIfLobby] = useState(false);
     const [showStalemateOverlay, setShowStalemateOverlay] = useState(false);
 
     const [passButton, setPassButton] = useState(false);
@@ -677,9 +684,10 @@ function MainGame() {
         );
     }
 
-    function renderDominoImage(domino) {
+    function renderDominoImage(domino, domino_was_flipped, domino_direction) {
         if (!domino || domino.length !== 2) return null;
-        const tileKey = domino[0].toString() + domino[1].toString();
+        const tempTileKey = domino[0].toString() + domino[1].toString();
+        const tileKey = Array.from(tempTileKey).sort().join('');
         const tile = tileMap.get(tileKey);
         if (tile && tile.image) {
             return (
@@ -697,7 +705,7 @@ function MainGame() {
                             height: `${tile.height}px`,
                             objectFit: 'none',
                             objectPosition: `-${tile.sx}px 0px`,
-                            transform: 'scale(0.6)',  // Increased from 0.5
+                            transform: `scale(${domino_was_flipped ? -0.6 : 0.6 }) rotate(${domino_direction === DisplayDirection.HORIZONTAL ? 0 : 90}deg)`,  // Increased from 0.5
                             transformOrigin: 'center center',
                         }}
                         alt={`Domino ${domino[0]}-${domino[1]}`}
@@ -709,14 +717,8 @@ function MainGame() {
     }
 
     const handleLobbyButton = () => {
-        if (showLoseProgressIfLobby) {
-            alert("Leaving game will cause you to lose progress.")
-            setShowLoseProgressIfLobby(false);
-        }
-        else {
-            navigate('/lobby')
-        }
-    }
+        setShowLoseProgressIfLobby(true);
+    };
 
     function renderGameBoard() {
         let matrix = tableData.TableState.dominoesMatrix;
@@ -724,11 +726,11 @@ function MainGame() {
         for (let i = 0; i < matrix.length; i++) {
             for (let j = 0; j < matrix[0].length; j++) {
                 let domino = matrix[i][j]
-                if (domino != null) {
-                    const [val1, val2] = [domino.values[0], domino.values[1]]
-                    html.push(<div key={[i, j]} style={{ display: 'grid', placeItems: 'center' }}>{renderDominoImage([val1, val2])}</div>)
-                } else {
-                    html.push(<div key={[i, j]} className="gridSquare" style={{ display: 'grid', placeItems: 'center' }}></div>)
+                if(domino != null){
+                    const [val1, val2] = [domino.values[0],domino.values[1]]
+                    html.push(<div key = {[i,j]} style={{display:'grid',placeItems: 'center'}}>{renderDominoImage([val1, val2],domino.flipped,domino.displayDirection)}</div>)
+                }else{
+                    html.push(<div key = {[i,j]} className="gridSquare" style={{display:'grid',placeItems: 'center'}}></div>)
                 }
             }
         }
@@ -756,56 +758,48 @@ function MainGame() {
     }
 
     return (
-        <>  {/* Add a fragment to hold both containers */}
-            <div style={{
-                overflowX: 'auto',
-                maxWidth: '100vw',
-                padding: '10px'
-            }}>
-                {!isPaused ? (
-                    <div className='table_game' style={{
-                        width: 'fit-content',
-                        minWidth: '800px',
-                        transform: 'scale(0.8)',
-                        transformOrigin: 'top center',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '0px',
-
-                    }}>
-                        {/*Button to switch between gamestate and lobby ui*/}
-                        <button
-                            className='floating-button game-button'  // Added floating-button class
-                            style={{
-                                position: 'absolute',
-                                top: '10px',
-                                right: '10px',
-                                padding: '10px',
-                                backgroundColor: '#1A3636',
-                                color: '#FFFFFF',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: 'pointer'
-                            }}
-                            onClick={handleLobbyButton}
-                        >
-                            Lobby
-                        </button>
-
-                        {/* Display the scores with inline styling */}
-                        {gameMode === 'allFives' && (
-                            <div className='main-text' style={{
-                                position: 'absolute',
-                                top: '50px',
-                                left: '20px',
-                                padding: '10px',
-                                borderRadius: '5px',
-                                color: 'white',
-                                fontSize: '16px'
-                            }}>
-                                <p>Player Score: {playerScore}</p>
-                                <p>Bot Score: {botScore}</p>
+        <>
+        <div>
+            {!isPaused ? (
+                <div className='table_game'>
+                    {/*Button to switch between gamestate and lobby ui*/}
+                    <button
+                        onClick={() => { playButtonSound(); handleLobbyButton();}}className="lobby-button"> Lobby </button>
+                        {showLoseProgressIfLobby && (
+                            <div className='leave-overlay'>
+                                <div className='leave-message'>
+                                    <h2>Leaving game will cause you to lose progress</h2>
+                                    <button className='leave-button' onClick={() => {playButtonSound(); setShowLoseProgressIfLobby(false);}}> Cancel </button>
+                                    <button className='leave-button'onClick={() => {playButtonSound(); navigate("/lobby");}}> Confirm </button>
+                                </div>
                             </div>
+                        )}
+                    {/* Display the scores with inline styling */}
+                    {gameMode === 'allFives' && (
+                    <div className= 'main-text' style={{
+                        position: 'absolute',
+                        top: '50px',
+                        left: '20px',
+                        padding: '10px',
+                        borderRadius: '5px',
+                        color: 'white',
+                        fontSize: '16px'
+                    }}>
+                        <p>Player Score: {playerScore}</p>
+                        <p>Bot Score: {botScore}</p>
+                    </div>
+                    )}
+
+                    {/*Displays who's turn it is.*/}
+                    <div className='turnInfo'>
+                        <p>{currentTurn === 'Player' ? "It's your turn!" : "Bot is thinking..."}</p>
+                    </div>
+                    {/* Turn notification overlay */}
+                    {showTurnNotification && (
+                        <div className="overlay">
+                            <img src={'yourTurn.png'} alt="Your Turn" />
+
+                        </div>
                         )}
 
                         {/*Displays who's turn it is.*/}
@@ -974,6 +968,7 @@ function MainGame() {
                                     placeholder='Enter domino position' />
 
                                 <button className='game-button' onClick={() => {
+                                    playButtonSound();
                                     if (playerDominoIndex) {
                                         setData({
                                             Domino: playerData.PlayerHand[playerDominoIndex],
@@ -982,6 +977,7 @@ function MainGame() {
                                     }
                                 }}>Left Tail</button>
                                 <button className='game-button' onClick={() => {
+                                    playButtonSound();
                                     if (playerDominoIndex) {
                                         setData({
                                             Domino: playerData.PlayerHand[playerDominoIndex],
@@ -990,6 +986,7 @@ function MainGame() {
                                     }
                                 }}>Right Tail</button>
                                 <button className='game-button' onClick={() => {
+                                    playButtonSound();
                                     if (tableData.TableState.availableDominos <= 0) {
                                         setShowPopup(true);
                                         setTimeout(() => setShowPopup(false), 3000); // Hide popup after 3 seconds
@@ -1002,12 +999,13 @@ function MainGame() {
                                     }
                                 }}>Grab a Random Chip</button>
                                 <button className='game-button' onClick={() => {
-                                    if (tableData.TableState.dominoesOnTable > 0) {
+                                    playButtonSound();
+                                    if(tableData.TableState.dominoesOnTable > 0){
                                         setPassButton(true);
                                     }
                                 }}>Pass Turn</button>
-                                <button className='game-button' onClick={pauseGame}>Pause Game</button>
-                                <BackgroundMusic src={"/BackgroundMusic.mp3"} />
+                                <button className='game-button' onClick={() => {playButtonSound();pauseGame();}}> Pause Game </button>
+                                <BackgroundMusic src={"/BackgroundMusic.mp3"}/> 
                             </div>
 
                             {/* Avatar image */}
@@ -1027,9 +1025,10 @@ function MainGame() {
 
                         {/* Add ToastContainer to display toast notifications */}
                         <audio id="dominoPlaceSound" src="/DominoPlacement.wav" preload="auto"></audio>
+                        <audio id="buttonSound" src="/GamestateSound.wav" preload="auto"></audio>
                     </div>
-                ) : (<PauseScreen onResume={resumeGame} />)}
-                {showPopup && <Popup message="There are no more tiles to pick up!" />}
+                ) : (<PauseScreen onResume={() => { playButtonSound();resumeGame();}} />)}
+                {showPopup && <Popup message="There are no more tiles to pick up!" />} 
             </div>
 
             {/* Move ToastContainer outside the main game container */}

@@ -2,6 +2,10 @@ import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken'; // Asegúrate de importar jsonwebtoken
 import bcrypt from 'bcrypt';
 import { JWT_SECRET } from '../index.js';
+import {
+    EmailAvailableSpecification,
+    UsernameAvailableSpecification,
+} from '../specifications/UserSpecification.js';
 
 
 
@@ -23,13 +27,16 @@ export default class UsersController {
         try {
             const { email, username } = req.body;
 
-            const existingUserByEmail = await this.userHandler.findUserByEmail(email);
-            if (existingUserByEmail) {
+            const emailSpec = new EmailAvailableSpecification(this.userHandler);
+            const usernameSpec = new UsernameAvailableSpecification(this.userHandler);
+
+            const isEmailAvailable = await emailSpec.isSatisfiedBy(email);
+            const isUsernameAvailable = await usernameSpec.isSatisfiedBy(username);
+
+            if (!isEmailAvailable) {
                 return res.status(400).json({ error: 'Email already registered' });
             }
-
-            const existingUserByUsername = await this.userHandler.findUserByUsername(username);
-            if (existingUserByUsername) {
+            if (!isUsernameAvailable) {
                 return res.status(400).json({ error: 'Username already taken' });
             }
 
@@ -39,6 +46,7 @@ export default class UsersController {
             res.status(500).json({ error: error.message });
         }
     }
+    
 
     async loginUser(req, res) {
         try {
