@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './ProfilePage.css';
-import { useUserService } from './UserServiceContext'; // Importing the injected service
 
-const ProfilePage = () => {
-  const userService = useUserService(); // Get the injected service
+const ProfilePage = (userService) => {
   const [user, setUser] = useState({
     username: '',
     profilePicture: '/default-profile.png',
