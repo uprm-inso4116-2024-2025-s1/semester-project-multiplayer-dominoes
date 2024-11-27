@@ -167,54 +167,90 @@ const port = 5000;
 
 // Room list
 const rooms = [];
+// Helper function to generate unique room IDs
+const generateRoomId = () => Math.random().toString(36).substr(2, 9);
 
+// Socket.io logic
 io.on("connection", (socket) => {
   console.log(`Player connected: ${socket.id}`);
 
-  // Send payload with client ID upon connection
-  socket.emit("connectPayload", { method: "connect", clientId: socket.id });
-
-  // Send the current list of rooms to the newly connected player
-  socket.emit("roomList", rooms);
-
   // Handle room creation
-  socket.on("createRoom", (room) => {
-    rooms.push({
-      id: socket.id, // Use socket ID as room ID
-      name: room.name,
-      gamemode: room.gamemode,
-      players: 1, // Room creator is the first player
-      maxPlayers: room.maxPlayers,
-    });
+  socket.on("createRoom", (roomData, callback) => {
+    const roomId = generateRoomId();
+    const newRoom = {
+      id: roomId,
+      name: roomData.name,
+      gamemode: roomData.gamemode,
+      maxPlayers: roomData.maxPlayers,
+      isPrivate: roomData.isPrivate,
+      players: [socket.id], // Add creator to the room
+    };
 
-    console.log(`Room created: ${room.name}`);
-    // Broadcast the updated room list to all clients
-    io.emit("roomList", rooms);
+    rooms.push(newRoom); // Add room to the rooms array
+    console.log(`Room created: ${JSON.stringify(newRoom)}`);
+
+    // Join the creator to the room
+    socket.join(roomId);
+    // Emit updated room list to all clients (excluding private rooms)
+    io.emit("roomList", rooms.filter((room) => !room.isPrivate));
+    // Respond to the creator with room details
+    if (callback) callback(newRoom);
+
+
   });
+
 
   // Handle player joining a room
   socket.on("joinRoom", (roomId) => {
+    console.log("Rooms available:", rooms);
+    console.log("Room ID requested:", roomId);
+  
+    // Find the room by ID
     const room = rooms.find((r) => r.id === roomId);
-    if (room && room.players < room.maxPlayers) {
-      room.players += 1; // Increment player count
-      socket.join(roomId); // Join the room
-      console.log(`${socket.id} joined room: ${room.name}`);
-      io.emit("roomList", rooms); // Broadcast updated room list
-    } else {
-      socket.emit("error", "Room is full or does not exist.");
+  
+    if (!room) {
+      socket.emit("error", "Room does not exist.");
+      return;
     }
-  });
+  
+    if (room.players.length >= room.maxPlayers) {
+      socket.emit("error", "Room is full.");
+      return;
+    }
+  
+    // Add the player to the room
+    room.players.push(socket.id);
+    socket.join(roomId);
+      // Broadcast updated room list (excluding private rooms for public listing)
+      io.emit("roomList", rooms.filter((r) => !r.isPrivate));
+    console.log(`Player ${socket.id} joined room: ${room.name}`);
+  
+    // Emit the joinedRoom event to the joining player
+    socket.emit("joinedRoom", room);
+  
 
-  // Handle player disconnect
+  });
+  
+
   socket.on("disconnect", () => {
     console.log(`Player disconnected: ${socket.id}`);
-    // Remove player from rooms
-    const index = rooms.findIndex((room) => room.id === socket.id);
-    if (index !== -1) {
-      rooms.splice(index, 1); // Remove the room
-      io.emit("roomList", rooms); // Broadcast updated room list
-    }
+  
+    rooms.forEach((room) => {
+      const playerIndex = room.players.indexOf(socket.id);
+      if (playerIndex !== -1) {
+        room.players.splice(playerIndex, 1);
+      }
+    });
+  
+    // Remove empty rooms
+    const nonEmptyRooms = rooms.filter((room) => room.players.length > 0);
+    rooms.length = 0; // Clear and refill the array
+    rooms.push(...nonEmptyRooms);
+  
+    // Broadcast updated room list
+    io.emit("roomList", rooms.filter((room) => !room.isPrivate));
   });
+  
 });
 
 server.listen(port, () => {

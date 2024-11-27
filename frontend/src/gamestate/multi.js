@@ -4,7 +4,7 @@ import DominoBot from './Bot.js';
 import IntermediateBot from './intermediateBot.js';
 import AdvancedBot from './AdvancedBot.js';
 import RuleEngine from './RuleEngine.js';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import PauseScreen from './Pause.js';
 import AchievementManager from './AchievementManager.js';
 import { ToastContainer, toast } from 'react-toastify';  // Import ToastContainer
@@ -26,7 +26,6 @@ const yellowAvatarImage = new Image();
 yellowAvatarImage.src = '/Yellow-Avatar.png';
 const greenAvatarImage = new Image();
 greenAvatarImage.src = '/Green-Avatar.png';
-
 
 
 function Multiplayer() {

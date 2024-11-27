@@ -69,8 +69,7 @@ function App() {
                 </>
               } 
             />
-            <Route 
-              path="/multiplayer" 
+            <Route path="/:roomId/multiplayer"
               element={
                 <>
                   <button onClick={() => { toggleRules(); playSound(); }} className="rules-button">
@@ -101,7 +100,6 @@ function App() {
                   <button onClick={() => { toggleRules(); playSound(); }} className="rules-button">
                     {showRules ? 'Close' : 'How to Play'}
                   </button>
-                  <button onClick={toggleChat} className="chat-button">Chat</button>
                   <Lobby />
                   {showRules && (
                     <div className="rules-overlay">
