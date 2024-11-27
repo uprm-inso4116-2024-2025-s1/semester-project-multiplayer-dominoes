@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthService from './services/AuthService.js';
 import './styles/Login.css';
 import { Link } from 'react-router-dom';
 
-function Login() {
+function Login({ authService }) {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const authService = new AuthService();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,11 +16,11 @@ function Login() {
       const data = isLogin
         ? await authService.login(email, password)
         : await authService.register(username, email, password);
-      
+
       console.log(data); 
       localStorage.setItem('token', data.token);
       navigate('/gameMode');
-} catch (error) {
+    } catch (error) {
       console.warn('Failed to register or login:', error);
     }
   };
@@ -68,10 +66,10 @@ function Login() {
           </button>
         </p>
         {isLogin && (
-  <Link to="/forgot-password" className="forgot-password-link">
-    Forgot password?
-  </Link>
-)}
+          <Link to="/forgot-password" className="forgot-password-link">
+            Forgot password?
+          </Link>
+        )}
 
       </div>
     </div>
