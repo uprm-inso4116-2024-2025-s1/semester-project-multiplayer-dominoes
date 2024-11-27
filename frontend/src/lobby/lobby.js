@@ -75,14 +75,10 @@ const Lobby = () => {
     });
   
     socket.on("roomList", (updatedRooms) => {
-      setRooms(updatedRooms); // Update the state with the received room list
+      setRooms(updatedRooms);
       console.log("Updated rooms:", updatedRooms);
-        console.log("Received roomList:", updatedRooms);
     });
-    
-    socket.on("getRoomList", () => {
-      socket.emit("roomList", rooms.filter((room) => !room.isPrivate));
-    });
+  
     socket.on("joinedRoom", (room) => {
       console.log(`Successfully joined room: ${room.name}`);
       navigate(`/${room.id}/multiplayer`, {
@@ -431,26 +427,25 @@ const Lobby = () => {
               </tr>
             </thead>
             <tbody>
-  {rooms
-    .filter((room) => {
-      console.log(`Room: ${room.name}, isPrivate: ${room.isPrivate}`); // Debug log
-      return !room.isPrivate; // Filter public rooms
-    })
-    .map((room) => (
-      <tr key={room.id}>
-        <td>{room.name}</td>
-        <td>
-          {room.players.length}/{room.maxPlayers}
-        </td>
-        <td>
-          <button onClick={() => handleJoinRoom(room.id)} className="join-button">
-            Join Room
-          </button>
-        </td>
-      </tr>
-    ))}
-</tbody>
-
+              {rooms
+                .filter((room) => !room.isPrivate) // Only show public rooms
+                .map((room) => (
+                  <tr key={room.id}>
+                    <td>{room.name}</td>
+                    <td>
+                      {room.playerCount}/{room.maxPlayers}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleJoinRoom(room.id)}
+                        className="join-button"
+                      >
+                        Join Room
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
           </table>
         ) : (
           <p>No rooms available. Create one to get started!</p>

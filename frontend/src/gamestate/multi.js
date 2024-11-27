@@ -1035,3 +1035,158 @@ const Multiplayer = () => {
 }
 
 export default Multiplayer
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import io from 'socket.io-client';
+
+// const socket = io('http://localhost:5000'); // Adjust for your backend
+
+// // Utility: Domino Object
+// class Domino {
+//     constructor(values, coords = null, displayDirection = null) {
+//         this.values = values; // Domino values, e.g., [3, 6]
+//         this.coords = coords; // Position on the board
+//         this.displayDirection = displayDirection; // Orientation
+//         this.freeCorners = [...values]; // Available placement numbers
+//         this.flipped = false; // Indicates if flipped
+//     }
+
+//     removeCorner(number) {
+//         const index = this.freeCorners.indexOf(number);
+//         if (index > -1) this.freeCorners.splice(index, 1);
+//     }
+// }
+
+// // Game Board Logic
+// class Table {
+//     constructor(pathMatrix) {
+//         this.pathMatrix = pathMatrix;
+//         this.dataMatrix = this.createDataMatrix();
+//         this.dominoes = Array.from({ length: 28 }, (_, i) => {
+//             const a = Math.floor(i / 7);
+//             const b = i % 7;
+//             return [a, b];
+//         });
+//         this.dominoesOnTable = 0;
+//         this.leftTail = null;
+//         this.rightTail = null;
+//         this.playedDominoes = [];
+//     }
+
+//     createDataMatrix() {
+//         return this.pathMatrix.map(row => row.map(() => null));
+//     }
+
+//     grabRandomDomino() {
+//         const randomIndex = Math.floor(Math.random() * this.dominoes.length);
+//         return this.dominoes.splice(randomIndex, 1)[0];
+//     }
+
+//     placeDomino(domino, corner) {
+//         if (!this.leftTail && !this.rightTail) {
+//             this.leftTail = this.rightTail = new Domino(domino, [5, 5], 'HORIZONTAL');
+//             this.dataMatrix[5][5] = this.leftTail;
+//             return true;
+//         }
+//         const tail = corner === 'LEFT' ? this.leftTail : this.rightTail;
+//         const newCoords = [tail.coords[0], tail.coords[1] + (corner === 'RIGHT' ? 1 : -1)];
+//         const newDomino = new Domino(domino, newCoords, 'HORIZONTAL');
+
+//         if (tail.freeCorners.includes(domino[0]) || tail.freeCorners.includes(domino[1])) {
+//             tail.removeCorner(domino[0]);
+//             newDomino.removeCorner(domino[0]);
+//             this.dataMatrix[newCoords[0]][newCoords[1]] = newDomino;
+//             if (corner === 'LEFT') this.leftTail = newDomino;
+//             else this.rightTail = newDomino;
+//             this.dominoesOnTable++;
+//             this.playedDominoes.push(domino);
+//             return true;
+//         }
+//         return false;
+//     }
+// }
+
+// // Game Component
+// const Multiplayer = () => {
+//     const [table] = useState(() => new Table(Array(11).fill(Array(11).fill(1))));
+//     const [playerHand, setPlayerHand] = useState([]);
+//     const [currentTurn, setCurrentTurn] = useState('');
+//     const [gameState, setGameState] = useState([]);
+//     const [selectedDomino, setSelectedDomino] = useState(null);
+
+//     useEffect(() => {
+//         // Initialize the player's hand
+//         setPlayerHand(Array.from({ length: 7 }, () => table.grabRandomDomino()));
+
+//         // Socket Listeners
+//         socket.on('updateGameState', (state) => setGameState(state));
+//         socket.on('setTurn', (turn) => setCurrentTurn(turn));
+
+//         return () => {
+//             socket.off('updateGameState');
+//             socket.off('setTurn');
+//         };
+//     }, [table]);
+
+//     const handlePlay = (corner) => {
+//         if (currentTurn === socket.id && selectedDomino) {
+//             const success = table.placeDomino(selectedDomino, corner);
+//             if (success) {
+//                 setPlayerHand((hand) => hand.filter((domino) => domino !== selectedDomino));
+//                 socket.emit('playDomino', { domino: selectedDomino, corner });
+//                 setSelectedDomino(null);
+//             }
+//         }
+//     };
+
+//     const renderBoard = () => {
+//         return table.dataMatrix.map((row, y) => (
+//             <div key={y} style={{ display: 'flex' }}>
+//                 {row.map((cell, x) => (
+//                     <div
+//                         key={x}
+//                         style={{
+//                             width: '50px',
+//                             height: '50px',
+//                             border: '1px solid black',
+//                             textAlign: 'center',
+//                             lineHeight: '50px',
+//                         }}
+//                     >
+//                         {cell ? `${cell.values[0]}|${cell.values[1]}` : ''}
+//                     </div>
+//                 ))}
+//             </div>
+//         ));
+//     };
+
+//     return (
+//         <div>
+//             <h1>Multiplayer Domino Game</h1>
+//             <div>
+//                 <h2>Board</h2>
+//                 {renderBoard()}
+//             </div>
+//             <div>
+//                 <h2>Your Hand</h2>
+//                 {playerHand.map((domino, index) => (
+//                     <button key={index} onClick={() => setSelectedDomino(domino)}>
+//                         {domino[0]}|{domino[1]}
+//                     </button>
+//                 ))}
+//             </div>
+//             <div>
+//                 <button onClick={() => handlePlay('LEFT')}>Place on Left</button>
+//                 <button onClick={() => handlePlay('RIGHT')}>Place on Right</button>
+//             </div>
+//             <p>
+//                 Current Turn: {currentTurn === socket.id ? 'Your Turn' : "Opponent's Turn"}
+//             </p>
+//         </div>
+//     );
+// };
+
+// export default Multiplayer;
