@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import React, { useState } from 'react';
 
+import AuthService from './services/AuthService';
 import Lobby from './lobby/lobby.js';
 import Login from './Auth/Login.js';
 import MainGame from './gamestate/experimentalGame.js';
@@ -11,6 +12,8 @@ import GameMode from './gameMode.js';
 import ForgotPassword from './Auth/ForgotPassword.js';
 import ResetPassword from './Auth/ResetPassword.js';
 import ChatPopup from './gamestate/Chat.js';
+
+const authService = new AuthService();
 
 function App() {
   const [showRules, setShowRules] = useState(false);
@@ -38,8 +41,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/forgot-password" element={<ForgotPassword authService={authService} />} />
+            <Route path="/reset-password" element={<ResetPassword authService={authService} />} />
             <Route path="/game" 
             element={
               <>
@@ -66,7 +69,7 @@ function App() {
           />
             
             <Route path="/game/:roomId" element={<MainGame />} />
-            <Route path="/lobby" element={<Lobby />} />
+            <Route path="/login" element={<Login authService={authService} />} />
             <Route path="/gameMode" element={<GameMode />} />
           </Routes>
           <audio id="howToPlaySound" src="/DominoesClick.wav" preload="auto"></audio>

@@ -1,27 +1,13 @@
 import React, { useState } from 'react';
 import './styles/Login.css';
-
-function ForgotPassword({ fetchService }) {
+function ForgotPassword({ authService }) {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
-
     try {
-      console.log('Sending password reset request for:', email);
-      const response = await fetchService(`${process.env.REACT_APP_BACKEND_URL}/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Failed to send password reset email:', errorText);
-        throw new Error('Failed to send password reset email');
-      }
-
+      await authService.sendPasswordReset(email);
       setMessage('A password reset link has been sent to your email.');
     } catch (error) {
       setMessage('An error occurred. Please try again.');
