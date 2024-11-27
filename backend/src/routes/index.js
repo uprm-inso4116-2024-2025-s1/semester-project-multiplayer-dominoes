@@ -2,6 +2,7 @@ import healthzRoutes from './healthzRoutes.js';
 import userRoutes from './userRoutes.js';
 import authRoutes from './authRoutes.js';
 import matchRoutes from './matchRoutes.js';
+import achievementRoutes from './achievementRoutes.js';
 import { joinRoom, createRoom, getAllRooms } from "../controllers/RoomsController.js";
 
 export default (app, container) => {
@@ -23,4 +24,7 @@ export default (app, container) => {
     app.get('/rooms', getAllRooms);
     app.post('/rooms', createRoom);
     app.post('/rooms/:roomId/join', joinRoom);
+
+    // Register achivement routes
+    app.use('/achievements', achievementRoutes(container));
 };

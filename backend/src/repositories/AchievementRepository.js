@@ -9,6 +9,10 @@ export default class AchievementRepository {
         return await this.#achievementModel.find();
     }
 
+    async findAchievementByName(name) {
+        return await this.#achievementModel.findOne({ name });
+    }
+
     async createAchievement(data) {
         const achievement = new this.#achievementModel({
             name: data.name,
@@ -18,7 +22,7 @@ export default class AchievementRepository {
         return await achievement.save();
     }
 
-    async updateAchievement(name, data) {
-        return await this.#achievementModel.findOneAndUpdate({ name: name }, data, {returnDocument: 'after'});
+    async updateAchievement(id, data) {
+        return await this.#achievementModel.findByIdAndUpdate(id, data, {returnDocument: 'after'});
     }
 }
