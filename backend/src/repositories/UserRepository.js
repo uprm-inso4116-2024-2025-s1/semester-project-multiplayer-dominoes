@@ -32,7 +32,7 @@ export default class UserRepository {
     }
 
     async findUserByIdAndUpdate(id, data) {
-        return await this.#userModel.findByIdAndUpdate(id, data);
+        return await this.#userModel.findByIdAndUpdate(id, data, {returnDocument: 'after'});
     }
 
     async updateUserProfilePicture(username, { profilePicture }) {

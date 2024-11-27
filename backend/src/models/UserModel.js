@@ -37,6 +37,14 @@ const userSchema = new mongoose.Schema({
         default: 'user',
         enum: ['user', 'admin'],
     },
+    achivementsEarned: {
+        type: Number,
+        default: 0,
+    },
+}, {
+    // Automatically adds createdAt and updatedAt fields
+    // Handled by mongoose "under the hood"
+    timestamps: true,
 });
 
 export default mongoose.model('User', userSchema);
