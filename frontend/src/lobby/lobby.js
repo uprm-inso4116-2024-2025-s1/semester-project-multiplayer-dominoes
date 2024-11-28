@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import "./lobby.css";
 import { useNavigate } from "react-router-dom";
-
+import io from "socket.io-client";
+import { getSocket } from "./socket.js";
 const Lobby = () => {
   /*Variable added to navigate between gamestate and lobby */
   const navigate = useNavigate();
+
+  const socket = getSocket();
   // State to manage the list of rooms and room creation
   const [rooms, setRooms] = useState([]);
+  const [clientId, setClientId] = useState(null);
+
   const [newRoomName, setNewRoomName] = useState("");
   const [roomMode, setRoomMode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -17,6 +22,9 @@ const Lobby = () => {
   const [botdifficulty, setBotlevel] = useState("");
   const [gameMode, setGameMode] = useState("");
   const [botAmmount, setBotAmmount] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [showPrivateJoin, setShowPrivateJoin] = useState(false);
+  const [privateRoomCode, setPrivateRoomCode] = useState("");
 
   const playSound = () => {
     const audio = document.getElementById("lobbyClickSound");
@@ -57,64 +65,119 @@ const Lobby = () => {
     playButtonSound();
   };
 
-  // Later Implement with the database to do a getAllRooms
   useEffect(() => {
-    fetchRooms();
+    const socket = getSocket();
+  
+    // Listen for server events
+    socket.on("connectPayload", (payload) => {
+      setClientId(payload.clientId);
+      console.log("Client ID received:", payload.clientId);
+    });
+  
+    socket.on("roomList", (updatedRooms) => {
+      setRooms(updatedRooms);
+      console.log("Updated rooms:", updatedRooms);
+    });
+  
+    socket.on("joinedRoom", (room) => {
+      console.log(`Successfully joined room: ${room.name}`);
+      navigate(`/${room.id}/multiplayer`, {
+        state: {
+          roomId: room.id,
+          roomName: room.name,
+          gameMode: room.gamemode,
+        },
+      });
+    });
+  
+    socket.once("error", (errorMessage) => {
+      console.error("Error:", errorMessage);
+      setErrorMessage(errorMessage);
+    });
+  
+    return () => {
+      socket.off("connectPayload");
+      socket.off("roomList");
+      socket.off("joinedRoom");
+      socket.off("error");
+    };
   }, []);
-
-  const fetchRooms = async () => {
-    //dummy daya for rooms
-    //replace with API calls and decide which info the rooms have to show in the interface
-    const fetchedRooms = [];
-    //Change this to a fetchedRooms with the GET response
-    setRooms(fetchedRooms);
-  };
-  //room creating. Missing backend post?
-  const handleCreateRoom = async () => {
-    if (newRoomName.trim() === "") {
+  const handleCreateRoom = () => {
+    if (!newRoomName.trim()) {
       setErrorMessage("Room name cannot be empty.");
       return;
-    } else if (roomMode === "") {
-      setErrorMessage("Please select a game mode.");
-      return;
-    } else {
-      setErrorMessage("");
-
-      // Dummy post
-      //Replace with response, can use stringify on the json response
-      const newRoom = {
-        id: rooms.length + 1,
-        name: newRoomName,
-        gamemode: roomMode,
-        players: 1,
-        maxPlayers: 4,
-      };
-      setRooms([...rooms, newRoom]);
-      setNewRoomName(""); //Clear input if success
-      setRoomMode("");
     }
-  };
-
-  //handle joining
-  const joinRooms = (roomId) => {
-    //handleling the update of the players count
-    setRooms((prevRooms) => {
-      const updatedRooms = prevRooms.map((room) => {
-        if (room.id === roomId) {
-          // Check if the room is not full
-          if (room.players < room.maxPlayers) {
-            return { ...room, players: room.players + 1 }; // Increment player count
-          } else {
-            alert("Room is full.");
-            return room; // No change if room is full
-          }
-        }
-        return room;
-      });
-      return updatedRooms;
+  
+    const room = {
+      name: newRoomName,
+      gamemode: "classic", // Default game mode
+      maxPlayers: 4,
+      isPrivate,
+    };
+  
+    socket.emit("createRoom", room, (createdRoom) => {
+      if (createdRoom) {
+        setNewRoomName("");
+        setErrorMessage("");
+        console.log("Room created successfully:", createdRoom);
+  
+        navigate(`/${createdRoom.id}/multiplayer`, {
+          state: {
+            roomId: createdRoom.id,
+            roomName: createdRoom.name,
+            gameMode: createdRoom.gamemode,
+          },
+        });
+      } else {
+        setErrorMessage("Failed to create the room.");
+        console.error("Room creation failed.");
+      }
     });
-    playButtonSound();
   };
+  
+  const handleJoinRoom = (roomId) => {
+    if (!roomId.trim()) {
+      setErrorMessage("Room ID cannot be empty.");
+      return;
+    }
+  
+    console.log(`Attempting to join room with ID: ${roomId}`);
+    socket.emit("joinRoom", roomId);
+  
+    socket.once("roomList", (updatedRooms) => {
+      const room = updatedRooms.find((r) => r.id === roomId);
+      if (room && room.players.includes(socket.id)) {
+        console.log(`Successfully joined room: ${room.name}`);
+        navigate(`/${room.id}/multiplayer`, {
+          state: {
+            roomId: room.id,
+            roomName: room.name,
+            gameMode: room.gamemode,
+          },
+        });
+      } else {
+        console.error("Failed to join room.");
+        setErrorMessage("Room does not exist or is full.");
+      }
+    });
+  
+    socket.once("error", (errorMessage) => {
+      console.error("Error joining room:", errorMessage);
+      setErrorMessage(errorMessage);
+    });
+  };
+  
+  const handleJoinPrivateRoom = () => {
+    if (!privateRoomCode.trim()) {
+      setErrorMessage("Room code cannot be empty.");
+      return;
+    }
+  
+    console.log(`Attempting to join private room with code: ${privateRoomCode}`);
+    handleJoinRoom(privateRoomCode); // Reuse handleJoinRoom for private rooms
+  };
+  
+  
   return (
     <div className="selection-box" style={{ display: "block", width: "100%" }}>
       {showInstruction && (
@@ -187,61 +250,29 @@ const Lobby = () => {
             )}
             {!isSoloPlay && (
               <div className="create_lobby">
-                <h2 className="multiplayer-heading">Create Lobby</h2>
-                <input
-                  type="text"
-                  value={newRoomName}
-                  onChange={(e) => setNewRoomName(e.target.value)}
-                  placeholder="Enter Room Name"
-                  className="text-box"
-                />
-                <div
-                  className="game-mode-selection"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    marginTop: "10px",
-                  }}
-                >
-                  <label>
-                    <input
-                      type="radio"
-                      name="gamemode"
-                      value="classic"
-                      onChange={handleGameMode}
-                    />{" "}
-                    Classic
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="gamemode"
-                      value="allFives"
-                      onChange={handleGameMode}
-                    />{" "}
-                    All Fives
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="gamemode"
-                      value="drawDominoes"
-                      onChange={handleGameMode}
-                    />{" "}
-                    Draw Dominoes
-                  </label>
-                </div>
-                <button
-                  className="createRoom_button"
-                  onClick={() => {
-                    handleCreateRoom();
-                    playButtonSound();
-                  }}
-                >
-                  Create Room
-                </button>
-                {errorMessage && <p className="error">{errorMessage}</p>}
+              <h2>Create Lobby</h2>
+              <input
+                type="text"
+                value={newRoomName}
+                onChange={(e) => setNewRoomName(e.target.value)}
+                placeholder="Enter Room Name"
+                className="text-box"
+              />
+              <button className="createRoom_button" onClick={handleCreateRoom}>
+                Create Room
+              </button>
+              <div className="checkbox-container">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={isPrivate}
+                    onChange={(e) => setIsPrivate(e.target.checked)}
+                  />
+                  Private Room
+                </label>
               </div>
+              {errorMessage && <p className="error">{errorMessage}</p>}
+            </div>
             )}
           </div>
 
@@ -357,55 +388,73 @@ const Lobby = () => {
                 </form>
               </div>
             )}
-            {!isSoloPlay && (
-              <div className="lobby'list">
-                <h1 className="multiplayer-heading">Available Rooms</h1>
-                {rooms.length > 0 ? (
-                  <div className="rooms-table-container">
-                    <table className="rooms-table">
-                      <thead>
-                        <tr>
-                          <th>Room Name</th>
-                          <th>Players</th>
-                          <th>GameMode</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rooms.map((room) => (
-                          <tr key={room.id}>
-                            <td>{room.name}</td>
-                            <td>
-                              {room.players}/{room.maxPlayers}
-                            </td>
-                            <td>{room.gamemode}</td>
-                            <td>
-                              <button
-                                onClick={() => {
-                                  joinRooms(room.id);
-                                  playSound();
-                                  navigate("/game", {
-                                    state: {
-                                      gameMode: gameMode,
-                                      bot: "multiplayer",
-                                    },
-                                  });
-                                }}
-                                className="join-button"
-                              >
-                                Join Room
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <p>No rooms available. Create one to get started!</p>
-                )}
-              </div>
-            )}
+{!isSoloPlay && (
+  <div className="rooms-list">
+    <h2>Available Rooms</h2>
+    <button
+      className="createRoom_button"
+      onClick={() => setShowPrivateJoin((prev) => !prev)}
+    >
+      {showPrivateJoin ? "Back to Available Rooms" : "Join Private Room"}
+    </button>
+
+    {showPrivateJoin ? (
+      <div className="private-join">
+        <h3>Join Private Room</h3>
+        <input
+          type="text"
+          value={privateRoomCode}
+          onChange={(e) => setPrivateRoomCode(e.target.value)}
+          placeholder="Enter Room Code"
+          className="text-box"
+        />
+        <button
+          className="join-button"
+          onClick={() => handleJoinRoom(privateRoomCode)}
+        >
+          Join Room
+        </button>
+      </div>
+    ) : (
+      <>
+        {rooms.length > 0 ? (
+          <table className="rooms-table">
+            <thead>
+              <tr>
+                <th>Room Name</th>
+                <th>Players</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rooms
+                .filter((room) => !room.isPrivate) // Only show public rooms
+                .map((room) => (
+                  <tr key={room.id}>
+                    <td>{room.name}</td>
+                    <td>
+                      {room.playerCount}/{room.maxPlayers}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleJoinRoom(room.id)}
+                        className="join-button"
+                      >
+                        Join Room
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No rooms available. Create one to get started!</p>
+        )}
+      </>
+    )}
+  </div>
+)}
+
           </div>
 
           <audio
