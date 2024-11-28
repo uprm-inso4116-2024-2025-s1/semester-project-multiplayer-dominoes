@@ -749,7 +749,7 @@ function MainGame() {
     style={{
         backgroundImage: `url(${currentBackground.src})`,
         backgroundSize: 'cover', // Ensures the image covers the entire container
-        backgroundPosition: 'center -100px', // Adjust the position (move upward)
+        backgroundPosition: 'center -120px', // Adjust the position (move upward)
         backgroundRepeat: 'no-repeat',
         transform: 'scale(0.8)', // Scale the entire container to make it appear smaller
         transformOrigin: 'center center', // Ensure scaling happens relative to the center
