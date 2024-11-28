@@ -748,14 +748,17 @@ function MainGame() {
     className="table_game"
     style={{
         backgroundImage: `url(${currentBackground.src})`,
-        backgroundSize: '80% auto',
-        backgroundPosition: 'right 30px -40px',
+        backgroundSize: 'cover', // Ensures the image covers the entire container
+        backgroundPosition: 'center -100px', // Adjust the position (move upward)
         backgroundRepeat: 'no-repeat',
+        transform: 'scale(0.8)', // Scale the entire container to make it appear smaller
+        transformOrigin: 'center center', // Ensure scaling happens relative to the center
         width: '100vw',
         height: '100vh',
         position: 'relative',
     }}
 >
+
     
     {/* Button to switch between gamestate and lobby ui */}
     <button
