@@ -276,4 +276,31 @@ label {
     font-size: 12px;
     padding: 10px 15px;
   }
+}.checkbox-container {
+  font-size: 12px;  /* Reduces the font size of the label text */
+  display: flex;
+  align-items: center; /* Centers the checkbox and label vertically */
+  gap: 5px; /* Adds space between the checkbox and the label */
+}
+
+.checkbox-container input[type="checkbox"] {
+  transform: scale(0.8);  /* Reduces the size of the checkbox */
+}
+
+
+.toggle-button {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.private-join {
+  margin-top: 20px;
+}
+
+.text-box {
+  width: 80%;
+  padding: 5px;
+  margin-bottom: 10px;
 }
