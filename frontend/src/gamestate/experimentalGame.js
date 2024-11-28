@@ -23,27 +23,30 @@ const yellowAvatarImage = new Image();
 yellowAvatarImage.src = '/Yellow-Avatar.png';
 const greenAvatarImage = new Image();
 greenAvatarImage.src = '/Green-Avatar.png';
+const boardImage1 = new Image();
+boardImage1.src = '/M3-board1.png';
+const boardImage2 = new Image();
+boardImage2.src = '/M3-board2.png';
+const boardImage3 = new Image();
+boardImage3.src = '/M3-board3.png'; // 
+
 
 function MainGame() {
     const [tileMap, setTileMap] = useState(new Map());
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
-    const [backgroundImage, setBackgroundImage] = useState('/images/M3-board3.png'); // Initial background image set
-    const backgroundImages = [
-        '/images/M3-board3.png', // Images of background boards
-        '/images/M3-board2.png',
-        '/images/M3-board1.png',
-    ];
-
+    const backgroundImages = [boardImage1, boardImage2, boardImage3];
+    const [currentBackground, setCurrentBackground] = useState(backgroundImages[0]); // Default background
+    
     // Function to rotate the background
     const changeBackground = () => {
-        setBackgroundImage((prevImage) => {
-            const currentIndex = backgroundImages.indexOf(prevImage);
-            const nextIndex = (currentIndex + 1) % backgroundImages.length; // Loop to the next image accordingly.
+        setCurrentBackground((prevBackground) => {
+            const currentIndex = backgroundImages.indexOf(prevBackground);
+            const nextIndex = (currentIndex + 1) % backgroundImages.length; // Loop to the next image
             return backgroundImages[nextIndex];
         });
-    };
+    };    
 
     const playButtonSound = () => {
         const audio = document.getElementById('buttonSound');
@@ -744,15 +747,16 @@ function MainGame() {
                 <div
     className="table_game"
     style={{
-        backgroundImage: `url(${backgroundImage})`, // Use the current background image
-        backgroundSize: 'cover', // Ensure it fits the screen
-        backgroundPosition: 'center', // Center the image
-        backgroundRepeat: 'no-repeat', // Prevent tiling
-        width: '100vw', // Full viewport width
-        height: '100vh', // Full viewport height
-        position: 'relative', // Allow layering for other elements
+        backgroundImage: `url(${currentBackground.src})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        width: '100vw',
+        height: '100vh',
+        position: 'relative',
     }}
 >
+    
     {/* Button to switch between gamestate and lobby ui */}
     <button
         onClick={() => { playButtonSound(); handleLobbyButton(); }}
@@ -788,8 +792,9 @@ function MainGame() {
 
     {/* Button to change background dynamically */}
     <button onClick={changeBackground} className="game-button">
-        Next Background
-    </button>
+    Next Background
+</button>
+
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
                     <div className= 'main-text' style={{
