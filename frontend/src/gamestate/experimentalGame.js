@@ -23,12 +23,30 @@ const yellowAvatarImage = new Image();
 yellowAvatarImage.src = '/Yellow-Avatar.png';
 const greenAvatarImage = new Image();
 greenAvatarImage.src = '/Green-Avatar.png';
+const boardImage1 = new Image();
+boardImage1.src = '/M3-board1.png';
+const boardImage2 = new Image();
+boardImage2.src = '/M3-board2.png';
+const boardImage3 = new Image();
+boardImage3.src = '/M3-board3.png'; // 
+
 
 function MainGame() {
     const [tileMap, setTileMap] = useState(new Map());
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
+    const backgroundImages = [boardImage3, boardImage2, boardImage1];
+    const [currentBackground, setCurrentBackground] = useState(backgroundImages[0]); // Default background
+    
+    // Function to rotate the background
+    const changeBackground = () => {
+        setCurrentBackground((prevBackground) => {
+            const currentIndex = backgroundImages.indexOf(prevBackground);
+            const nextIndex = (currentIndex + 1) % backgroundImages.length; // Loop to the next image
+            return backgroundImages[nextIndex];
+        });
+    };    
 
     const playButtonSound = () => {
         const audio = document.getElementById('buttonSound');
@@ -761,19 +779,59 @@ function MainGame() {
         <>
         <div>
             {!isPaused ? (
-                <div className='table_game'>
-                    {/*Button to switch between gamestate and lobby ui*/}
-                    <button
-                        onClick={() => { playButtonSound(); handleLobbyButton();}}className="lobby-button"> Lobby </button>
-                        {showLoseProgressIfLobby && (
-                            <div className='leave-overlay'>
-                                <div className='leave-message'>
-                                    <h2>Leaving game will cause you to lose progress</h2>
-                                    <button className='leave-button' onClick={() => {playButtonSound(); setShowLoseProgressIfLobby(false);}}> Cancel </button>
-                                    <button className='leave-button'onClick={() => {playButtonSound(); navigate("/lobby");}}> Confirm </button>
-                                </div>
-                            </div>
-                        )}
+                <div
+    className="table_game"
+    style={{
+        backgroundImage: `url(${currentBackground.src})`,
+        backgroundSize: 'contain', 
+        backgroundPosition: 'center 200px', 
+        backgroundRepeat: 'no-repeat',
+        transformOrigin: 'center center', 
+        width: '100vw',
+        height: '100vh',
+        position: 'relative',
+    }}
+>
+
+    
+    {/* Button to switch between gamestate and lobby ui */}
+    <button
+        onClick={() => { playButtonSound(); handleLobbyButton(); }}
+        className="lobby-button"
+    >
+        Lobby
+    </button>
+    {showLoseProgressIfLobby && (
+        <div className="leave-overlay">
+            <div className="leave-message">
+                <h2>Leaving game will cause you to lose progress</h2>
+                <button
+                    className="leave-button"
+                    onClick={() => {
+                        playButtonSound();
+                        setShowLoseProgressIfLobby(false);
+                    }}
+                >
+                    Cancel
+                </button>
+                <button
+                    className="leave-button"
+                    onClick={() => {
+                        playButtonSound();
+                        navigate("/lobby");
+                    }}
+                >
+                    Confirm
+                </button>
+            </div>
+        </div>
+    )}
+
+    {/* Button to change background dynamically */}
+    <button onClick={changeBackground} className="game-button">
+    Next Background
+</button>
+
                     {/* Display the scores with inline styling */}
                     {gameMode === 'allFives' && (
                     <div className= 'main-text' style={{
