@@ -105,6 +105,15 @@ class RuleEngine {
         }
         return 0;
     }
+    domino_win_score(player_hand) {
+        // this calculates the score of the player by the end of the game by getting all the dominoes
+        // in the player hand.
+        let score = 0;
+        for (let i = 0; i < player_hand.length; i++) {
+            score += player_hand[i][0] + player_hand[i][1];
+        }
+        return score;
+    }
 }
 
 export default RuleEngine;

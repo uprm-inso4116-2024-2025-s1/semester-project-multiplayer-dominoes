@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 
 const achievementSchema = new mongoose.Schema({
-    username: {
+    name: {
         type: String,
         required: true,
         unique: true,
     },
-    status: {
+    description: {
         type: String,
-        enum: ['Not Started', 'In Progress', 'Completed'],
-        default: 'Not Started',
+        required: true,
+    },
+    points: {
+        type: Number,
+        default: 0,
     },
 });
 

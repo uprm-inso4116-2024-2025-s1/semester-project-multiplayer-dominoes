@@ -1,9 +1,9 @@
-const Room = require('../models/RoomsModel');
-const User = require('../models/UserModel');
-const {
+import RoomModel from '../models/RoomsModel.js';
+import UserModel from '../models/UserModel.js';
+import {
   RoomNameAvailableSpecification,
   RoomCapacitySpecification,
-} = require('../specifications/RoomSpecification.js');
+}  from '../specifications/RoomSpecification.js';
 
 
 
@@ -11,7 +11,7 @@ const {
 const getAllRooms = async (req, res) => {
  
   try {
-    const rooms = await Room.find({});
+    const rooms = await RoomModel.find({});
     res.status(200).json(rooms);  
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch rooms' });
@@ -27,19 +27,19 @@ const createRoom = async (req, res) => {
   }
 
   try {
-      const creator = await User.findOne({ uuid: creatorUuid });
+      const creator = await UserModel.findOne({ uuid: creatorUuid });
       if (!creator) {
           return res.status(404).json({ error: 'Creator not found' });
       }
 
-      const nameSpec = new RoomNameAvailableSpecification(Room);
+      const nameSpec = new RoomNameAvailableSpecification(RoomModel);
       const isNameAvailable = await nameSpec.isSatisfiedBy(name);
 
       if (!isNameAvailable) {
           return res.status(400).json({ error: 'Room with that name already exists' });
       }
 
-      const newRoom = new Room({ name, creator: creator._id });
+      const newRoom = new RoomModel({ name, creator: creator._id });
       await newRoom.save();
       res.status(201).json(newRoom);
   } catch (err) {
@@ -55,12 +55,12 @@ const joinRoom = async (req, res) => {
   const { userUuid } = req.body;
 
   try {
-      const user = await User.findOne({ uuid: userUuid });
+      const user = await UserModel.findOne({ uuid: userUuid });
       if (!user) {
           return res.status(404).json({ error: 'User not found' });
       }
 
-      const room = await Room.findById(roomId);
+      const room = await RoomModel.findById(roomId);
       if (!room) {
           return res.status(404).json({ error: 'Room not found' });
       }
@@ -79,4 +79,4 @@ const joinRoom = async (req, res) => {
   }
 };
 
-module.exports = { getAllRooms, createRoom, joinRoom };
+export { getAllRooms, createRoom, joinRoom };
