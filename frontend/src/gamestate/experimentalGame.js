@@ -749,7 +749,7 @@ function MainGame() {
     style={{
         backgroundImage: `url(${currentBackground.src})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'right 50px center',
+        backgroundPosition: 'right 40px bottom 40px',
         backgroundRepeat: 'no-repeat',
         width: '100vw',
         height: '100vh',
