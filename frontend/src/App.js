@@ -14,9 +14,7 @@ import ContactUs from './Home/ContactUs.js';
 import FAQS from './Home/FAQS.js';
 import PrivacyPolicy from './Home/PrivacyPolicy.js';
 import ProfilePage from './Auth/ProfilePage.js';
-import AuthService from './services/AuthService.js';
 
-const authService = new AuthService();
 
 function App() {
   const [showRules, setShowRules] = useState(false);
@@ -43,7 +41,7 @@ function App() {
         <header className="App-header">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login authService={authService} />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/profile" element={<ProfilePage />} />
