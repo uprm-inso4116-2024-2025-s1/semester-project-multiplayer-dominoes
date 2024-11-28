@@ -748,7 +748,7 @@ function MainGame() {
     className="table_game"
     style={{
         backgroundImage: `url(${currentBackground.src})`,
-        backgroundSize: 'contain', 
+        backgroundSize: '100% auto', 
         backgroundPosition: 'center 200px', 
         backgroundRepeat: 'no-repeat',
         transformOrigin: 'center center', 
