@@ -13,7 +13,7 @@ import ContactUs from './Home/ContactUs.js';
 import FAQS from './Home/FAQS.js';
 import PrivacyPolicy from './Home/PrivacyPolicy.js';
 import ProfilePage from './Auth/ProfilePage.js';
-import { useUserService } from './Auth/services/UserService.js';
+import { UserService } from './Auth/services/UserService.js';
 import AuthService from './Auth/services/AuthService.js';
 
 const authService = new AuthService();
@@ -48,7 +48,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/profile"
-              element={<ProfilePage userService={new useUserService()} />}
+              element={<ProfilePage userService={new UserService()} />}
             />
             <Route path="/game"
               element={
