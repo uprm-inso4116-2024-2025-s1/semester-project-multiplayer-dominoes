@@ -748,8 +748,8 @@ function MainGame() {
     className="table_game"
     style={{
         backgroundImage: `url(${currentBackground.src})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'right 40px bottom 40px',
+        backgroundSize: '80% auto',
+        backgroundPosition: 'right 30px -40px',
         backgroundRepeat: 'no-repeat',
         width: '100vw',
         height: '100vh',
