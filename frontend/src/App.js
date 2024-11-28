@@ -13,7 +13,7 @@ import ContactUs from './Home/ContactUs.js';
 import FAQS from './Home/FAQS.js';
 import PrivacyPolicy from './Home/PrivacyPolicy.js';
 import ProfilePage from './Auth/ProfilePage.js';
-import AuthService from './services/AuthService.js';
+import AuthService from './Auth/services/AuthService.js';
 
 const authService = new AuthService();
 
