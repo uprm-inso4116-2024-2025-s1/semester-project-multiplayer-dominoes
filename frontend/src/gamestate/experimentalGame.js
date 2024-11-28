@@ -36,7 +36,7 @@ function MainGame() {
     const [tilesInitialized, setTilesInitialized] = useState(false);
     const [playerScore, setPlayerScore] = useState(0);
     const [botScore, setBotScore] = useState(0);
-    const backgroundImages = [boardImage1, boardImage2, boardImage3];
+    const backgroundImages = [boardImage3, boardImage2, boardImage1];
     const [currentBackground, setCurrentBackground] = useState(backgroundImages[0]); // Default background
     
     // Function to rotate the background
@@ -748,11 +748,10 @@ function MainGame() {
     className="table_game"
     style={{
         backgroundImage: `url(${currentBackground.src})`,
-        backgroundSize: 'cover', // Ensures the image covers the entire container
+        backgroundSize: 'contain', 
         backgroundPosition: 'center 200px', 
         backgroundRepeat: 'no-repeat',
-        transform: 'scale(0.8)', // Scale the entire container to make it appear smaller
-        transformOrigin: 'center center', // Ensure scaling happens relative to the center
+        transformOrigin: 'center center', 
         width: '100vw',
         height: '100vh',
         position: 'relative',
